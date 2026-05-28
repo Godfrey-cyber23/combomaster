@@ -4,16 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ComboMaster Fitness — Transform Your Body, Master Your Life</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] },
-                    colors: { brand: { gold: '#D4A853', dark: '#0F0F0F', darker: '#050505', card: '#1A1A1A' } }
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        display: ['Oswald', 'sans-serif'] 
+                    },
+                    colors: { 
+                        brand: { 
+                            gold: '#D4A853', 
+                            dark: '#0F0F0F', 
+                            darker: '#050505', 
+                            card: '#1A1A1A' 
+                        } 
+                    }
                 }
             }
         }
@@ -21,7 +41,7 @@
 </head>
 <body class="font-sans antialiased">
 
-    <!-- Toast -->
+    <!-- Toast Notification -->
     <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
         <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
         <span id="toast-message" class="text-sm font-medium"></span>
@@ -40,9 +60,9 @@
                     </div>
                 </a>
 
-                <!-- Desktop Menu -->
+                <!-- Desktop Navigation Links -->
                 <div class="hidden lg:flex items-center gap-6">
-                    <a href="index.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="index.html" class="text-sm tracking-wide text-gold font-semibold transition-colors">Home</a>
                     <a href="about.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">About</a>
                     <a href="training.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Training</a>
                     <a href="mealplans.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
@@ -51,20 +71,21 @@
                     <a href="contact.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Contact</a>
                 </div>
 
+                <!-- Desktop CTA Buttons -->
                 <div class="hidden lg:flex items-center gap-3">
-                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors">
+                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle theme">
                         <i data-lucide="moon" class="w-5 h-5"></i>
                     </button>
                     <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
                     <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
                 </div>
 
-                <!-- Mobile Menu Button -->
+                <!-- Mobile Menu Buttons -->
                 <div class="flex items-center gap-2 lg:hidden">
-                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors">
+                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle theme">
                         <i data-lucide="moon" class="w-5 h-5"></i>
                     </button>
-                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors">
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle menu">
                         <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
                     </button>
                 </div>
@@ -73,7 +94,7 @@
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="mobile-menu lg:hidden">
                 <div class="pb-6 space-y-1">
-                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Home</a>
+                    <a href="index.html" class="block py-3 px-4 text-gold font-semibold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Home</a>
                     <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">About</a>
                     <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Training</a>
                     <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Meal Plans</a>
@@ -91,27 +112,33 @@
 
     <!-- HERO SECTION -->
     <section class="relative min-h-screen flex items-center overflow-hidden">
+        <!-- Background Image -->
         <div class="absolute inset-0">
-            <!-- CUSTOM IMAGE: Replace with your gym photo -->
             <img src="images/hero-gym.jpg" alt="Gym Training" class="w-full h-full object-cover opacity-50">
             <div class="hero-overlay absolute inset-0"></div>
+            <div class="hero-bottom absolute inset-0"></div>
         </div>
 
+        <!-- Hero Content -->
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-20 w-full">
             <div class="max-w-3xl">
+                <!-- Badge -->
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-gold/30 bg-brand-gold/10 mb-6 animate-fade-in-up">
                     <div class="w-2 h-2 rounded-full bg-brand-gold pulse-gold"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase text-gold">Transform Your Body, Master Your Life</span>
                 </div>
 
+                <!-- Main Heading -->
                 <h1 class="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.9] tracking-tight mb-8 hero-text animate-fade-in-up" style="animation-delay:0.1s">
                     WHERE <span class="text-gradient">FITNESS</span> MEETS DISCIPLINE
                 </h1>
 
+                <!-- Subtitle -->
                 <p class="text-base sm:text-lg md:text-xl text-muted-custom leading-relaxed max-w-xl mb-10 animate-fade-in-up" style="animation-delay:0.2s">
                     Professional workout programs, meal plans, body transformation guidance, and lifestyle coaching designed for real results.
                 </p>
 
+                <!-- CTA Buttons -->
                 <div class="flex flex-wrap gap-3 animate-fade-in-up" style="animation-delay:0.3s">
                     <a href="training.html" class="btn-gold px-6 sm:px-7 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase flex items-center gap-2">
                         <i data-lucide="dumbbell" class="w-4 h-4"></i> Start Training
@@ -122,41 +149,60 @@
                 </div>
             </div>
         </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+            <div class="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center">
+                <div class="w-1.5 h-3 bg-gold rounded-full mt-2 animate-bounce"></div>
+            </div>
+        </div>
     </section>
 
-    <!-- QUICK ACCESS -->
-    <section class="py-16 sm:py-20 border-t border-white/5 section-padding">
+    <!-- QUICK ACCESS SECTION -->
+    <section class="py-16 sm:py-20 border-t border-[var(--border-color)] section-padding">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="text-center mb-10">
+            <!-- Section Header -->
+            <div class="text-center mb-10 reveal-on-scroll">
                 <span class="text-xs font-semibold tracking-widest uppercase text-gold">Quick Access</span>
                 <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mt-3">Start Your Journey</h2>
             </div>
+
+            <!-- Quick Access Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                <a href="training.html" class="glass-card card-hover rounded-2xl p-5 text-center group">
+                <!-- Start Training -->
+                <a href="training.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="dumbbell" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Start Training</h3>
                 </a>
-                <a href="mealplans.html" class="glass-card card-hover rounded-2xl p-5 text-center group">
+
+                <!-- Meal Plans -->
+                <a href="mealplans.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll" style="transition-delay: 0.1s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="utensils" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Buy Meal Plan</h3>
                 </a>
-                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group">
+
+                <!-- Supplements -->
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll" style="transition-delay: 0.2s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="pill" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Supplements</h3>
                 </a>
-                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group">
+
+                <!-- Gym Attire -->
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll" style="transition-delay: 0.3s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="shirt" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Gym Attire</h3>
                 </a>
-                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group col-span-2 sm:col-span-1">
+
+                <!-- Equipment -->
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group col-span-2 sm:col-span-1 reveal-on-scroll" style="transition-delay: 0.4s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="weights" class="w-6 h-6 text-gold"></i>
                     </div>
@@ -166,10 +212,182 @@
         </div>
     </section>
 
+    <!-- STATS SECTION -->
+    <section class="py-16 sm:py-20 border-t border-[var(--border-color)] section-padding">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <!-- Clients -->
+                <div class="text-center reveal-on-scroll">
+                    <div class="stat-number text-4xl md:text-5xl font-display font-bold text-gold mb-2" data-target="500">0+</div>
+                    <p class="text-sm text-muted-custom">Active Clients</p>
+                </div>
+
+                <!-- Years -->
+                <div class="text-center reveal-on-scroll" style="transition-delay: 0.1s;">
+                    <div class="stat-number text-4xl md:text-5xl font-display font-bold text-gold mb-2" data-target="10">0+</div>
+                    <p class="text-sm text-muted-custom">Years Experience</p>
+                </div>
+
+                <!-- Transformations -->
+                <div class="text-center reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <div class="stat-number text-4xl md:text-5xl font-display font-bold text-gold mb-2" data-target="1000">0+</div>
+                    <p class="text-sm text-muted-custom">Transformations</p>
+                </div>
+
+                <!-- Satisfaction -->
+                <div class="text-center reveal-on-scroll" style="transition-delay: 0.3s;">
+                    <div class="stat-number text-4xl md:text-5xl font-display font-bold text-gold mb-2" data-target="98">0%</div>
+                    <p class="text-sm text-muted-custom">Client Satisfaction</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED PROGRAMS SECTION -->
+    <section class="py-16 sm:py-20 border-t border-[var(--border-color)] section-padding bg-[var(--bg-secondary)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <!-- Section Header -->
+            <div class="text-center mb-12 reveal-on-scroll">
+                <span class="text-xs font-semibold tracking-widest uppercase text-gold">Our Programs</span>
+                <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mt-3 mb-4">Choose Your Path</h2>
+                <p class="text-muted-custom max-w-2xl mx-auto">Select the program that fits your goals and start your transformation journey today.</p>
+            </div>
+
+            <!-- Programs Grid -->
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Beginner Program -->
+                <div class="glass-card rounded-2xl p-6 card-hover reveal-on-scroll">
+                    <div class="w-14 h-14 rounded-xl bg-brand-gold/10 flex items-center justify-center mb-4">
+                        <i data-lucide="trending-up" class="w-7 h-7 text-gold"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold mb-2">Beginner</h3>
+                    <p class="text-muted-custom text-sm mb-4">Perfect for those starting their fitness journey. Build a solid foundation with guided workouts.</p>
+                    <ul class="space-y-2 text-sm text-muted-custom mb-6">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> 3 workouts/week</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> Basic nutrition guide</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> Form check videos</li>
+                    </ul>
+                    <a href="training.html" class="btn-outline w-full block text-center py-2 rounded-lg text-sm font-semibold">Learn More</a>
+                </div>
+
+                <!-- Intermediate Program -->
+                <div class="glass-card rounded-2xl p-6 card-hover reveal-on-scroll gold-glow" style="transition-delay: 0.1s;">
+                    <div class="w-14 h-14 rounded-xl bg-brand-gold/10 flex items-center justify-center mb-4">
+                        <i data-lucide="zap" class="w-7 h-7 text-gold"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold mb-2">Intermediate</h3>
+                    <p class="text-muted-custom text-sm mb-4">Take your training to the next level with advanced techniques and structured programs.</p>
+                    <ul class="space-y-2 text-sm text-muted-custom mb-6">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> 5 workouts/week</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> Meal plan included</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> Progress tracking</li>
+                    </ul>
+                    <a href="training.html" class="btn-gold w-full block text-center py-2 rounded-lg text-sm font-semibold">Get Started</a>
+                </div>
+
+                <!-- Advanced Program -->
+                <div class="glass-card rounded-2xl p-6 card-hover reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <div class="w-14 h-14 rounded-xl bg-brand-gold/10 flex items-center justify-center mb-4">
+                        <i data-lucide="flame" class="w-7 h-7 text-gold"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold mb-2">Advanced</h3>
+                    <p class="text-muted-custom text-sm mb-4">Elite training for serious athletes. Maximize performance and achieve peak condition.</p>
+                    <ul class="space-y-2 text-sm text-muted-custom mb-6">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> 6 workouts/week</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> Custom meal plans</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> 1-on-1 coaching</li>
+                    </ul>
+                    <a href="training.html" class="btn-outline w-full block text-center py-2 rounded-lg text-sm font-semibold">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIAL SECTION -->
+    <section class="py-16 sm:py-20 border-t border-[var(--border-color)] section-padding">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <!-- Section Header -->
+            <div class="text-center mb-12 reveal-on-scroll">
+                <span class="text-xs font-semibold tracking-widest uppercase text-gold">Testimonials</span>
+                <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mt-3">What Our Clients Say</h2>
+            </div>
+
+            <!-- Testimonials Grid -->
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Testimonial 1 -->
+                <div class="glass-card rounded-2xl p-6 reveal-on-scroll">
+                    <div class="star-rating">
+                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                    </div>
+                    <p class="text-muted-custom text-sm mb-4">"ComboMaster completely changed my approach to fitness. I've lost 30 pounds and feel stronger than ever!"</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center">
+                            <span class="text-gold font-semibold text-sm">JD</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm">John Doe</p>
+                            <p class="text-xs text-muted-custom">Lost 30 lbs in 6 months</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="glass-card rounded-2xl p-6 reveal-on-scroll" style="transition-delay: 0.1s;">
+                    <div class="star-rating">
+                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                    </div>
+                    <p class="text-muted-custom text-sm mb-4">"The meal plans are a game-changer! Combined with the workouts, I achieved results I never thought possible."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center">
+                            <span class="text-gold font-semibold text-sm">SM</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm">Sarah Miller</p>
+                            <p class="text-xs text-muted-custom">Transformed in 4 months</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="glass-card rounded-2xl p-6 reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <div class="star-rating">
+                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                    </div>
+                    <p class="text-muted-custom text-sm mb-4">"The coaching team is incredible. They pushed me beyond my limits and helped me become the best version of myself."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center">
+                            <span class="text-gold font-semibold text-sm">MR</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm">Mike Rodriguez</p>
+                            <p class="text-xs text-muted-custom">Gained 15 lbs of muscle</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="py-16 sm:py-20 border-t border-[var(--border-color)] section-padding bg-[var(--bg-secondary)]">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+            <div class="reveal-on-scroll">
+                <span class="text-xs font-semibold tracking-widest uppercase text-gold">Ready to Start?</span>
+                <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3 mb-6">Transform Your Body Today</h2>
+                <p class="text-muted-custom text-lg mb-8 max-w-2xl mx-auto">Join hundreds of satisfied clients who have transformed their lives with ComboMaster Fitness.</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="membership.html" class="btn-gold px-8 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase">Start Free Trial</a>
+                    <a href="contact.html" class="btn-outline px-8 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- FOOTER -->
-    <footer class="py-12 border-t border-white/5">
+    <footer class="py-12 border-t border-[var(--border-color)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <!-- Company Info -->
                 <div class="col-span-2 md:col-span-1">
                     <a href="index.html" class="flex items-center gap-2 mb-4">
                         <img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto">
@@ -177,36 +395,45 @@
                     </a>
                     <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
                 </div>
+
+                <!-- Links -->
                 <div>
                     <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="training.html">Training</a></li>
-                        <li><a href="membership.html">Membership</a></li>
+                        <li><a href="about.html" class="hover:text-gold transition-colors">About</a></li>
+                        <li><a href="training.html" class="hover:text-gold transition-colors">Training</a></li>
+                        <li><a href="membership.html" class="hover:text-gold transition-colors">Membership</a></li>
                     </ul>
                 </div>
+
+                <!-- Shop -->
                 <div>
                     <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="shop.html">Supplements</a></li>
-                        <li><a href="shop.html">Attire</a></li>
-                        <li><a href="shop.html">Equipment</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Supplements</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Attire</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Equipment</a></li>
                     </ul>
                 </div>
+
+                <!-- Connect -->
                 <div>
                     <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="contact.html">Contact Us</a></li>
-                        <li><a href="login.html">Client Login</a></li>
+                        <li><a href="contact.html" class="hover:text-gold transition-colors">Contact Us</a></li>
+                        <li><a href="login.html" class="hover:text-gold transition-colors">Client Login</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-white/5 pt-6 text-center">
+
+            <!-- Copyright -->
+            <div class="border-t border-[var(--border-color)] pt-6 text-center">
                 <p class="text-xs text-muted-custom">&copy; 2025 ComboMaster Fitness. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
+    <!-- Custom JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>

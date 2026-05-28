@@ -1,206 +1,357 @@
-// Initialize Lucide Icons
-lucide.createIcons();
+// Wait for the DOM to fully load before running scripts
+document.addEventListener('DOMContentLoaded', () => {
 
-// ===== Dark/Light Mode Toggle =====
-const themeToggle = document.getElementById('theme-toggle');
-const themeToggleMobile = document.getElementById('theme-toggle-mobile');
-const body = document.body;
-
-// Apply saved theme or system preference on load
-function applyTheme(isLight) {
-    if (isLight) {
-        body.classList.add('light-mode');
-    } else {
-        body.classList.remove('light-mode');
-    }
-    updateThemeIcons(isLight);
-    updateNavbarScroll(); // Ensure navbar colors update instantly
-}
-
-function updateThemeIcons(isLight) {
-    const iconName = isLight ? 'sun' : 'moon';
-    if (themeToggle) themeToggle.setAttribute('data-lucide', iconName);
-    if (themeToggleMobile) themeToggleMobile.setAttribute('data-lucide', iconName);
+    // Initialize Lucide Icons
     lucide.createIcons();
-}
 
-// Check for saved preference, otherwise check system preference
-const currentTheme = localStorage.getItem('theme');
-const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-const initialIsLight = currentTheme === 'light' || (!currentTheme && prefersLight);
-applyTheme(initialIsLight);
+    // ===== Dark/Light Mode Toggle =====
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+    const body = document.body;
 
-if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-        const isLight = !body.classList.contains('light-mode');
-        localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        applyTheme(isLight);
-    });
-}
-if (themeToggleMobile) {
-    themeToggleMobile.addEventListener('click', () => {
-        const isLight = !body.classList.contains('light-mode');
-        localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        applyTheme(isLight);
-    });
-}
-
-// ===== Mobile Menu =====
-const mobileToggle = document.getElementById('mobile-toggle');
-const mobileMenu = document.getElementById('mobile-menu');
-let menuOpen = false;
-
-if (mobileToggle && mobileMenu) {
-    mobileToggle.addEventListener('click', () => {
-        menuOpen = !menuOpen;
-        mobileMenu.classList.toggle('open', menuOpen);
-        const icon = document.getElementById('menu-icon');
-        if (icon) {
-            icon.setAttribute('data-lucide', menuOpen ? 'x' : 'menu');
-            lucide.createIcons();
+    function updateThemeIcons(isLight) {
+        const iconName = isLight ? 'sun' : 'moon';
+        
+        // Update desktop toggle icon
+        if (themeToggle) {
+            const icon = themeToggle.querySelector('i');
+            if (icon) {
+                icon.setAttribute('data-lucide', iconName);
+            }
         }
-    });
-}
-
-function closeMobileMenu() {
-    if (!mobileMenu) return;
-    menuOpen = false;
-    mobileMenu.classList.remove('open');
-    const icon = document.getElementById('menu-icon');
-    if (icon) {
-        icon.setAttribute('data-lucide', 'menu');
+        
+        // Update mobile toggle icon
+        if (themeToggleMobile) {
+            const icon = themeToggleMobile.querySelector('i');
+            if (icon) {
+                icon.setAttribute('data-lucide', iconName);
+            }
+        }
+        
         lucide.createIcons();
     }
-}
 
-// ===== Navbar Scroll Effect =====
-const navbar = document.getElementById('navbar');
-
-function updateNavbarScroll() {
-    if (!navbar) return;
-    const isLight = body.classList.contains('light-mode');
-    
-    if (window.scrollY > 50) {
-        navbar.style.backgroundColor = isLight ? 'rgba(255, 255, 255, 0.9)' : 'rgba(5, 5, 5, 0.9)';
-        navbar.style.backdropFilter = 'blur(12px)';
-        navbar.style.borderBottom = isLight ? '1px solid rgba(0,0,0,0.05)' : '1px solid rgba(255,255,255,0.05)';
-    } else {
-        navbar.style.backgroundColor = 'transparent';
-        navbar.style.backdropFilter = 'none';
-        navbar.style.borderBottom = '1px solid transparent';
+    function applyTheme(isLight) {
+        if (isLight) {
+            body.classList.add('light-mode');
+        } else {
+            body.classList.remove('light-mode');
+        }
+        updateThemeIcons(isLight);
+        updateNavbarScroll();
     }
-}
 
-window.addEventListener('scroll', updateNavbarScroll);
-updateNavbarScroll(); // Run on load
+    // Load saved preference or system preference
+    const currentTheme = localStorage.getItem('theme');
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    const initialIsLight = currentTheme === 'light' || (!currentTheme && prefersLight);
+    applyTheme(initialIsLight);
 
-// ===== Unified Tab Switching =====
-// Works for any section (training, shop, etc.) by passing the group name
-function switchTab(tabGroup, tab) {
-    const contentEl = document.getElementById(`${tabGroup}-${tab}`);
-    if (!contentEl) return; // Exit if element doesn't exist on this page
+    function toggleTheme(e) {
+        // Prevent any default behavior and stop propagation
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        const isLight = !body.classList.contains('light-mode');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        applyTheme(isLight);
+    }
 
-    document.querySelectorAll(`.${tabGroup}-content`).forEach(el => el.classList.add('hidden'));
-    contentEl.classList.remove('hidden');
-
-    document.querySelectorAll(`[id^="${tabGroup}-tab-"]`).forEach(btn => btn.classList.remove('active'));
-    const activeBtn = document.getElementById(`${tabGroup}-tab-${tab}`);
-    if (activeBtn) activeBtn.classList.add('active');
-}
-
-// Backwards compatibility aliases for HTML onclick attributes
-function switchTrainingTab(tab) { switchTab('training', tab); }
-function switchShopTab(tab) { switchTab('shop', tab); }
-
-// ===== Toast Notification =====
-function showToast(message) {
-    const toast = document.getElementById('toast');
-    const toastMsg = document.getElementById('toast-message');
-    if (!toast || !toastMsg) return;
-    
-    toastMsg.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-// ===== Forms =====
-function handleContactSubmit(e) {
-    e.preventDefault();
-    showToast('Message sent successfully! We\'ll get back to you soon.');
-    e.target.reset();
-}
-
-function handleLoginSubmit(e) {
-    e.preventDefault();
-    showToast('Logging in...');
-    // Add actual authentication logic here
-}
-
-function handleNewsletter(e) {
-    e.preventDefault();
-    showToast('Subscribed! Welcome to the ComboMaster community.');
-    e.target.reset();
-}
-
-// ===== Stat Counter Animation =====
-const statNumbers = document.querySelectorAll('.stat-number');
-if (statNumbers.length > 0) {
-    const observerOptions = { threshold: 0.5 };
-
-    const statObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const el = entry.target;
-                const target = parseInt(el.getAttribute('data-target'));
-                let current = 0;
-                const increment = target / 60;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        current = target;
-                        clearInterval(timer);
-                    }
-                    el.textContent = Math.floor(current) + (target === 98 ? '%' : '+');
-                }, 30);
-                statObserver.unobserve(el); // Stop observing once animated
-            }
+    // Add click event listeners to both theme toggle buttons
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+        // Also handle touch events for mobile
+        themeToggle.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            toggleTheme(e);
         });
-    }, observerOptions);
+    }
+    
+    if (themeToggleMobile) {
+        themeToggleMobile.addEventListener('click', toggleTheme);
+        // Also handle touch events for mobile
+        themeToggleMobile.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            toggleTheme(e);
+        });
+    }
 
-    statNumbers.forEach(el => statObserver.observe(el));
-}
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+            applyTheme(e.matches);
+        }
+    });
 
-// ===== Smooth Scroll for anchor links =====
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        if (href !== '#') {
-            const target = document.querySelector(href);
-            if (target) {
-                e.preventDefault();
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // ===== Mobile Menu =====
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    let menuOpen = false;
+
+    function toggleMobileMenu(e) {
+        // Prevent any default behavior and stop propagation
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        menuOpen = !menuOpen;
+        
+        if (mobileMenu) {
+            if (menuOpen) {
+                mobileMenu.classList.add('open');
+            } else {
+                mobileMenu.classList.remove('open');
+            }
+        }
+        
+        if (menuIcon) {
+            menuIcon.setAttribute('data-lucide', menuOpen ? 'x' : 'menu');
+            lucide.createIcons();
+        }
+    }
+
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', toggleMobileMenu);
+        // Also handle touch events for mobile
+        mobileToggle.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            toggleMobileMenu(e);
+        });
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (menuOpen && mobileMenu && mobileToggle) {
+            // Check if click is outside both the menu and the toggle button
+            if (!mobileMenu.contains(e.target) && !mobileToggle.contains(e.target)) {
+                closeMobileMenu();
             }
         }
     });
-});
 
-// ===== Scroll Reveal Animation =====
-const revealElements = document.querySelectorAll('.reveal-on-scroll');
-if (revealElements.length > 0) {
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                revealObserver.unobserve(entry.target); // Only animate once
+    // Close mobile menu on window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024 && menuOpen) {
+            closeMobileMenu();
+        }
+    });
+
+    window.closeMobileMenu = function() {
+        if (!menuOpen) return;
+        menuOpen = false;
+        
+        if (mobileMenu) {
+            mobileMenu.classList.remove('open');
+        }
+        
+        if (menuIcon) {
+            menuIcon.setAttribute('data-lucide', 'menu');
+            lucide.createIcons();
+        }
+    };
+
+    // ===== Navbar Scroll Effect =====
+    const navbar = document.getElementById('navbar');
+
+    function updateNavbarScroll() {
+        if (!navbar) return;
+        const isLight = body.classList.contains('light-mode');
+        
+        if (window.scrollY > 50) {
+            navbar.style.backgroundColor = isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(5, 5, 5, 0.95)';
+            navbar.style.backdropFilter = 'blur(12px)';
+            navbar.style.webkitBackdropFilter = 'blur(12px)';
+            navbar.style.borderBottom = isLight ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.05)';
+            navbar.style.boxShadow = isLight ? '0 1px 3px rgba(0,0,0,0.05)' : '0 1px 3px rgba(0,0,0,0.2)';
+        } else {
+            navbar.style.backgroundColor = 'transparent';
+            navbar.style.backdropFilter = 'none';
+            navbar.style.webkitBackdropFilter = 'none';
+            navbar.style.borderBottom = '1px solid transparent';
+            navbar.style.boxShadow = 'none';
+        }
+    }
+
+    // Throttle scroll event for better performance
+    let ticking = false;
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                updateNavbarScroll();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+    
+    updateNavbarScroll();
+
+    // ===== Unified Tab Switching =====
+    window.switchTab = function(tabGroup, tab) {
+        // Hide all content panels for this group
+        const contents = document.querySelectorAll(`.${tabGroup}-content`);
+        contents.forEach(el => {
+            el.classList.add('hidden');
+        });
+
+        // Show selected content panel
+        const contentEl = document.getElementById(`${tabGroup}-${tab}`);
+        if (contentEl) {
+            contentEl.classList.remove('hidden');
+        }
+
+        // Remove active class from all tabs
+        const tabs = document.querySelectorAll(`[id^="${tabGroup}-tab-"]`);
+        tabs.forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Add active class to selected tab
+        const activeBtn = document.getElementById(`${tabGroup}-tab-${tab}`);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+    };
+
+    // Backwards compatibility aliases
+    window.switchTrainingTab = function(tab) { window.switchTab('training', tab); };
+    window.switchShopTab = function(tab) { window.switchTab('shop', tab); };
+
+    // ===== Toast Notification =====
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-message');
+    let toastTimer;
+
+    window.showToast = function(message) {
+        if (!toast || !toastMsg) return;
+        
+        // Clear any existing timeout
+        if (toastTimer) {
+            clearTimeout(toastTimer);
+        }
+        
+        toastMsg.textContent = message;
+        toast.classList.add('show');
+        
+        toastTimer = setTimeout(function() {
+            toast.classList.remove('show');
+        }, 3000);
+    };
+
+    // ===== Forms =====
+    window.handleContactSubmit = function(e) {
+        if (e) e.preventDefault();
+        window.showToast('Message sent successfully! We\'ll get back to you soon.');
+        if (e && e.target) e.target.reset();
+        return false;
+    };
+
+    window.handleLoginSubmit = function(e) {
+        if (e) e.preventDefault();
+        window.showToast('Logging in...');
+        return false;
+    };
+
+    window.handleNewsletter = function(e) {
+        if (e) e.preventDefault();
+        window.showToast('Subscribed! Welcome to the ComboMaster community.');
+        if (e && e.target) e.target.reset();
+        return false;
+    };
+
+    // ===== Stat Counter Animation =====
+    const statNumbers = document.querySelectorAll('.stat-number');
+    if (statNumbers.length > 0) {
+        const statObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseInt(el.getAttribute('data-target'));
+                    if (isNaN(target)) return;
+                    
+                    const suffix = target === 98 ? '%' : '+';
+                    let current = 0;
+                    const duration = 2000;
+                    const increment = target / (duration / 16);
+                    
+                    function updateCounter() {
+                        current += increment;
+                        if (current >= target) {
+                            el.textContent = target + suffix;
+                            return;
+                        }
+                        el.textContent = Math.floor(current) + suffix;
+                        requestAnimationFrame(updateCounter);
+                    }
+                    
+                    updateCounter();
+                    statObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statNumbers.forEach(function(el) {
+            statObserver.observe(el);
+        });
+    }
+
+    // ===== Smooth Scroll for anchor links =====
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href && href !== '#') {
+                const target = document.querySelector(href);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                }
             }
         });
-    }, { threshold: 0.1 });
-
-    revealElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        revealObserver.observe(el);
     });
-}
+
+    // ===== Scroll Reveal Animation =====
+    const revealElements = document.querySelectorAll('.reveal-on-scroll');
+    if (revealElements.length > 0) {
+        const revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { 
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        revealElements.forEach(function(el) {
+            revealObserver.observe(el);
+        });
+    }
+
+    // ===== Keyboard Accessibility =====
+    document.addEventListener('keydown', function(e) {
+        // Close mobile menu on Escape key
+        if (e.key === 'Escape' && menuOpen) {
+            closeMobileMenu();
+        }
+    });
+
+    // ===== Fix for iOS Safari 100vh issue =====
+    function setVH() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    setVH();
+    window.addEventListener('resize', setVH);
+    window.addEventListener('orientationchange', setVH);
+
+}); // End DOMContentLoaded

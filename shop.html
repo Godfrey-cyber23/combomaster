@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop — ComboMaster Fitness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+        }
+    </script>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Toast -->
+    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between py-4">
+                <a href="index.html" class="flex items-center gap-3">
+                    <img src="images/gym_logo.jpg" alt="Logo" class="h-10 w-auto">
+                    <span class="font-display text-xl text-gold hidden sm:block">COMBOMASTER</span>
+                </a>
+                <div class="hidden lg:flex items-center gap-6">
+                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="about.html" class="text-sm text-muted-custom hover:text-gold transition-colors">About</a>
+                    <a href="training.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Training</a>
+                    <a href="mealplans.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
+                    <a href="shop.html" class="text-sm text-gold font-semibold">Shop</a>
+                    <a href="transformations.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Results</a>
+                    <a href="contact.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Contact</a>
+                </div>
+                <div class="hidden lg:flex items-center gap-3">
+                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
+                    <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
+                </div>
+                <div class="flex items-center gap-2 lg:hidden">
+                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i></button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="mobile-menu lg:hidden">
+                <div class="pb-6 space-y-1">
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-gold font-semibold" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Results</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Contact</a>
+                    <div class="pt-3 flex gap-2">
+                        <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
+                        <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <img src="images/shop-hero.jpg" alt="ComboMaster Store">
+        <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <span class="text-xs font-semibold tracking-widest uppercase text-gold">Shop</span>
+            <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
+                THE <span class="text-gradient">COMBOMASTER</span> STORE
+            </h1>
+            <p class="text-muted-custom max-w-2xl mx-auto mt-4">Everything you need to fuel your transformation — supplements, apparel, and equipment.</p>
+        </div>
+    </section>
+
+    <!-- SHOP TABS SECTION -->
+    <section class="py-12 sm:py-16 section-padding">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            
+            <!-- Tab Buttons -->
+            <div class="flex flex-wrap justify-center gap-3 mb-10 reveal-on-scroll">
+                <button onclick="switchTab('shop', 'supplements')" id="shop-tab-supplements" class="shop-tab active px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase transition-all">Supplements</button>
+                <button onclick="switchTab('shop', 'attire')" id="shop-tab-attire" class="shop-tab px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase transition-all">Gym Attire</button>
+                <button onclick="switchTab('shop', 'equipment')" id="shop-tab-equipment" class="shop-tab px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase transition-all">Equipment</button>
+            </div>
+
+            <!-- SUPPLEMENTS CONTENT -->
+            <div id="shop-supplements" class="shop-content tab-content">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+                    <!-- Product 1 -->
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-square">
+                            <img src="images/shop-protein.jpg" alt="Whey Protein">
+                        </div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">Whey Protein</h4>
+                            <p class="text-xs text-muted-custom mb-2">2lb / 900g</p>
+                            <span class="font-display text-lg font-semibold text-gold">$45</span>
+                            <button onclick="showToast('Whey Protein added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-square">
+                            <img src="images/shop-gainer.jpg" alt="Mass Gainer">
+                        </div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">Mass Gainer</h4>
+                            <p class="text-xs text-muted-custom mb-2">5lb / 2.2kg</p>
+                            <span class="font-display text-lg font-semibold text-gold">$55</span>
+                            <button onclick="showToast('Mass Gainer added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-square">
+                            <img src="images/shop-preworkout.jpg" alt="Pre-Workout">
+                        </div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">Pre-Workout</h4>
+                            <p class="text-xs text-muted-custom mb-2">30 servings</p>
+                            <span class="font-display text-lg font-semibold text-gold">$35</span>
+                            <button onclick="showToast('Pre-Workout added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 4 -->
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-square">
+                            <img src="images/shop-fatburner.jpg" alt="Fat Burner">
+                        </div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">Fat Burner</h4>
+                            <p class="text-xs text-muted-custom mb-2">60 capsules</p>
+                            <span class="font-display text-lg font-semibold text-gold">$30</span>
+                            <button onclick="showToast('Fat Burner added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 5 -->
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-square">
+                            <img src="images/shop-vitamins.jpg" alt="Vitamins">
+                        </div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">Vitamin Pack</h4>
+                            <p class="text-xs text-muted-custom mb-2">30-day supply</p>
+                            <span class="font-display text-lg font-semibold text-gold">$25</span>
+                            <button onclick="showToast('Vitamin Pack added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GYM ATTIRE CONTENT -->
+            <div id="shop-attire" class="shop-content tab-content hidden">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-tall"><img src="images/shop-tshirt.jpg" alt="Gym T-Shirt"></div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">CM Gym T-Shirt</h4>
+                            <p class="text-xs text-muted-custom mb-2">S / M / L / XL</p>
+                            <span class="font-display text-lg font-semibold text-gold">$25</span>
+                            <button onclick="showToast('Gym T-Shirt added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-tall"><img src="images/shop-vest.jpg" alt="Training Vest"></div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">CM Training Vest</h4>
+                            <p class="text-xs text-muted-custom mb-2">S / M / L / XL</p>
+                            <span class="font-display text-lg font-semibold text-gold">$22</span>
+                            <button onclick="showToast('Training Vest added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-tall"><img src="images/shop-shorts.jpg" alt="Workout Shorts"></div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">CM Workout Shorts</h4>
+                            <p class="text-xs text-muted-custom mb-2">M / L / XL</p>
+                            <span class="font-display text-lg font-semibold text-gold">$20</span>
+                            <button onclick="showToast('Workout Shorts added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-tall"><img src="images/shop-hoodie.jpg" alt="Gym Hoodie"></div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">CM Gym Hoodie</h4>
+                            <p class="text-xs text-muted-custom mb-2">M / L / XL / XXL</p>
+                            <span class="font-display text-lg font-semibold text-gold">$40</span>
+                            <button onclick="showToast('Gym Hoodie added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GYM EQUIPMENT CONTENT -->
+            <div id="shop-equipment" class="shop-content tab-content hidden">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-square">
+                            <img src="images/shop-dumbbells.jpg" alt="Dumbbells">
+                        </div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">Dumbbell Set</h4>
+                            <p class="text-xs text-muted-custom mb-2">5-25kg pairs</p>
+                            <span class="font-display text-lg font-semibold text-gold">$120</span>
+                            <button onclick="showToast('Dumbbell Set added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-square">
+                            <img src="images/shop-bands.jpg" alt="Resistance Bands">
+                        </div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">Resistance Bands</h4>
+                            <p class="text-xs text-muted-custom mb-2">Set of 5</p>
+                            <span class="font-display text-lg font-semibold text-gold">$18</span>
+                            <button onclick="showToast('Resistance Bands added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-square">
+                            <img src="images/shop-rope.jpg" alt="Speed Rope">
+                        </div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">Speed Rope</h4>
+                            <p class="text-xs text-muted-custom mb-2">Adjustable</p>
+                            <span class="font-display text-lg font-semibold text-gold">$12</span>
+                            <button onclick="showToast('Speed Rope added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                        <div class="product-image-square">
+                            <img src="images/shop-abroller.jpg" alt="Ab Roller">
+                        </div>
+                        <div class="product-content text-center">
+                            <h4 class="font-semibold text-sm mb-1">Ab Roller</h4>
+                            <p class="text-xs text-muted-custom mb-2">Pro quality</p>
+                            <span class="font-display text-lg font-semibold text-gold">$15</span>
+                            <button onclick="showToast('Ab Roller added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-2 md:col-span-1">
+                    <a href="index.html" class="flex items-center gap-2 mb-4"><img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto"><span class="font-display text-lg text-gold">COMBOMASTER</span></a>
+                    <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="training.html">Training</a></li>
+                        <li><a href="membership.html">Membership</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="shop.html">Supplements</a></li>
+                        <li><a href="shop.html">Attire</a></li>
+                        <li><a href="shop.html">Equipment</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="login.html">Client Login</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-[var(--border-color)] pt-6 text-center">
+                <p class="text-xs text-muted-custom">&copy; 2025 ComboMaster Fitness. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

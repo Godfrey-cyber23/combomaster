@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — ComboMaster Fitness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } } }</script>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Copy the exact <nav> from index.html here -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between py-4">
+                <a href="index.html" class="flex items-center gap-3"><img src="images/gym_logo.jpg" alt="Logo" class="h-10 w-auto"><span class="font-display text-xl text-gold hidden sm:block">COMBOMASTER</span></a>
+                <div class="hidden lg:flex items-center gap-6">
+                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold">Home</a>
+                    <a href="about.html" class="text-sm text-gold hover:text-gold">About</a>
+                    <a href="training.html" class="text-sm text-muted-custom hover:text-gold">Training</a>
+                    <a href="mealplans.html" class="text-sm text-muted-custom hover:text-gold">Meal Plans</a>
+                    <a href="shop.html" class="text-sm text-muted-custom hover:text-gold">Shop</a>
+                    <a href="contact.html" class="text-sm text-muted-custom hover:text-gold">Contact</a>
+                </div>
+                <div class="hidden lg:flex items-center gap-3">
+                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold">Login</a>
+                </div>
+                <div class="flex items-center gap-2 lg:hidden">
+                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold"><i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i></button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="mobile-menu lg:hidden">
+                <div class="pb-6 space-y-1">
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-gold" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Shop</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Contact</a>
+                    <div class="pt-3"><a href="login.html" class="btn-gold block text-center py-3 rounded-lg text-sm font-semibold">Login</a></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE CONTENT -->
+    <main class="pt-24 pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12">
+                <span class="text-xs font-semibold tracking-widest uppercase text-gold">About Us</span>
+                <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">THE STORY BEHIND <span class="text-gradient">COMBOMASTER</span></h1>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="relative">
+                    <div class="rounded-2xl overflow-hidden shadow-2xl border border-[var(--border-color)]">
+                        <!-- CUSTOM IMAGE: Founder/About photo -->
+                        <img src="images/about-founder.jpg" alt="Peter Chanda" class="w-full h-[400px] sm:h-[500px] object-cover">
+                    </div>
+                    <div class="absolute -bottom-4 -right-4 glass-card rounded-2xl p-4 gold-glow">
+                        <div class="font-display text-3xl font-semibold text-gold">10+</div>
+                        <div class="text-xs tracking-widest uppercase text-muted-custom">Years Experience</div>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-muted-custom leading-relaxed mb-6">
+                        ComboMaster Fitness was born from my personal journey of transformation. I realized that true results come from a <strong class="text-gold">combination</strong> of the right workouts, proper nutrition, mental discipline, recovery, and consistent lifestyle habits.
+                    </p>
+                    <p class="text-muted-custom leading-relaxed mb-6">
+                        <strong>Combo</strong> represents the integration of all key elements. <strong>Master</strong> represents the pursuit of excellence and the responsibility to guide others with knowledge and results.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-lg bg-brand-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="target" class="w-4 h-4 text-gold"></i></div>
+                            <div><h4 class="font-semibold text-sm">Transformation of Bodies & Minds</h4><p class="text-sm text-muted-custom mt-1">Complete physical and mental metamorphosis</p></div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-lg bg-brand-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="shield-check" class="w-4 h-4 text-gold"></i></div>
+                            <div><h4 class="font-semibold text-sm">Discipline & Structured Living</h4><p class="text-sm text-muted-custom mt-1">Building habits that last beyond the gym</p></div>
+                        </div>
+                    </div>
+
+                    <a href="training.html" class="btn-gold mt-8 px-8 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase inline-flex items-center gap-2">
+                        Explore Programs <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Copy the exact <footer> from index.html here -->
+    <footer class="py-12 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <a href="index.html" class="inline-block"><img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto mx-auto mb-4"></a>
+            <p class="text-xs text-muted-custom">&copy; 2025 ComboMaster Fitness. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

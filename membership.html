@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership — ComboMaster Fitness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+        }
+    </script>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Toast -->
+    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between py-4">
+                <a href="index.html" class="flex items-center gap-3">
+                    <img src="images/gym_logo.jpg" alt="Logo" class="h-10 w-auto">
+                    <span class="font-display text-xl text-gold hidden sm:block">COMBOMASTER</span>
+                </a>
+                <div class="hidden lg:flex items-center gap-6">
+                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="about.html" class="text-sm text-muted-custom hover:text-gold transition-colors">About</a>
+                    <a href="training.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Training</a>
+                    <a href="mealplans.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
+                    <a href="shop.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Shop</a>
+                    <a href="transformations.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Results</a>
+                    <a href="contact.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Contact</a>
+                </div>
+                <div class="hidden lg:flex items-center gap-3">
+                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
+                    <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
+                </div>
+                <div class="flex items-center gap-2 lg:hidden">
+                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i></button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="mobile-menu lg:hidden">
+                <div class="pb-6 space-y-1">
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Results</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Contact</a>
+                    <div class="pt-3 flex gap-2">
+                        <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
+                        <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <img src="images/membership-hero.jpg" alt="ComboMaster Community">
+        <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <span class="text-xs font-semibold tracking-widest uppercase text-gold">Membership</span>
+            <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
+                JOIN THE <span class="text-gradient">COMBOMASTER</span> COMMUNITY
+            </h1>
+            <p class="text-muted-custom max-w-2xl mx-auto mt-4">Choose the plan that matches your goals. Every membership includes access to our supportive community and expert coaching.</p>
+        </div>
+    </section>
+
+    <!-- PRICING TIERS -->
+    <section class="py-12 sm:py-16 section-padding">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+                
+                <!-- Starter -->
+                <div class="glass-card card-hover rounded-2xl p-8 pricing-card reveal-on-scroll">
+                    <div class="mb-6">
+                        <h3 class="font-display text-xl font-semibold tracking-tight mb-1">Starter</h3>
+                        <p class="text-sm text-muted-custom">For those beginning their fitness journey</p>
+                    </div>
+                    <div class="mb-6">
+                        <span class="font-display text-4xl font-semibold text-gold">$29</span>
+                        <span class="text-muted-custom">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 flex-grow">
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Access to workout library</li>
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Basic meal plan templates</li>
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Community forum access</li>
+                        <li class="pricing-feature disabled text-muted-custom"><i data-lucide="x" class="text-red-400/50"></i> Personal coaching</li>
+                        <li class="pricing-feature disabled text-muted-custom"><i data-lucide="x" class="text-red-400/50"></i> Progress tracking</li>
+                    </ul>
+                    <button onclick="showToast('Starter plan selected! Redirecting to checkout...')" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase">Choose Starter</button>
+                </div>
+
+                <!-- Pro (Featured) -->
+                <div class="glass-card rounded-2xl p-8 pricing-card featured gold-glow reveal-on-scroll relative border-brand-gold/40">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="mb-6 pt-2">
+                        <h3 class="font-display text-xl font-semibold tracking-tight mb-1">Pro</h3>
+                        <p class="text-sm text-muted-custom">For serious transformation seekers</p>
+                    </div>
+                    <div class="mb-6">
+                        <span class="font-display text-4xl font-semibold text-gold">$79</span>
+                        <span class="text-muted-custom">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 flex-grow">
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> All workout programs</li>
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Customized meal plans</li>
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Weekly progress check-ins</li>
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Coach messaging</li>
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Fitness challenges</li>
+                    </ul>
+                    <button onclick="showToast('Pro plan selected! Redirecting to checkout...')" class="btn-gold w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase">Choose Pro</button>
+                </div>
+
+                <!-- Elite -->
+                <div class="glass-card card-hover rounded-2xl p-8 pricing-card reveal-on-scroll">
+                    <div class="mb-6">
+                        <h3 class="font-display text-xl font-semibold tracking-tight mb-1">Elite</h3>
+                        <p class="text-sm text-muted-custom">For athletes and competition prep</p>
+                    </div>
+                    <div class="mb-6">
+                        <span class="font-display text-4xl font-semibold text-gold">$149</span>
+                        <span class="text-muted-custom">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 flex-grow">
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Everything in Pro</li>
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> 1-on-1 video coaching</li>
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Competition prep guidance</li>
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Posing sessions</li>
+                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Priority support 24/7</li>
+                    </ul>
+                    <button onclick="showToast('Elite plan selected! Redirecting to checkout...')" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase">Choose Elite</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CLIENT PORTAL PREVIEW -->
+    <section class="py-12 sm:py-16 border-t border-[var(--border-color)] section-padding">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- Left Content -->
+                <div class="reveal-on-scroll">
+                    <span class="text-xs font-semibold tracking-widest uppercase text-gold">Client Portal</span>
+                    <h2 class="font-display text-2xl sm:text-3xl font-semibold tracking-tight mt-3 mb-4">Your Personal Fitness Dashboard</h2>
+                    <p class="text-muted-custom mb-8">As a member, you get access to a personalized dashboard where you can track your progress, access programs, communicate with coaches, and more.</p>
+                    
+                    <div class="space-y-5">
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="download" class="w-5 h-5 text-gold"></i></div>
+                            <div><h4 class="font-semibold">Access Purchased Programs</h4><p class="text-sm text-muted-custom mt-1">Download workouts and meal plans anytime</p></div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="bar-chart-3" class="w-5 h-5 text-gold"></i></div>
+                            <div><h4 class="font-semibold">Track Your Progress</h4><p class="text-sm text-muted-custom mt-1">Log workouts, measurements, and photos</p></div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="message-circle" class="w-5 h-5 text-gold"></i></div>
+                            <div><h4 class="font-semibold">Communicate with Coaches</h4><p class="text-sm text-muted-custom mt-1">Get answers and support directly</p></div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="swords" class="w-5 h-5 text-gold"></i></div>
+                            <div><h4 class="font-semibold">Join Fitness Challenges</h4><p class="text-sm text-muted-custom mt-1">Compete and stay motivated with the community</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Dashboard Mockup -->
+                <div class="reveal-on-scroll">
+                    <div class="dashboard-mockup p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div><p class="text-xs text-muted-custom">Welcome back,</p><p class="font-semibold">John D.</p></div>
+                            <div class="w-10 h-10 rounded-full bg-brand-gold/20 overflow-hidden border-2 border-brand-gold/30">
+                                <img src="images/avatar.jpg" alt="User" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 mb-6">
+                            <div class="dash-stat"><p class="text-xs text-muted-custom">Workouts</p><p class="font-display text-xl font-semibold text-gold">48</p></div>
+                            <div class="dash-stat"><p class="text-xs text-muted-custom">Weight</p><p class="font-display text-xl font-semibold text-green-400">-12kg</p></div>
+                            <div class="dash-stat"><p class="text-xs text-muted-custom">Streak</p><p class="font-display text-xl font-semibold text-gold">21</p></div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="flex justify-between text-xs mb-1"><span class="text-muted-custom">Monthly Goal</span><span class="text-gold font-semibold">78%</span></div>
+                            <div class="dash-progress-track"><div class="dash-progress-fill"></div></div>
+                        </div>
+                        <div class="dash-workout">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-brand-gold/10 flex items-center justify-center"><i data-lucide="dumbbell" class="w-5 h-5 text-gold"></i></div>
+                                <div><p class="text-sm font-semibold">Upper Body Push</p><p class="text-xs text-muted-custom">Today • 45 min</p></div>
+                            </div>
+                            <button class="btn-gold px-3 py-1.5 rounded-lg text-xs font-semibold">Start</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-2 md:col-span-1">
+                    <a href="index.html" class="flex items-center gap-2 mb-4"><img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto"><span class="font-display text-lg text-gold">COMBOMASTER</span></a>
+                    <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="training.html">Training</a></li>
+                        <li><a href="membership.html">Membership</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="shop.html">Supplements</a></li>
+                        <li><a href="shop.html">Attire</a></li>
+                        <li><a href="shop.html">Equipment</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="login.html">Client Login</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-[var(--border-color)] pt-6 text-center">
+                <p class="text-xs text-muted-custom">&copy; 2025 ComboMaster Fitness. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

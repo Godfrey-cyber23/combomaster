@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComboMaster Fitness — Transform Your Body, Master Your Life</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] },
+                    colors: { brand: { gold: '#D4A853', dark: '#0F0F0F', darker: '#050505', card: '#1A1A1A' } }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Toast -->
+    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between py-4">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
+                    <div class="hidden sm:block">
+                        <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
+                        <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex items-center gap-6">
+                    <a href="index.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="about.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">About</a>
+                    <a href="training.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Training</a>
+                    <a href="mealplans.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
+                    <a href="shop.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Shop</a>
+                    <a href="transformations.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Results</a>
+                    <a href="contact.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Contact</a>
+                </div>
+
+                <div class="hidden lg:flex items-center gap-3">
+                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
+                    <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center gap-2 lg:hidden">
+                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors">
+                        <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="mobile-menu lg:hidden">
+                <div class="pb-6 space-y-1">
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Transformations</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Contact</a>
+                    <div class="pt-3 flex gap-2">
+                        <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
+                        <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative min-h-screen flex items-center overflow-hidden">
+        <div class="absolute inset-0">
+            <!-- CUSTOM IMAGE: Replace with your gym photo -->
+            <img src="images/hero-gym.jpg" alt="Gym Training" class="w-full h-full object-cover opacity-50">
+            <div class="hero-overlay absolute inset-0"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-20 w-full">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-gold/30 bg-brand-gold/10 mb-6 animate-fade-in-up">
+                    <div class="w-2 h-2 rounded-full bg-brand-gold pulse-gold"></div>
+                    <span class="text-xs font-semibold tracking-widest uppercase text-gold">Transform Your Body, Master Your Life</span>
+                </div>
+
+                <h1 class="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.9] tracking-tight mb-8 hero-text animate-fade-in-up" style="animation-delay:0.1s">
+                    WHERE <span class="text-gradient">FITNESS</span> MEETS DISCIPLINE
+                </h1>
+
+                <p class="text-base sm:text-lg md:text-xl text-muted-custom leading-relaxed max-w-xl mb-10 animate-fade-in-up" style="animation-delay:0.2s">
+                    Professional workout programs, meal plans, body transformation guidance, and lifestyle coaching designed for real results.
+                </p>
+
+                <div class="flex flex-wrap gap-3 animate-fade-in-up" style="animation-delay:0.3s">
+                    <a href="training.html" class="btn-gold px-6 sm:px-7 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase flex items-center gap-2">
+                        <i data-lucide="dumbbell" class="w-4 h-4"></i> Start Training
+                    </a>
+                    <a href="mealplans.html" class="btn-outline px-6 sm:px-7 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase flex items-center gap-2">
+                        <i data-lucide="utensils" class="w-4 h-4"></i> Meal Plans
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUICK ACCESS -->
+    <section class="py-16 sm:py-20 border-t border-white/5 section-padding">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10">
+                <span class="text-xs font-semibold tracking-widest uppercase text-gold">Quick Access</span>
+                <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mt-3">Start Your Journey</h2>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                <a href="training.html" class="glass-card card-hover rounded-2xl p-5 text-center group">
+                    <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
+                        <i data-lucide="dumbbell" class="w-6 h-6 text-gold"></i>
+                    </div>
+                    <h3 class="font-semibold text-sm tracking-wide">Start Training</h3>
+                </a>
+                <a href="mealplans.html" class="glass-card card-hover rounded-2xl p-5 text-center group">
+                    <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
+                        <i data-lucide="utensils" class="w-6 h-6 text-gold"></i>
+                    </div>
+                    <h3 class="font-semibold text-sm tracking-wide">Buy Meal Plan</h3>
+                </a>
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group">
+                    <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
+                        <i data-lucide="pill" class="w-6 h-6 text-gold"></i>
+                    </div>
+                    <h3 class="font-semibold text-sm tracking-wide">Supplements</h3>
+                </a>
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group">
+                    <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
+                        <i data-lucide="shirt" class="w-6 h-6 text-gold"></i>
+                    </div>
+                    <h3 class="font-semibold text-sm tracking-wide">Gym Attire</h3>
+                </a>
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group col-span-2 sm:col-span-1">
+                    <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
+                        <i data-lucide="weights" class="w-6 h-6 text-gold"></i>
+                    </div>
+                    <h3 class="font-semibold text-sm tracking-wide">Equipment</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-2 md:col-span-1">
+                    <a href="index.html" class="flex items-center gap-2 mb-4">
+                        <img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto">
+                        <span class="font-display text-lg text-gold">COMBOMASTER</span>
+                    </a>
+                    <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="training.html">Training</a></li>
+                        <li><a href="membership.html">Membership</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="shop.html">Supplements</a></li>
+                        <li><a href="shop.html">Attire</a></li>
+                        <li><a href="shop.html">Equipment</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="login.html">Client Login</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/5 pt-6 text-center">
+                <p class="text-xs text-muted-custom">&copy; 2025 ComboMaster Fitness. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

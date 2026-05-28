@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformations — ComboMaster Fitness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+        }
+    </script>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Toast -->
+    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between py-4">
+                <a href="index.html" class="flex items-center gap-3">
+                    <img src="images/gym_logo.jpg" alt="Logo" class="h-10 w-auto">
+                    <span class="font-display text-xl text-gold hidden sm:block">COMBOMASTER</span>
+                </a>
+                <div class="hidden lg:flex items-center gap-6">
+                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="about.html" class="text-sm text-muted-custom hover:text-gold transition-colors">About</a>
+                    <a href="training.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Training</a>
+                    <a href="mealplans.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
+                    <a href="shop.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Shop</a>
+                    <a href="transformations.html" class="text-sm text-gold font-semibold">Results</a>
+                    <a href="contact.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Contact</a>
+                </div>
+                <div class="hidden lg:flex items-center gap-3">
+                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
+                    <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
+                </div>
+                <div class="flex items-center gap-2 lg:hidden">
+                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i></button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="mobile-menu lg:hidden">
+                <div class="pb-6 space-y-1">
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-gold font-semibold" onclick="closeMobileMenu()">Results</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Contact</a>
+                    <div class="pt-3 flex gap-2">
+                        <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
+                        <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <img src="images/transformations-hero.jpg" alt="Fitness Transformations">
+        <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <span class="text-xs font-semibold tracking-widest uppercase text-gold">Transformations</span>
+            <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
+                REAL PEOPLE, <span class="text-gradient">REAL RESULTS</span>
+            </h1>
+            <p class="text-muted-custom max-w-2xl mx-auto mt-4">These transformations represent dedication, discipline, and the ComboMaster system in action.</p>
+        </div>
+    </section>
+
+    <!-- TRANSFORMATION GALLERY -->
+    <section class="py-12 sm:py-16 section-padding">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+                
+                <!-- Card 1 -->
+                <div class="glass-card rounded-2xl overflow-hidden transformation-card reveal-on-scroll">
+                    <div class="ba-images relative">
+                        <div class="relative overflow-hidden">
+                            <img src="images/trans-before1.jpg" alt="Before">
+                            <div class="ba-badge before">Before</div>
+                        </div>
+                        <div class="relative overflow-hidden">
+                            <img src="images/trans-after1.jpg" alt="After">
+                            <div class="ba-badge after">After</div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-display text-lg font-semibold">James M.</h4>
+                        <p class="text-sm text-gold mb-2 font-semibold">Lost 22kg in 16 weeks</p>
+                        <p class="text-sm text-muted-custom">"ComboMaster gave me a system that actually works. The meal plans and training together changed my life completely."</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-card rounded-2xl overflow-hidden transformation-card reveal-on-scroll">
+                    <div class="ba-images relative">
+                        <div class="relative overflow-hidden">
+                            <img src="images/trans-before2.jpg" alt="Before">
+                            <div class="ba-badge before">Before</div>
+                        </div>
+                        <div class="relative overflow-hidden">
+                            <img src="images/trans-after2.jpg" alt="After">
+                            <div class="ba-badge after">After</div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-display text-lg font-semibold">Sarah K.</h4>
+                        <p class="text-sm text-gold mb-2 font-semibold">Gained 8kg muscle in 12 weeks</p>
+                        <p class="text-sm text-muted-custom">"As a woman, I was scared of getting bulky. Peter taught me how to train smart and fuel my body the right way."</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-card rounded-2xl overflow-hidden transformation-card reveal-on-scroll">
+                    <div class="ba-images relative">
+                        <div class="relative overflow-hidden">
+                            <img src="images/trans-before3.jpg" alt="Before">
+                            <div class="ba-badge before">Before</div>
+                        </div>
+                        <div class="relative overflow-hidden">
+                            <img src="images/trans-after3.jpg" alt="After">
+                            <div class="ba-badge after">After</div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-display text-lg font-semibold">David C.</h4>
+                        <p class="text-sm text-gold mb-2 font-semibold">Competition ready in 20 weeks</p>
+                        <p class="text-sm text-muted-custom">"From never stepping in a gym to competing on stage. The competition prep program is world-class."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TESTIMONIALS SECTION -->
+            <div class="text-center mb-10 reveal-on-scroll">
+                <span class="text-xs font-semibold tracking-widest uppercase text-gold">Testimonials</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-semibold tracking-tight mt-3">WHAT OUR CLIENTS SAY</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Testimonial 1 -->
+                <div class="glass-card rounded-2xl p-8 reveal-on-scroll">
+                    <div class="star-rating">
+                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                    </div>
+                    <p class="text-muted-custom italic mb-6 text-base">"I tried everything before ComboMaster. What makes this different is the combination — the training, the food, the mindset coaching. It all works together. I lost 30kg and gained a whole new life."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-brand-gold/20 overflow-hidden border-2 border-brand-gold/30">
+                            <img src="images/testimonial1.jpg" alt="Grace" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <div class="font-semibold">Grace T.</div>
+                            <div class="text-xs text-muted-custom">Lost 30kg • 6 months</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="glass-card rounded-2xl p-8 reveal-on-scroll">
+                    <div class="star-rating">
+                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                    </div>
+                    <p class="text-muted-custom italic mb-6 text-base">"The home workout program fit perfectly into my busy schedule. No gym needed, real results. I'm stronger now at 40 than I was at 25. Thank you ComboMaster!"</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-brand-gold/20 overflow-hidden border-2 border-brand-gold/30">
+                            <img src="images/testimonial2.jpg" alt="Michael" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <div class="font-semibold">Michael B.</div>
+                            <div class="text-xs text-muted-custom">Home Workout • 4 months</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section class="py-16 relative overflow-hidden border-t border-[var(--border-color)]">
+        <div class="absolute inset-0"><img src="images/cta-gym2.jpg" alt="" class="w-full h-full object-cover opacity-20"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[var(--bg-base)] via-[var(--bg-base)]/90 to-[var(--bg-base)]/70"></div>
+        <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
+            <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-4">READY FOR YOUR TRANSFORMATION?</h2>
+            <p class="text-muted-custom mb-8 max-w-xl mx-auto">Join the ComboMaster system today. When you combine knowledge, discipline, and purpose — transformation is inevitable.</p>
+            <a href="membership.html" class="btn-gold px-8 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase inline-flex items-center gap-2">
+                <i data-lucide="zap" class="w-4 h-4"></i> Start Your Journey
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-2 md:col-span-1">
+                    <a href="index.html" class="flex items-center gap-2 mb-4"><img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto"><span class="font-display text-lg text-gold">COMBOMASTER</span></a>
+                    <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="training.html">Training</a></li>
+                        <li><a href="membership.html">Membership</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="shop.html">Supplements</a></li>
+                        <li><a href="shop.html">Attire</a></li>
+                        <li><a href="shop.html">Equipment</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="login.html">Client Login</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-[var(--border-color)] pt-6 text-center">
+                <p class="text-xs text-muted-custom">&copy; 2025 ComboMaster Fitness. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

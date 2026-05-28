@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Programs — ComboMaster Fitness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+        }
+    </script>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Toast -->
+    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between py-4">
+                <a href="index.html" class="flex items-center gap-3">
+                    <img src="images/gym_logo.jpg" alt="Logo" class="h-10 w-auto">
+                    <span class="font-display text-xl text-gold hidden sm:block">COMBOMASTER</span>
+                </a>
+                <div class="hidden lg:flex items-center gap-6">
+                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="about.html" class="text-sm text-muted-custom hover:text-gold transition-colors">About</a>
+                    <a href="training.html" class="text-sm text-gold font-semibold">Training</a>
+                    <a href="mealplans.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
+                    <a href="shop.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Shop</a>
+                    <a href="transformations.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Results</a>
+                    <a href="contact.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Contact</a>
+                </div>
+                <div class="hidden lg:flex items-center gap-3">
+                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
+                    <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
+                </div>
+                <div class="flex items-center gap-2 lg:hidden">
+                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i></button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="mobile-menu lg:hidden">
+                <div class="pb-6 space-y-1">
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-gold font-semibold" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Results</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Contact</a>
+                    <div class="pt-3 flex gap-2">
+                        <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
+                        <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <!-- CUSTOM IMAGE: Training Hero -->
+        <img src="images/training-hero.jpg" alt="Training Programs">
+        <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <span class="text-xs font-semibold tracking-widest uppercase text-gold">Training Programs</span>
+            <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
+                PROGRAMS FOR <span class="text-gradient">EVERY GOAL</span>
+            </h1>
+            <p class="text-muted-custom max-w-2xl mx-auto mt-4">Professional training programs designed for real results — whether you train at the gym, at home, or need personal coaching.</p>
+        </div>
+    </section>
+
+    <!-- TRAINING TABS SECTION -->
+    <section class="py-12 sm:py-16 section-padding">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            
+            <!-- Tab Buttons -->
+            <div class="flex flex-wrap justify-center gap-3 mb-10 reveal-on-scroll">
+                <button onclick="switchTab('training', 'gym')" id="training-tab-gym" class="shop-tab active px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase transition-all">Gym Training</button>
+                <button onclick="switchTab('training', 'home')" id="training-tab-home" class="shop-tab px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase transition-all">Home Workout</button>
+                <button onclick="switchTab('training', 'coaching')" id="training-tab-coaching" class="shop-tab px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase transition-all">Personal Coaching</button>
+            </div>
+
+            <!-- GYM TRAINING CONTENT -->
+            <div id="training-gym" class="training-content tab-content">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Card 1 -->
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
+                        <div class="h-48 overflow-hidden">
+                            <img src="images/training-muscle.jpg" alt="Muscle Building" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <i data-lucide="dumbbell" class="w-4 h-4 text-gold"></i>
+                                <span class="text-xs font-semibold tracking-widest uppercase text-gold">12 Weeks</span>
+                            </div>
+                            <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Muscle Building</h3>
+                            <p class="text-sm text-muted-custom mb-4">Progressive overload system designed to build lean muscle mass with structured splits.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="font-display text-2xl font-semibold text-gold">$49</span>
+                                <button onclick="showToast('Muscle Building Program added to cart!')" class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Get Program</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
+                        <div class="h-48 overflow-hidden">
+                            <img src="images/training-fatloss.jpg" alt="Fat Loss" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <i data-lucide="flame" class="w-4 h-4 text-gold"></i>
+                                <span class="text-xs font-semibold tracking-widest uppercase text-gold">8 Weeks</span>
+                            </div>
+                            <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Fat Loss Training</h3>
+                            <p class="text-sm text-muted-custom mb-4">High-intensity and metabolic conditioning to burn fat while preserving muscle mass.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="font-display text-2xl font-semibold text-gold">$39</span>
+                                <button onclick="showToast('Fat Loss Program added to cart!')" class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Get Program</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
+                        <div class="h-48 overflow-hidden">
+                            <img src="images/training-bodybuilding.jpg" alt="Bodybuilding" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <i data-lucide="trophy" class="w-4 h-4 text-gold"></i>
+                                <span class="text-xs font-semibold tracking-widest uppercase text-gold">16 Weeks</span>
+                            </div>
+                            <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Bodybuilding Program</h3>
+                            <p class="text-sm text-muted-custom mb-4">Comprehensive bodybuilding with advanced techniques for maximum muscle development.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="font-display text-2xl font-semibold text-gold">$69</span>
+                                <button onclick="showToast('Bodybuilding Program added to cart!')" class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Get Program</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 (Featured) -->
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden gold-glow relative reveal-on-scroll">
+                        <div class="absolute top-3 right-3 z-10 bg-brand-gold text-brand-darker text-xs font-bold px-3 py-1 rounded-full">PREMIUM</div>
+                        <div class="h-48 overflow-hidden">
+                            <img src="images/training-comp.jpg" alt="Competition Prep" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <i data-lucide="crown" class="w-4 h-4 text-gold"></i>
+                                <span class="text-xs font-semibold tracking-widest uppercase text-gold">20 Weeks</span>
+                            </div>
+                            <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Competition Prep</h3>
+                            <p class="text-sm text-muted-custom mb-4">Elite-level contest prep with posing practice and peak week protocol.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="font-display text-2xl font-semibold text-gold">$149</span>
+                                <button onclick="showToast('Competition Prep added to cart!')" class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Get Program</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HOME WORKOUT CONTENT -->
+            <div id="training-home" class="training-content tab-content hidden">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
+                        <div class="h-48 overflow-hidden"><img src="images/training-home1.jpg" alt="Beginner Home" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"></div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 mb-3"><i data-lucide="home" class="w-4 h-4 text-gold"></i><span class="text-xs font-semibold tracking-widest uppercase text-gold">4 Weeks</span></div>
+                            <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Beginner Home Workout</h3>
+                            <p class="text-sm text-muted-custom mb-4">Perfect starting point. No equipment needed, just your bodyweight and determination.</p>
+                            <div class="flex items-center justify-between"><span class="font-display text-2xl font-semibold text-gold">$19</span><button onclick="showToast('Beginner Home added!')" class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Get Program</button></div>
+                        </div>
+                    </div>
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
+                        <div class="h-48 overflow-hidden"><img src="images/training-home2.jpg" alt="30 Day Fat Loss" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"></div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 mb-3"><i data-lucide="flame" class="w-4 h-4 text-gold"></i><span class="text-xs font-semibold tracking-widest uppercase text-gold">30 Days</span></div>
+                            <h3 class="font-display text-xl font-semibold tracking-tight mb-2">30-Day Fat Loss</h3>
+                            <p class="text-sm text-muted-custom mb-4">Intense home-based HIIT and metabolic circuits for rapid fat loss results.</p>
+                            <div class="flex items-center justify-between"><span class="font-display text-2xl font-semibold text-gold">$29</span><button onclick="showToast('30-Day Fat Loss added!')" class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Get Program</button></div>
+                        </div>
+                    </div>
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
+                        <div class="h-48 overflow-hidden"><img src="images/training-home3.jpg" alt="Full Body" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"></div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 mb-3"><i data-lucide="activity" class="w-4 h-4 text-gold"></i><span class="text-xs font-semibold tracking-widest uppercase text-gold">8 Weeks</span></div>
+                            <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Full Body Home Plan</h3>
+                            <p class="text-sm text-muted-custom mb-4">Complete training with minimal equipment. Resistance bands and dumbbells optional.</p>
+                            <div class="flex items-center justify-between"><span class="font-display text-2xl font-semibold text-gold">$35</span><button onclick="showToast('Full Body Plan added!')" class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Get Program</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PERSONAL COACHING CONTENT -->
+            <div id="training-coaching" class="training-content tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    <div class="glass-card card-hover rounded-2xl p-8 text-center coaching-card reveal-on-scroll">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-6"><i data-lucide="monitor" class="w-8 h-8 text-gold"></i></div>
+                        <h3 class="font-display text-xl font-semibold tracking-tight mb-3">Online Coaching</h3>
+                        <p class="text-sm text-muted-custom mb-6">1-on-1 virtual sessions with personalized guidance and form checks.</p>
+                        <span class="font-display text-3xl font-semibold text-gold">$99<span class="text-lg text-muted-custom">/mo</span></span>
+                        <button onclick="showToast('Online Coaching selected!')" class="btn-outline w-full mt-6 py-3 rounded-lg text-sm font-semibold tracking-wide uppercase">Subscribe</button>
+                    </div>
+                    <div class="glass-card card-hover rounded-2xl p-8 text-center coaching-card featured gold-glow reveal-on-scroll">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-6"><i data-lucide="trending-up" class="w-8 h-8 text-gold"></i></div>
+                        <h3 class="font-display text-xl font-semibold tracking-tight mb-3">Weekly Monitoring</h3>
+                        <p class="text-sm text-muted-custom mb-6">Regular progress tracking, photo check-ins, and program modifications.</p>
+                        <span class="font-display text-3xl font-semibold text-gold">$59<span class="text-lg text-muted-custom">/mo</span></span>
+                        <button onclick="showToast('Weekly Monitoring selected!')" class="btn-gold w-full mt-6 py-3 rounded-lg text-sm font-semibold tracking-wide uppercase">Subscribe</button>
+                    </div>
+                    <div class="glass-card card-hover rounded-2xl p-8 text-center coaching-card reveal-on-scroll">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-6"><i data-lucide="user-check" class="w-8 h-8 text-gold"></i></div>
+                        <h3 class="font-display text-xl font-semibold tracking-tight mb-3">Personalized Programs</h3>
+                        <p class="text-sm text-muted-custom mb-6">Fully custom workout programs built for your body, goals, and schedule.</p>
+                        <span class="font-display text-3xl font-semibold text-gold">$79<span class="text-lg text-muted-custom">/mo</span></span>
+                        <button onclick="showToast('Personalized Program selected!')" class="btn-outline w-full mt-6 py-3 rounded-lg text-sm font-semibold tracking-wide uppercase">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section class="py-16 relative overflow-hidden border-t border-[var(--border-color)]">
+        <div class="absolute inset-0"><img src="images/cta-gym.jpg" alt="" class="w-full h-full object-cover opacity-20"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[var(--bg-base)] via-[var(--bg-base)]/90 to-[var(--bg-base)]/70"></div>
+        <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
+            <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-4">NOT SURE WHICH PROGRAM?</h2>
+            <p class="text-muted-custom mb-8 max-w-xl mx-auto">Talk to a coach today for free, and let's figure out the perfect plan for your body and your goals.</p>
+            <a href="contact.html" class="btn-gold px-8 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase inline-flex items-center gap-2">
+                <i data-lucide="message-circle" class="w-4 h-4"></i> Talk to a Coach
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-2 md:col-span-1">
+                    <a href="index.html" class="flex items-center gap-2 mb-4"><img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto"><span class="font-display text-lg text-gold">COMBOMASTER</span></a>
+                    <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="training.html">Training</a></li>
+                        <li><a href="membership.html">Membership</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="shop.html">Supplements</a></li>
+                        <li><a href="shop.html">Attire</a></li>
+                        <li><a href="shop.html">Equipment</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="login.html">Client Login</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-[var(--border-color)] pt-6 text-center">
+                <p class="text-xs text-muted-custom">&copy; 2025 ComboMaster Fitness. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

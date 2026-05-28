@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — ComboMaster Fitness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+        }
+    </script>
+</head>
+<body class="font-sans antialiased">
+
+    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
+
+    <div class="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+        <!-- Background -->
+        <div class="absolute inset-0">
+            <img src="images/gym-interior.jpg" alt="Gym" class="w-full h-full object-cover opacity-20">
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-base)] via-[var(--bg-base)]/90 to-[var(--bg-base)]/80"></div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-md">
+            <div class="text-center mb-8">
+                <a href="index.html" class="inline-block">
+                    <img src="images/gym_logo.jpg" alt="ComboMaster" class="h-16 w-auto mx-auto mb-4">
+                </a>
+                <h1 class="font-display text-3xl font-semibold tracking-tight">CLIENT LOGIN</h1>
+                <p class="text-muted-custom text-sm mt-2">Access your dashboard, programs, and meal plans.</p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 sm:p-8 gold-glow">
+                <form onsubmit="handleLoginSubmit(event)" class="space-y-5">
+                    <div>
+                        <label class="text-sm text-muted-custom mb-1.5 block">Email Address</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i data-lucide="mail" class="w-4 h-4 text-muted-custom"></i>
+                            </div>
+                            <input type="email" required class="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-brand-gold/50 transition-colors" placeholder="you@example.com">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-sm text-muted-custom mb-1.5 block">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i data-lucide="lock" class="w-4 h-4 text-muted-custom"></i>
+                            </div>
+                            <input type="password" required class="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-brand-gold/50 transition-colors" placeholder="••••••••">
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <label class="flex items-center gap-2 text-muted-custom cursor-pointer">
+                            <input type="checkbox" class="rounded border-gray-300 text-brand-gold focus:ring-brand-gold">
+                            Remember me
+                        </label>
+                        <a href="#" class="text-gold hover:underline">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="btn-gold w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide uppercase flex items-center justify-center gap-2">
+                        <i data-lucide="log-in" class="w-4 h-4"></i> Sign In
+                    </button>
+                </form>
+                
+                <div class="mt-6 text-center text-sm text-muted-custom">
+                    Not a member yet? <a href="membership.html" class="text-gold font-semibold hover:underline">Join Now</a>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors inline-flex items-center gap-1">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

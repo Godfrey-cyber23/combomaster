@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us — ComboMaster Fitness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+        }
+    </script>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Toast -->
+    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between py-4">
+                <a href="index.html" class="flex items-center gap-3">
+                    <img src="images/gym_logo.jpg" alt="Logo" class="h-10 w-auto">
+                    <span class="font-display text-xl text-gold hidden sm:block">COMBOMASTER</span>
+                </a>
+                <div class="hidden lg:flex items-center gap-6">
+                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="about.html" class="text-sm text-muted-custom hover:text-gold transition-colors">About</a>
+                    <a href="training.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Training</a>
+                    <a href="mealplans.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
+                    <a href="shop.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Shop</a>
+                    <a href="transformations.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Results</a>
+                    <a href="contact.html" class="text-sm text-gold font-semibold">Contact</a>
+                </div>
+                <div class="hidden lg:flex items-center gap-3">
+                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
+                    <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
+                </div>
+                <div class="flex items-center gap-2 lg:hidden">
+                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i></button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="mobile-menu lg:hidden">
+                <div class="pb-6 space-y-1">
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Results</a>
+                    <a href="contact.html" class="block py-3 px-4 text-gold font-semibold" onclick="closeMobileMenu()">Contact</a>
+                    <div class="pt-3 flex gap-2">
+                        <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
+                        <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <img src="images/contact-hero.jpg" alt="Contact ComboMaster">
+        <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <span class="text-xs font-semibold tracking-widest uppercase text-gold">Contact</span>
+            <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
+                GET IN <span class="text-gradient">TOUCH</span>
+            </h1>
+            <p class="text-muted-custom max-w-2xl mx-auto mt-4">Ready to start your transformation? Have questions? We'd love to hear from you.</p>
+        </div>
+    </section>
+
+    <!-- CONTACT CONTENT -->
+    <section class="py-12 sm:py-16 section-padding">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            
+            <div class="grid lg:grid-cols-2 gap-12">
+                
+                <!-- Left Column: Info -->
+                <div class="reveal-on-scroll">
+                    <div class="space-y-5 mb-10">
+                        <!-- Phone -->
+                        <div class="glass-card contact-info-card rounded-2xl p-6 flex items-start gap-4 card-hover">
+                            <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="phone" class="w-6 h-6 text-gold"></i></div>
+                            <div><h4 class="font-semibold mb-1">Phone</h4><p class="text-muted-custom text-sm">+260 97X XXX XXX</p></div>
+                        </div>
+                        <!-- WhatsApp -->
+                        <div class="glass-card contact-info-card rounded-2xl p-6 flex items-start gap-4 card-hover">
+                            <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0"><i data-lucide="message-circle" class="w-6 h-6 text-green-400"></i></div>
+                            <div>
+                                <h4 class="font-semibold mb-1">WhatsApp</h4>
+                                <p class="text-muted-custom text-sm">+260 97X XXX XXX</p>
+                                <a href="#" class="text-green-400 text-sm font-semibold inline-flex items-center gap-1 mt-1 hover:underline">Chat Now <i data-lucide="external-link" class="w-3 h-3"></i></a>
+                            </div>
+                        </div>
+                        <!-- Email -->
+                        <div class="glass-card contact-info-card rounded-2xl p-6 flex items-start gap-4 card-hover">
+                            <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0"><i data-lucide="mail" class="w-6 h-6 text-blue-400"></i></div>
+                            <div><h4 class="font-semibold mb-1">Email</h4><p class="text-muted-custom text-sm">info@combomasterfitness.com</p></div>
+                        </div>
+                        <!-- Location -->
+                        <div class="glass-card contact-info-card rounded-2xl p-6 flex items-start gap-4 card-hover">
+                            <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center flex-shrink-0"><i data-lucide="map-pin" class="w-6 h-6 text-red-400"></i></div>
+                            <div><h4 class="font-semibold mb-1">Location</h4><p class="text-muted-custom text-sm">Lusaka, Zambia</p></div>
+                        </div>
+                    </div>
+
+                    <!-- Social Media -->
+                    <div>
+                        <h4 class="font-semibold mb-4">Follow Us</h4>
+                        <div class="flex gap-3">
+                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all"><i data-lucide="facebook" class="w-5 h-5 text-muted-custom"></i></a>
+                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all"><i data-lucide="instagram" class="w-5 h-5 text-muted-custom"></i></a>
+                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all"><i data-lucide="youtube" class="w-5 h-5 text-muted-custom"></i></a>
+                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all"><i data-lucide="twitter" class="w-5 h-5 text-muted-custom"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Form -->
+                <div class="glass-card rounded-2xl p-6 sm:p-8 reveal-on-scroll">
+                    <h3 class="font-display text-2xl font-semibold tracking-tight mb-6">Send a Message</h3>
+                    <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label class="text-sm text-muted-custom mb-1.5 block">First Name</label>
+                                <input type="text" required class="form-input" placeholder="John">
+                            </div>
+                            <div>
+                                <label class="text-sm text-muted-custom mb-1.5 block">Last Name</label>
+                                <input type="text" required class="form-input" placeholder="Doe">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-sm text-muted-custom mb-1.5 block">Email</label>
+                            <input type="email" required class="form-input" placeholder="john@example.com">
+                        </div>
+                        <div>
+                            <label class="text-sm text-muted-custom mb-1.5 block">I'm interested in</label>
+                            <select class="form-input">
+                                <option value="">Select an option</option>
+                                <option>Training Programs</option>
+                                <option>Meal Plans</option>
+                                <option>Personal Coaching</option>
+                                <option>Competition Prep</option>
+                                <option>Shop Products</option>
+                                <option>Partnership Inquiry</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm text-muted-custom mb-1.5 block">Message</label>
+                            <textarea required rows="4" class="form-input resize-none" placeholder="Tell us about your goals..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-gold w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide uppercase flex items-center justify-center gap-2">
+                            <i data-lucide="send" class="w-4 h-4"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-2 md:col-span-1">
+                    <a href="index.html" class="flex items-center gap-2 mb-4"><img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto"><span class="font-display text-lg text-gold">COMBOMASTER</span></a>
+                    <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="training.html">Training</a></li>
+                        <li><a href="membership.html">Membership</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="shop.html">Supplements</a></li>
+                        <li><a href="shop.html">Attire</a></li>
+                        <li><a href="shop.html">Equipment</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm text-muted-custom">
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="login.html">Client Login</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-[var(--border-color)] pt-6 text-center">
+                <p class="text-xs text-muted-custom">&copy; 2025 ComboMaster Fitness. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

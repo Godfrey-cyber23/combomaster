@@ -1,5 +1,6 @@
 /* ===== BASE & VARIABLES ===== */
 :root {
+    /* Dark theme (default) */
     --bg-base: #050505;
     --bg-secondary: #0F0F0F;
     --bg-card: rgba(26, 26, 26, 0.6);
@@ -8,16 +9,44 @@
     --border-color: rgba(255, 255, 255, 0.05);
     --gold: #D4A853;
     --gold-accent: #B8943F;
+    --card-bg-solid: #1A1A1A;
+    --nav-bg: rgba(5, 5, 5, 0.9);
+    --hero-overlay-start: #050505;
+    --hero-overlay-mid: rgba(5, 5, 5, 0.85);
+    --hero-bottom-start: #050505;
+    --hero-bottom-mid: rgba(5, 5, 5, 0.4);
+    --tab-inactive: rgba(255, 255, 255, 0.05);
+    --tab-text: #F5F5F0;
+    --toast-bg: rgba(26, 26, 26, 0.9);
+    --input-bg: #0F0F0F;
 }
 
-/* Light Mode Variables */
-body.light-mode {
-    --bg-base: #f4f4f5;
+/* Light theme overrides (applied via .light-theme class on body) */
+body.light-theme {
+    --bg-base: #f8f9fc;
     --bg-secondary: #ffffff;
     --bg-card: rgba(255, 255, 255, 0.8);
-    --text-main: #111827;
+    --text-main: #1e1e2a;
     --text-muted: #4b5563;
-    --border-color: rgba(0, 0, 0, 0.1);
+    --border-color: rgba(0, 0, 0, 0.08);
+    --gold: #B8860B;
+    --gold-accent: #9a7209;
+    --card-bg-solid: #ffffff;
+    --nav-bg: rgba(255, 255, 255, 0.95);
+    --hero-overlay-start: #f8f9fc;
+    --hero-overlay-mid: rgba(248, 249, 252, 0.85);
+    --hero-bottom-start: #f8f9fc;
+    --hero-bottom-mid: rgba(248, 249, 252, 0.4);
+    --tab-inactive: rgba(0, 0, 0, 0.05);
+    --tab-text: #1e1e2a;
+    --toast-bg: rgba(255, 255, 255, 0.95);
+    --input-bg: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 html, body {
@@ -34,44 +63,64 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* ===== NAVIGATION FIX ===== */
-/* DO NOT add position: relative here, it overrides Tailwind's fixed class in HTML */
-nav {
-    z-index: 50;
+/* ===== TYPOGRAPHY ===== */
+.font-display {
+    font-family: 'Oswald', sans-serif;
 }
 
-/* ===== UTILITIES ===== */
+/* ===== NAVIGATION ===== */
+nav {
+    z-index: 50;
+    background-color: var(--nav-bg);
+    backdrop-filter: blur(12px);
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+/* ===== UTILITY CLASSES ===== */
 .glass-card {
     background: var(--bg-card);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border-color);
-    transition: background 0.3s ease, border-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-.text-muted-custom { color: var(--text-muted); }
+.text-muted-custom {
+    color: var(--text-muted);
+}
+
 .text-gradient {
     background: linear-gradient(to right, var(--gold), #f5dfa0, var(--gold));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
-.text-gold { color: var(--gold); }
+
+.text-gold {
+    color: var(--gold);
+}
+
+.border-gold {
+    border-color: var(--gold);
+}
+
+.bg-gold\/10 {
+    background-color: rgba(212, 168, 83, 0.1);
+}
 
 /* Hero Overlays */
 .hero-overlay {
-    background: linear-gradient(to right, var(--bg-base), rgba(5,5,5,0.85), rgba(5,5,5,0.4));
-}
-.light-mode .hero-overlay {
-    background: linear-gradient(to right, var(--bg-base), rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    background: linear-gradient(to right, var(--hero-overlay-start), var(--hero-overlay-mid), rgba(5, 5, 5, 0.4));
+    transition: background 0.3s ease;
 }
 
-/* Added missing hero-bottom overlay */
-.hero-bottom {
-    background: linear-gradient(to top, var(--bg-base), transparent, rgba(5,5,5,0.4));
+body.light-theme .hero-overlay {
+    background: linear-gradient(to right, var(--hero-overlay-start), var(--hero-overlay-mid), rgba(248, 249, 252, 0.3));
 }
-.light-mode .hero-bottom {
-    background: linear-gradient(to top, var(--bg-base), transparent, rgba(255,255,255,0.4));
+
+.hero-bottom {
+    background: linear-gradient(to top, var(--hero-bottom-start), transparent, var(--hero-bottom-mid));
+    transition: background 0.3s ease;
 }
 
 /* ===== BUTTONS ===== */
@@ -80,10 +129,22 @@ nav {
     color: #050505;
     transition: all 150ms ease;
     cursor: pointer;
+    border: none;
+    font-weight: 600;
 }
+
 .btn-gold:hover {
     background: var(--gold-accent);
     box-shadow: 0 0 20px rgba(212, 168, 83, 0.4);
+    transform: translateY(-1px);
+}
+
+body.light-theme .btn-gold {
+    color: #ffffff;
+}
+
+body.light-theme .btn-gold:hover {
+    color: #ffffff;
 }
 
 .btn-outline {
@@ -92,79 +153,150 @@ nav {
     background: transparent;
     transition: all 150ms ease;
     cursor: pointer;
+    font-weight: 600;
 }
+
 .btn-outline:hover {
     background: rgba(212, 168, 83, 0.1);
     border-color: var(--gold);
+    transform: translateY(-1px);
 }
 
-/* ===== CARDS & TABS ===== */
+body.light-theme .btn-outline {
+    border-color: rgba(184, 134, 11, 0.4);
+}
+
+/* ===== CARDS & INTERACTIVE ELEMENTS ===== */
 .card-hover {
     transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .card-hover:hover {
     border-color: rgba(212, 168, 83, 0.5);
     transform: translateY(-4px);
 }
-.shop-tab.active { background: var(--gold); color: #050505; }
-.shop-tab:not(.active) { background: rgba(255,255,255,0.05); color: var(--text-main); }
-.light-mode .shop-tab:not(.active) { background: rgba(0,0,0,0.05); }
 
-/* ===== COMPONENTS ===== */
-.gold-glow { box-shadow: 0 0 30px rgba(212, 168, 83, 0.15); }
+.shop-tab.active {
+    background: var(--gold);
+    color: #050505;
+}
 
-.mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-.mobile-menu.open { max-height: 800px; }
+.shop-tab:not(.active) {
+    background: var(--tab-inactive);
+    color: var(--tab-text);
+}
 
-/* Ensure mobile menu background adapts to light mode */
-.light-mode .mobile-menu {
+/* ===== MOBILE MENU ===== */
+.mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
     background-color: var(--bg-base);
 }
 
-.toast {
-    position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
-    transform: translateY(100px); opacity: 0; transition: all 0.4s ease;
+.mobile-menu.open {
+    max-height: 800px;
 }
-.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ===== TOAST NOTIFICATION ===== */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.4s ease;
+    background: var(--toast-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
-.animate-fade-in-up { animation: fadeInUp 0.8s ease forwards; }
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease forwards;
+}
 
 @keyframes pulse-gold {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.4); }
-    50% { box-shadow: 0 0 20px 5px rgba(212, 168, 83, 0.15); }
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 20px 5px rgba(212, 168, 83, 0.15);
+    }
 }
-.pulse-gold { animation: pulse-gold 3s infinite; }
 
-/* ===== SCROLL REVEAL (FIXED) ===== */
+.pulse-gold {
+    animation: pulse-gold 3s infinite;
+}
+
+/* ===== SCROLL REVEAL ===== */
 .reveal-on-scroll {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.6s ease, transform 0.6s ease;
 }
+
 .reveal-on-scroll.is-visible {
     opacity: 1;
     transform: translateY(0);
 }
 
-/* ===== SCROLLBAR ===== */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--bg-base); }
-::-webkit-scrollbar-thumb { background: #1A1A1A; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold); }
-.light-mode ::-webkit-scrollbar-thumb { background: #ccc; }
+/* ===== CUSTOM SCROLLBAR ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1A1A1A;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
+}
+
+body.light-theme ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+}
+
+body.light-theme ::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
+}
 
 /* ===== RESPONSIVE FIXES ===== */
 @media (max-width: 640px) {
-    .hero-text { font-size: 2.5rem !important; }
-    .section-padding { padding-top: 3rem; padding-bottom: 3rem; }
+    .hero-text {
+        font-size: 2.5rem !important;
+    }
+    
+    .section-padding {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
 }
 
-/* ===== PAGE HERO BANNERS (For Sub-Pages) ===== */
+/* ===== PAGE HERO BANNERS ===== */
 .page-hero {
     position: relative;
     padding-top: 8rem;
@@ -177,12 +309,8 @@ nav {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, var(--bg-base), rgba(0,0,0,0.3), var(--bg-base));
+    background: linear-gradient(to bottom, var(--bg-base), rgba(0, 0, 0, 0.3), var(--bg-base));
     z-index: 1;
-}
-
-.light-mode .page-hero::before {
-    background: linear-gradient(to bottom, var(--bg-base), rgba(255,255,255,0.4), var(--bg-base));
 }
 
 .page-hero img {
@@ -205,8 +333,14 @@ nav {
 }
 
 @keyframes fadeInTab {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ===== PRICING / COACHING CARDS ===== */
@@ -214,6 +348,7 @@ nav {
     position: relative;
     overflow: hidden;
 }
+
 .coaching-card::before {
     content: '';
     position: absolute;
@@ -224,6 +359,7 @@ nav {
     background: var(--border-color);
     transition: background 0.3s ease;
 }
+
 .coaching-card.featured::before {
     background: var(--gold);
 }
@@ -243,10 +379,10 @@ nav {
     flex-shrink: 0;
     width: 1rem;
     height: 1rem;
-    color: #4ade80; /* green-400 */
+    color: #4ade80;
 }
 
-/* Custom wide card image alignment on mobile */
+/* Custom wide card image alignment */
 .custom-meal-card {
     display: grid;
     grid-template-rows: auto 1fr;
@@ -257,6 +393,7 @@ nav {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto;
     }
+    
     .custom-meal-card .card-image {
         height: 100%;
     }
@@ -282,9 +419,9 @@ nav {
     padding: 1rem;
 }
 
-.product-content .btn-outline, 
+.product-content .btn-outline,
 .product-content .btn-gold {
-    margin-top: auto; /* Pushes button to the bottom */
+    margin-top: auto;
 }
 
 /* Product image containers */
@@ -296,7 +433,6 @@ nav {
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    transition: background-color 0.3s ease;
 }
 
 .product-image-square img {
@@ -315,7 +451,6 @@ nav {
     height: 14rem;
     overflow: hidden;
     background-color: var(--bg-secondary);
-    transition: background-color 0.3s ease;
 }
 
 .product-image-tall img {
@@ -329,7 +464,7 @@ nav {
     transform: scale(1.05);
 }
 
-/* ===== TRANSFORMATIONS ===== */
+/* ===== TRANSFORMATIONS SECTION ===== */
 .transformation-card .ba-images {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -419,6 +554,10 @@ nav {
     z-index: 10;
 }
 
+body.light-theme .popular-badge {
+    color: #050505;
+}
+
 .pricing-feature {
     display: flex;
     align-items: center;
@@ -445,7 +584,6 @@ nav {
     border-radius: 1rem;
     overflow: hidden;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .dash-stat {
@@ -453,7 +591,6 @@ nav {
     border-radius: 0.75rem;
     padding: 0.75rem;
     text-align: center;
-    transition: background 0.3s ease;
 }
 
 .dash-progress-track {
@@ -461,7 +598,6 @@ nav {
     background: var(--bg-base);
     border-radius: 9999px;
     overflow: hidden;
-    transition: background 0.3s ease;
 }
 
 .dash-progress-fill {
@@ -479,7 +615,6 @@ nav {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    transition: background 0.3s ease;
 }
 
 /* ===== CONTACT PAGE ===== */
@@ -511,7 +646,7 @@ nav {
 /* Custom Form Inputs */
 .form-input {
     width: 100%;
-    background-color: var(--bg-secondary);
+    background-color: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     padding: 0.75rem 1rem;
@@ -531,7 +666,7 @@ nav {
     opacity: 0.6;
 }
 
-/* Select dropdown arrow fix for dark mode */
+/* Select dropdown arrow fix */
 select.form-input {
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a3a3a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -541,32 +676,42 @@ select.form-input {
     padding-right: 2.5rem;
 }
 
-/* Add this at the end of your styles.css file */
-
-/* Ensure all interactive elements are clickable */
-button, 
-a, 
-[role="button"],
-input,
-select,
-textarea {
-    pointer-events: auto !important;
+body.light-theme select.form-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 }
 
-/* Fix for iOS tap highlight */
+/* ===== THEME TOGGLE BUTTON ===== */
+.theme-toggle-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 9999px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.theme-toggle-btn:hover {
+    border-color: var(--gold);
+    transform: scale(1.05);
+}
+
+/* ===== CRITICAL FIX: Ensure buttons are always clickable ===== */
 button,
-a {
-    -webkit-tap-highlight-color: transparent;
+a,
+[role="button"] {
+    pointer-events: auto !important;
+    cursor: pointer;
 }
 
-/* Ensure nav buttons have proper z-index */
 nav button,
 nav a {
     position: relative;
     z-index: 60;
 }
 
-/* Fix for mobile menu toggle */
 #mobile-toggle,
 #theme-toggle,
 #theme-toggle-mobile {
@@ -574,4 +719,55 @@ nav a {
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
+}
+
+/* ===== ADDITIONAL LIGHT MODE SPECIFIC STYLES ===== */
+body.light-theme .glass-card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+body.light-theme nav {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .gold-glow {
+    box-shadow: 0 0 30px rgba(184, 134, 11, 0.1);
+}
+
+/* ===== UTILITY CLASSES FOR SPACING ===== */
+.section-padding {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+    .section-padding {
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+    }
+}
+
+/* ===== IMAGE PLACEHOLDER STYLES ===== */
+.img-placeholder {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-base) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== ANIMATION DELAY UTILITIES ===== */
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
 }

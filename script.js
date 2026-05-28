@@ -2,33 +2,38 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize Lucide Icons
-    lucide.createIcons();
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 
     // ===== Dark/Light Mode Toggle =====
     const themeToggle = document.getElementById('theme-toggle');
     const themeToggleMobile = document.getElementById('theme-toggle-mobile');
     const body = document.body;
 
-    function updateThemeIcons(isLight) {
-        const iconName = isLight ? 'sun' : 'moon';
-        
-        // Update desktop toggle icon
+    // Get icon elements inside toggle buttons
+    function getThemeIconElements() {
+        const icons = [];
         if (themeToggle) {
             const icon = themeToggle.querySelector('i');
-            if (icon) {
-                icon.setAttribute('data-lucide', iconName);
-            }
+            if (icon) icons.push(icon);
         }
-        
-        // Update mobile toggle icon
         if (themeToggleMobile) {
             const icon = themeToggleMobile.querySelector('i');
-            if (icon) {
-                icon.setAttribute('data-lucide', iconName);
-            }
+            if (icon) icons.push(icon);
         }
-        
-        lucide.createIcons();
+        return icons;
+    }
+
+    function updateThemeIcons(isLight) {
+        const iconName = isLight ? 'sun' : 'moon';
+        const icons = getThemeIconElements();
+        icons.forEach(icon => {
+            icon.setAttribute('data-lucide', iconName);
+        });
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
 
     function applyTheme(isLight) {
@@ -48,35 +53,25 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTheme(initialIsLight);
 
     function toggleTheme(e) {
-        // Prevent any default behavior and stop propagation
         if (e) {
             e.preventDefault();
             e.stopPropagation();
         }
-        
         const isLight = !body.classList.contains('light-mode');
         localStorage.setItem('theme', isLight ? 'light' : 'dark');
         applyTheme(isLight);
     }
 
-    // Add click event listeners to both theme toggle buttons
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-        // Also handle touch events for mobile
-        themeToggle.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            toggleTheme(e);
-        });
-    }
-    
-    if (themeToggleMobile) {
-        themeToggleMobile.addEventListener('click', toggleTheme);
-        // Also handle touch events for mobile
-        themeToggleMobile.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            toggleTheme(e);
-        });
-    }
+    // Attach click and touch events
+    [themeToggle, themeToggleMobile].forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', toggleTheme);
+            btn.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                toggleTheme(e);
+            });
+        }
+    });
 
     // Listen for system theme changes
     window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
@@ -92,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let menuOpen = false;
 
     function toggleMobileMenu(e) {
-        // Prevent any default behavior and stop propagation
         if (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -110,13 +104,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (menuIcon) {
             menuIcon.setAttribute('data-lucide', menuOpen ? 'x' : 'menu');
-            lucide.createIcons();
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
         }
     }
 
     if (mobileToggle) {
         mobileToggle.addEventListener('click', toggleMobileMenu);
-        // Also handle touch events for mobile
         mobileToggle.addEventListener('touchend', function(e) {
             e.preventDefault();
             toggleMobileMenu(e);
@@ -126,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close mobile menu when clicking outside
     document.addEventListener('click', function(e) {
         if (menuOpen && mobileMenu && mobileToggle) {
-            // Check if click is outside both the menu and the toggle button
             if (!mobileMenu.contains(e.target) && !mobileToggle.contains(e.target)) {
                 closeMobileMenu();
             }
@@ -150,7 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (menuIcon) {
             menuIcon.setAttribute('data-lucide', 'menu');
-            lucide.createIcons();
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
         }
     };
 
@@ -166,17 +162,15 @@ document.addEventListener('DOMContentLoaded', () => {
             navbar.style.backdropFilter = 'blur(12px)';
             navbar.style.webkitBackdropFilter = 'blur(12px)';
             navbar.style.borderBottom = isLight ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.05)';
-            navbar.style.boxShadow = isLight ? '0 1px 3px rgba(0,0,0,0.05)' : '0 1px 3px rgba(0,0,0,0.2)';
         } else {
             navbar.style.backgroundColor = 'transparent';
             navbar.style.backdropFilter = 'none';
             navbar.style.webkitBackdropFilter = 'none';
             navbar.style.borderBottom = '1px solid transparent';
-            navbar.style.boxShadow = 'none';
         }
     }
 
-    // Throttle scroll event for better performance
+    // Optimized scroll listener
     let ticking = false;
     window.addEventListener('scroll', function() {
         if (!ticking) {
@@ -192,32 +186,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== Unified Tab Switching =====
     window.switchTab = function(tabGroup, tab) {
-        // Hide all content panels for this group
         const contents = document.querySelectorAll(`.${tabGroup}-content`);
-        contents.forEach(el => {
-            el.classList.add('hidden');
-        });
+        contents.forEach(el => el.classList.add('hidden'));
 
-        // Show selected content panel
         const contentEl = document.getElementById(`${tabGroup}-${tab}`);
         if (contentEl) {
             contentEl.classList.remove('hidden');
         }
 
-        // Remove active class from all tabs
         const tabs = document.querySelectorAll(`[id^="${tabGroup}-tab-"]`);
-        tabs.forEach(btn => {
-            btn.classList.remove('active');
-        });
+        tabs.forEach(btn => btn.classList.remove('active'));
 
-        // Add active class to selected tab
         const activeBtn = document.getElementById(`${tabGroup}-tab-${tab}`);
         if (activeBtn) {
             activeBtn.classList.add('active');
         }
     };
 
-    // Backwards compatibility aliases
     window.switchTrainingTab = function(tab) { window.switchTab('training', tab); };
     window.switchShopTab = function(tab) { window.switchTab('shop', tab); };
 
@@ -229,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showToast = function(message) {
         if (!toast || !toastMsg) return;
         
-        // Clear any existing timeout
         if (toastTimer) {
             clearTimeout(toastTimer);
         }
@@ -338,20 +322,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== Keyboard Accessibility =====
     document.addEventListener('keydown', function(e) {
-        // Close mobile menu on Escape key
         if (e.key === 'Escape' && menuOpen) {
             closeMobileMenu();
         }
     });
 
-    // ===== Fix for iOS Safari 100vh issue =====
-    function setVH() {
-        let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    
-    setVH();
-    window.addEventListener('resize', setVH);
-    window.addEventListener('orientationchange', setVH);
-
-}); // End DOMContentLoaded
+});

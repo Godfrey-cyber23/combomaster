@@ -4,19 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meal Plans — ComboMaster Fitness</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        display: ['Oswald', 'sans-serif'] 
+                    },
+                    colors: { 
+                        brand: { 
+                            gold: '#D4A853', 
+                            dark: '#0F0F0F', 
+                            darker: '#050505', 
+                            card: '#1A1A1A' 
+                        } 
+                    }
+                }
+            }
         }
     </script>
 </head>
 <body class="font-sans antialiased">
 
-    <!-- Toast -->
+    <!-- Toast Notification -->
     <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
         <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
         <span id="toast-message" class="text-sm font-medium"></span>
@@ -26,39 +51,50 @@
     <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex items-center justify-between py-4">
-                <a href="index.html" class="flex items-center gap-3">
-                    <img src="images/gym_logo.jpg" alt="Logo" class="h-10 w-auto">
-                    <span class="font-display text-xl text-gold hidden sm:block">COMBOMASTER</span>
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
+                    <div class="hidden sm:block">
+                        <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
+                        <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
+                    </div>
                 </a>
+
+                <!-- Desktop Navigation -->
                 <div class="hidden lg:flex items-center gap-6">
-                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Home</a>
-                    <a href="about.html" class="text-sm text-muted-custom hover:text-gold transition-colors">About</a>
-                    <a href="training.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Training</a>
-                    <a href="mealplans.html" class="text-sm text-gold font-semibold">Meal Plans</a>
-                    <a href="shop.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Shop</a>
-                    <a href="transformations.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Results</a>
-                    <a href="contact.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Contact</a>
+                    <a href="index.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="about.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">About</a>
+                    <a href="training.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Training</a>
+                    <a href="mealplans.html" class="text-sm tracking-wide text-gold font-semibold transition-colors">Meal Plans</a>
+                    <a href="shop.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Shop</a>
+                    <a href="transformations.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Results</a>
+                    <a href="contact.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Contact</a>
                 </div>
+
+                <!-- Desktop CTA Buttons -->
                 <div class="hidden lg:flex items-center gap-3">
-                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
                     <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
                     <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
                 </div>
-                <div class="flex items-center gap-2 lg:hidden">
-                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
-                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i></button>
+
+                <!-- Mobile Menu Toggle -->
+                <div class="lg:hidden">
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle menu">
+                        <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
+                    </button>
                 </div>
             </div>
+
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="mobile-menu lg:hidden">
                 <div class="pb-6 space-y-1">
-                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Home</a>
-                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">About</a>
-                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Training</a>
-                    <a href="mealplans.html" class="block py-3 px-4 text-gold font-semibold" onclick="closeMobileMenu()">Meal Plans</a>
-                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Shop</a>
-                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Results</a>
-                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Contact</a>
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-gold font-semibold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Transformations</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Contact</a>
                     <div class="pt-3 flex gap-2">
                         <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
                         <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
@@ -68,7 +104,7 @@
         </div>
     </nav>
 
-    <!-- PAGE HERO -->
+    <!-- Page Hero -->
     <section class="page-hero">
         <img src="images/meal-hero.jpg" alt="Healthy Meal Prep">
         <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 text-center">
@@ -80,56 +116,57 @@
         </div>
     </section>
 
-    <!-- MEAL PLANS GRID -->
+    <!-- Meal Plans Grid -->
     <section class="py-12 sm:py-16 section-padding">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             
+            <!-- Plans Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 
-                <!-- Weight Loss -->
+                <!-- Weight Loss Plan -->
                 <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
                     <div class="h-52 overflow-hidden relative">
-                        <img src="images/meal-weightloss.jpg" alt="Weight Loss" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        <img src="images/meal-weightloss.jpg" alt="Weight Loss Meal Plan" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-card to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
                             <span class="bg-green-500/20 text-green-400 text-xs font-semibold px-3 py-1 rounded-full border border-green-500/30 backdrop-blur-sm">Weight Loss</span>
                         </div>
                     </div>
-                    <div class="p-6">
+                    <div class="p-6 flex flex-col h-[calc(100%-13rem)]">
                         <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Weight Loss Meal Plan</h3>
-                        <p class="text-sm text-muted-custom mb-5">Calorie-controlled meal plans with balanced macros to promote healthy, sustainable fat loss.</p>
+                        <p class="text-sm text-muted-custom mb-5 flex-grow">Calorie-controlled meal plans with balanced macros to promote healthy, sustainable fat loss without feeling deprived.</p>
                         <ul class="feature-list space-y-2 mb-6">
                             <li><i data-lucide="check"></i> 7-day meal schedule</li>
                             <li><i data-lucide="check"></i> Calorie & macro breakdown</li>
                             <li><i data-lucide="check"></i> Shopping lists included</li>
                         </ul>
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between mt-auto">
                             <span class="font-display text-2xl font-semibold text-gold">$29</span>
-                            <button onclick="showToast('Weight Loss Plan purchased!')" class="btn-gold px-5 py-2.5 rounded-lg text-xs font-semibold tracking-wide uppercase">Buy Plan</button>
+                            <button onclick="showToast('Weight Loss Plan added to cart!')" class="btn-gold px-5 py-2.5 rounded-lg text-xs font-semibold tracking-wide uppercase">Buy Plan</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Muscle Gain -->
+                <!-- Muscle Gain Plan -->
                 <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
                     <div class="h-52 overflow-hidden relative">
-                        <img src="images/meal-musclegain.jpg" alt="Muscle Gain" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        <img src="images/meal-musclegain.jpg" alt="Muscle Gain Meal Plan" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-card to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
                             <span class="bg-blue-500/20 text-blue-400 text-xs font-semibold px-3 py-1 rounded-full border border-blue-500/30 backdrop-blur-sm">Muscle Gain</span>
                         </div>
                     </div>
-                    <div class="p-6">
+                    <div class="p-6 flex flex-col h-[calc(100%-13rem)]">
                         <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Muscle Gain Meal Plan</h3>
-                        <p class="text-sm text-muted-custom mb-5">High-protein, surplus-calorie meal plans designed to fuel muscle growth and recovery.</p>
+                        <p class="text-sm text-muted-custom mb-5 flex-grow">High-protein, surplus-calorie meal plans designed to fuel muscle growth and optimize recovery after intense training.</p>
                         <ul class="feature-list space-y-2 mb-6">
                             <li><i data-lucide="check"></i> High-protein recipes</li>
                             <li><i data-lucide="check"></i> Pre & post workout meals</li>
                             <li><i data-lucide="check"></i> Supplement guidance</li>
                         </ul>
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between mt-auto">
                             <span class="font-display text-2xl font-semibold text-gold">$35</span>
-                            <button onclick="showToast('Muscle Gain Plan purchased!')" class="btn-gold px-5 py-2.5 rounded-lg text-xs font-semibold tracking-wide uppercase">Buy Plan</button>
+                            <button onclick="showToast('Muscle Gain Plan added to cart!')" class="btn-gold px-5 py-2.5 rounded-lg text-xs font-semibold tracking-wide uppercase">Buy Plan</button>
                         </div>
                     </div>
                 </div>
@@ -138,52 +175,52 @@
                 <div class="glass-card card-hover rounded-2xl overflow-hidden gold-glow relative reveal-on-scroll">
                     <div class="absolute top-0 left-0 right-0 h-1 bg-brand-gold rounded-t-2xl z-10"></div>
                     <div class="h-52 overflow-hidden relative">
-                        <img src="images/meal-competition.jpg" alt="Competition Diet" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        <img src="images/meal-competition.jpg" alt="Competition Diet Plan" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-card to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
                             <span class="bg-brand-gold/20 text-gold text-xs font-semibold px-3 py-1 rounded-full border border-brand-gold/30 backdrop-blur-sm">Competition</span>
                         </div>
                     </div>
-                    <div class="p-6">
+                    <div class="p-6 flex flex-col h-[calc(100%-13rem)]">
                         <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Competition Diet</h3>
-                        <p class="text-sm text-muted-custom mb-5">Peak week nutrition, carb loading, water manipulation, and stage-ready diet protocols.</p>
+                        <p class="text-sm text-muted-custom mb-5 flex-grow">Peak week nutrition, carb loading, water manipulation, and stage-ready diet protocols for competitors.</p>
                         <ul class="feature-list space-y-2 mb-6">
                             <li><i data-lucide="check"></i> Peak week protocol</li>
                             <li><i data-lucide="check"></i> Carb cycling schedule</li>
                             <li><i data-lucide="check"></i> Coach support included</li>
                         </ul>
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between mt-auto">
                             <span class="font-display text-2xl font-semibold text-gold">$79</span>
-                            <button onclick="showToast('Competition Diet purchased!')" class="btn-gold px-5 py-2.5 rounded-lg text-xs font-semibold tracking-wide uppercase">Buy Plan</button>
+                            <button onclick="showToast('Competition Diet added to cart!')" class="btn-gold px-5 py-2.5 rounded-lg text-xs font-semibold tracking-wide uppercase">Buy Plan</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Healthy Lifestyle -->
+                <!-- Healthy Lifestyle Plan -->
                 <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
                     <div class="h-52 overflow-hidden relative">
-                        <img src="images/meal-lifestyle.jpg" alt="Healthy Lifestyle" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        <img src="images/meal-lifestyle.jpg" alt="Healthy Lifestyle Plan" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-card to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
                             <span class="bg-emerald-500/20 text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 backdrop-blur-sm">Lifestyle</span>
                         </div>
                     </div>
-                    <div class="p-6">
+                    <div class="p-6 flex flex-col h-[calc(100%-13rem)]">
                         <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Healthy Lifestyle Plan</h3>
-                        <p class="text-sm text-muted-custom mb-5">Balanced nutrition for everyday wellness. Maintain a healthy weight and feel your best.</p>
+                        <p class="text-sm text-muted-custom mb-5 flex-grow">Balanced nutrition for everyday wellness. Maintain a healthy weight and feel your best with flexible meal options.</p>
                         <ul class="feature-list space-y-2 mb-6">
                             <li><i data-lucide="check"></i> Balanced macros</li>
                             <li><i data-lucide="check"></i> Family-friendly options</li>
                             <li><i data-lucide="check"></i> Meal prep guides</li>
                         </ul>
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between mt-auto">
                             <span class="font-display text-2xl font-semibold text-gold">$25</span>
-                            <button onclick="showToast('Healthy Lifestyle Plan purchased!')" class="btn-gold px-5 py-2.5 rounded-lg text-xs font-semibold tracking-wide uppercase">Buy Plan</button>
+                            <button onclick="showToast('Healthy Lifestyle Plan added to cart!')" class="btn-gold px-5 py-2.5 rounded-lg text-xs font-semibold tracking-wide uppercase">Buy Plan</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Downloadable Guide -->
+                <!-- Free E-Book Download -->
                 <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll sm:col-span-2 lg:col-span-2">
                     <div class="p-8 flex flex-col sm:flex-row items-center gap-8">
                         <div class="flex-shrink-0 w-24 h-24 rounded-2xl bg-brand-gold/10 flex items-center justify-center">
@@ -193,7 +230,12 @@
                             <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Free Nutrition E-Book</h3>
                             <p class="text-sm text-muted-custom mb-4">Download our free "10 Rules of Effective Fat Loss" guide. Start making smarter food choices today, no strings attached.</p>
                             <form onsubmit="handleNewsletter(event)" class="flex flex-col sm:flex-row gap-2 max-w-md mx-auto sm:mx-0">
-                                <input type="email" required placeholder="Enter your email" class="flex-1 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-brand-gold/50 transition-colors">
+                                <input 
+                                    type="email" 
+                                    required 
+                                    placeholder="Enter your email" 
+                                    class="flex-1 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-brand-gold/50 transition-colors"
+                                >
                                 <button type="submit" class="btn-gold px-6 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap">Download Free</button>
                             </form>
                         </div>
@@ -201,15 +243,15 @@
                 </div>
             </div>
 
-            <!-- Customized Wide Card -->
+            <!-- Custom Meal Plan Wide Card -->
             <div class="glass-card card-hover rounded-2xl overflow-hidden custom-meal-card reveal-on-scroll">
                 <div class="card-image h-64 lg:h-auto overflow-hidden">
                     <img src="images/meal-custom.jpg" alt="Custom Meal Plan" class="hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-8 flex flex-col justify-center">
-                    <span class="bg-purple-500/20 text-purple-400 text-xs font-semibold px-3 py-1 rounded-full border border-purple-500/30 w-fit mb-4">Custom</span>
+                    <span class="bg-purple-500/20 text-purple-400 text-xs font-semibold px-3 py-1 rounded-full border border-purple-500/30 w-fit mb-4">Most Popular</span>
                     <h3 class="font-display text-2xl font-semibold tracking-tight mb-3">Customized Meal Plan</h3>
-                    <p class="text-sm text-muted-custom mb-6">Fully personalized meal plan built around your dietary preferences, allergies, schedule, and specific fitness goals. Includes weekly adjustments based on progress.</p>
+                    <p class="text-sm text-muted-custom mb-6">Fully personalized meal plan built around your dietary preferences, allergies, schedule, and specific fitness goals. Includes weekly adjustments based on your progress.</p>
                     <ul class="feature-list space-y-2 mb-6">
                         <li><i data-lucide="check"></i> Personalized to your goals & preferences</li>
                         <li><i data-lucide="check"></i> Weekly adjustments & check-ins</li>
@@ -218,7 +260,7 @@
                     </ul>
                     <div class="flex items-center gap-4">
                         <span class="font-display text-2xl font-semibold text-gold">$59<span class="text-lg text-muted-custom">/mo</span></span>
-                        <button onclick="showToast('Customized Meal Plan selected!')" class="btn-gold px-6 py-3 rounded-lg text-sm font-semibold tracking-wide uppercase">Subscribe</button>
+                        <button onclick="showToast('Custom Meal Plan subscription added to cart!')" class="btn-gold px-6 py-3 rounded-lg text-sm font-semibold tracking-wide uppercase">Subscribe Now</button>
                     </div>
                 </div>
             </div>
@@ -226,35 +268,74 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
+    <!-- How It Works Section -->
+    <section class="py-12 sm:py-16 border-t border-[var(--border-color)] section-padding bg-[var(--bg-secondary)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 reveal-on-scroll">
+                <span class="text-xs font-semibold tracking-widest uppercase text-gold">How It Works</span>
+                <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mt-3 mb-4">Get Started in 3 Easy Steps</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center reveal-on-scroll">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="clipboard-list" class="w-8 h-8 text-gold"></i>
+                    </div>
+                    <h3 class="font-display text-lg font-semibold mb-2">1. Choose Your Plan</h3>
+                    <p class="text-sm text-muted-custom">Select the meal plan that aligns with your fitness goals and dietary preferences.</p>
+                </div>
+                
+                <div class="text-center reveal-on-scroll" style="transition-delay: 0.1s;">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="credit-card" class="w-8 h-8 text-gold"></i>
+                    </div>
+                    <h3 class="font-display text-lg font-semibold mb-2">2. Secure Checkout</h3>
+                    <p class="text-sm text-muted-custom">Complete your purchase securely and get instant access to your meal plan materials.</p>
+                </div>
+                
+                <div class="text-center reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="utensils-crossed" class="w-8 h-8 text-gold"></i>
+                    </div>
+                    <h3 class="font-display text-lg font-semibold mb-2">3. Start Cooking</h3>
+                    <p class="text-sm text-muted-custom">Follow your personalized meal plan, prep your meals, and watch your body transform.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="py-12 border-t border-[var(--border-color)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
                 <div class="col-span-2 md:col-span-1">
-                    <a href="index.html" class="flex items-center gap-2 mb-4"><img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto"><span class="font-display text-lg text-gold">COMBOMASTER</span></a>
+                    <a href="index.html" class="flex items-center gap-2 mb-4">
+                        <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-8 w-auto">
+                        <span class="font-display text-lg text-gold">COMBOMASTER</span>
+                    </a>
                     <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
                 </div>
                 <div>
                     <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="training.html">Training</a></li>
-                        <li><a href="membership.html">Membership</a></li>
+                        <li><a href="about.html" class="hover:text-gold transition-colors">About</a></li>
+                        <li><a href="training.html" class="hover:text-gold transition-colors">Training</a></li>
+                        <li><a href="membership.html" class="hover:text-gold transition-colors">Membership</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="shop.html">Supplements</a></li>
-                        <li><a href="shop.html">Attire</a></li>
-                        <li><a href="shop.html">Equipment</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Supplements</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Attire</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Equipment</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="contact.html">Contact Us</a></li>
-                        <li><a href="login.html">Client Login</a></li>
+                        <li><a href="contact.html" class="hover:text-gold transition-colors">Contact Us</a></li>
+                        <li><a href="login.html" class="hover:text-gold transition-colors">Client Login</a></li>
                     </ul>
                 </div>
             </div>
@@ -264,6 +345,7 @@
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="script.js"></script>
 </body>
 </html>

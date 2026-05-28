@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ComboMaster Fitness — Transform Your Body, Master Your Life</title>
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Lucide Icons -->
@@ -14,10 +14,10 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Custom CSS -->
+    <!-- External CSS -->
     <link rel="stylesheet" href="styles.css">
     
-    <!-- Tailwind Configuration -->
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
@@ -42,7 +42,7 @@
 <body class="font-sans antialiased">
 
     <!-- Toast Notification -->
-    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+    <div id="toast" class="toast rounded-xl px-6 py-4 flex items-center gap-3 shadow-lg">
         <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
         <span id="toast-message" class="text-sm font-medium"></span>
     </div>
@@ -53,14 +53,16 @@
             <div class="flex items-center justify-between py-4">
                 <!-- Logo -->
                 <a href="index.html" class="flex items-center gap-3 group">
-                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
+                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-brand-gold to-amber-600 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                        CF
+                    </div>
                     <div class="hidden sm:block">
                         <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
                         <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
                     </div>
                 </a>
 
-                <!-- Desktop Navigation Links -->
+                <!-- Desktop Menu -->
                 <div class="hidden lg:flex items-center gap-6">
                     <a href="index.html" class="text-sm tracking-wide text-gold font-semibold transition-colors">Home</a>
                     <a href="about.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">About</a>
@@ -71,19 +73,19 @@
                     <a href="contact.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Contact</a>
                 </div>
 
-                <!-- Desktop CTA Buttons -->
+                <!-- Desktop CTA + Theme Toggle -->
                 <div class="hidden lg:flex items-center gap-3">
-                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle theme">
-                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    <button id="theme-toggle-desktop" class="theme-toggle-btn" aria-label="Toggle light/dark mode">
+                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-desktop"></i>
                     </button>
                     <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
                     <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
                 </div>
 
-                <!-- Mobile Menu Buttons -->
-                <div class="flex items-center gap-2 lg:hidden">
-                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle theme">
-                        <i data-lucide="moon" class="w-5 h-5"></i>
+                <!-- Mobile Menu Button + Theme Toggle -->
+                <div class="lg:hidden flex items-center gap-2">
+                    <button id="theme-toggle-mobile-btn" class="theme-toggle-btn p-2" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-mobile"></i>
                     </button>
                     <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle menu">
                         <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
@@ -91,17 +93,17 @@
                 </div>
             </div>
 
-            <!-- Mobile Menu -->
+            <!-- Mobile Menu Dropdown -->
             <div id="mobile-menu" class="mobile-menu lg:hidden">
                 <div class="pb-6 space-y-1">
-                    <a href="index.html" class="block py-3 px-4 text-gold font-semibold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Home</a>
-                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">About</a>
-                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Training</a>
-                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Meal Plans</a>
-                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Shop</a>
-                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Transformations</a>
-                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Contact</a>
-                    <div class="pt-3 flex gap-2">
+                    <a href="index.html" class="block py-3 px-4 text-gold font-semibold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Transformations</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Contact</a>
+                    <div class="pt-3 flex gap-2 px-4">
                         <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
                         <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
                     </div>
@@ -112,97 +114,73 @@
 
     <!-- HERO SECTION -->
     <section class="relative min-h-screen flex items-center overflow-hidden">
-        <!-- Background Image -->
         <div class="absolute inset-0">
-            <img src="images/hero-gym.jpg" alt="Gym Training" class="w-full h-full object-cover opacity-50">
+            <!-- Hero Background Gradient (replaces image) -->
+            <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black opacity-80"></div>
             <div class="hero-overlay absolute inset-0"></div>
             <div class="hero-bottom absolute inset-0"></div>
         </div>
 
-        <!-- Hero Content -->
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-20 w-full">
             <div class="max-w-3xl">
-                <!-- Badge -->
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-gold/30 bg-brand-gold/10 mb-6 animate-fade-in-up">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-gold/30 bg-brand-gold/10 backdrop-blur-sm mb-6 animate-fade-in-up">
                     <div class="w-2 h-2 rounded-full bg-brand-gold pulse-gold"></div>
                     <span class="text-xs font-semibold tracking-widest uppercase text-gold">Transform Your Body, Master Your Life</span>
                 </div>
 
-                <!-- Main Heading -->
                 <h1 class="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.9] tracking-tight mb-8 hero-text animate-fade-in-up" style="animation-delay:0.1s">
                     WHERE <span class="text-gradient">FITNESS</span> MEETS DISCIPLINE
                 </h1>
 
-                <!-- Subtitle -->
                 <p class="text-base sm:text-lg md:text-xl text-muted-custom leading-relaxed max-w-xl mb-10 animate-fade-in-up" style="animation-delay:0.2s">
                     Professional workout programs, meal plans, body transformation guidance, and lifestyle coaching designed for real results.
                 </p>
 
-                <!-- CTA Buttons -->
                 <div class="flex flex-wrap gap-3 animate-fade-in-up" style="animation-delay:0.3s">
-                    <a href="training.html" class="btn-gold px-6 sm:px-7 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase flex items-center gap-2">
+                    <a href="training.html" class="btn-gold px-6 sm:px-7 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase flex items-center gap-2 transition-all">
                         <i data-lucide="dumbbell" class="w-4 h-4"></i> Start Training
                     </a>
-                    <a href="mealplans.html" class="btn-outline px-6 sm:px-7 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase flex items-center gap-2">
+                    <a href="mealplans.html" class="btn-outline px-6 sm:px-7 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase flex items-center gap-2 transition-all">
                         <i data-lucide="utensils" class="w-4 h-4"></i> Meal Plans
                     </a>
                 </div>
             </div>
         </div>
-
-        <!-- Scroll Indicator -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
-            <div class="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center">
-                <div class="w-1.5 h-3 bg-gold rounded-full mt-2 animate-bounce"></div>
-            </div>
-        </div>
     </section>
 
     <!-- QUICK ACCESS SECTION -->
-    <section class="py-16 sm:py-20 border-t border-[var(--border-color)] section-padding">
+    <section class="py-16 sm:py-20 border-t section-padding">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <!-- Section Header -->
             <div class="text-center mb-10 reveal-on-scroll">
                 <span class="text-xs font-semibold tracking-widest uppercase text-gold">Quick Access</span>
                 <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mt-3">Start Your Journey</h2>
             </div>
-
-            <!-- Quick Access Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                <!-- Start Training -->
-                <a href="training.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll">
+                <a href="training.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll transition-all">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="dumbbell" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Start Training</h3>
                 </a>
-
-                <!-- Meal Plans -->
-                <a href="mealplans.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll" style="transition-delay: 0.1s;">
+                <a href="mealplans.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll transition-all" style="transition-delay: 0.1s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="utensils" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Buy Meal Plan</h3>
                 </a>
-
-                <!-- Supplements -->
-                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll" style="transition-delay: 0.2s;">
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll transition-all" style="transition-delay: 0.2s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="pill" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Supplements</h3>
                 </a>
-
-                <!-- Gym Attire -->
-                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll" style="transition-delay: 0.3s;">
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll transition-all" style="transition-delay: 0.3s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="shirt" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Gym Attire</h3>
                 </a>
-
-                <!-- Equipment -->
-                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group col-span-2 sm:col-span-1 reveal-on-scroll" style="transition-delay: 0.4s;">
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group col-span-2 sm:col-span-1 reveal-on-scroll transition-all" style="transition-delay: 0.4s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="weights" class="w-6 h-6 text-gold"></i>
                     </div>
@@ -212,228 +190,276 @@
         </div>
     </section>
 
-    <!-- STATS SECTION -->
-    <section class="py-16 sm:py-20 border-t border-[var(--border-color)] section-padding">
+    <!-- FEATURED PROGRAM PREVIEW -->
+    <section class="py-16 sm:py-20 bg-opacity-30">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <!-- Clients -->
-                <div class="text-center reveal-on-scroll">
-                    <div class="stat-number text-4xl md:text-5xl font-display font-bold text-gold mb-2" data-target="500">0+</div>
-                    <p class="text-sm text-muted-custom">Active Clients</p>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="reveal-on-scroll">
+                    <span class="text-xs font-semibold tracking-widest uppercase text-gold">Elite Training</span>
+                    <h2 class="font-display text-3xl sm:text-4xl font-semibold tracking-tight mt-3 mb-5">Comprehensive <span class="text-gradient">Transformation</span> System</h2>
+                    <p class="text-muted-custom mb-6 leading-relaxed">Our signature 12-week program combines periodized strength training, metabolic conditioning, and nutritional coaching. Track progress, adapt weekly, and achieve measurable results.</p>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check-circle" class="w-5 h-5 text-gold"></i> <span>Personalized workout plans</span></li>
+                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check-circle" class="w-5 h-5 text-gold"></i> <span>Nutrition guidance & meal templates</span></li>
+                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check-circle" class="w-5 h-5 text-gold"></i> <span>24/7 coach access & progress tracking</span></li>
+                    </ul>
+                    <a href="membership.html" class="btn-gold inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold uppercase">Join Program <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
                 </div>
-
-                <!-- Years -->
-                <div class="text-center reveal-on-scroll" style="transition-delay: 0.1s;">
-                    <div class="stat-number text-4xl md:text-5xl font-display font-bold text-gold mb-2" data-target="10">0+</div>
-                    <p class="text-sm text-muted-custom">Years Experience</p>
-                </div>
-
-                <!-- Transformations -->
-                <div class="text-center reveal-on-scroll" style="transition-delay: 0.2s;">
-                    <div class="stat-number text-4xl md:text-5xl font-display font-bold text-gold mb-2" data-target="1000">0+</div>
-                    <p class="text-sm text-muted-custom">Transformations</p>
-                </div>
-
-                <!-- Satisfaction -->
-                <div class="text-center reveal-on-scroll" style="transition-delay: 0.3s;">
-                    <div class="stat-number text-4xl md:text-5xl font-display font-bold text-gold mb-2" data-target="98">0%</div>
-                    <p class="text-sm text-muted-custom">Client Satisfaction</p>
+                <div class="glass-card rounded-2xl p-6 reveal-on-scroll" style="animation-delay: 0.2s;">
+                    <div class="bg-gradient-to-br from-brand-gold/20 to-transparent rounded-xl p-4">
+                        <div class="flex justify-between items-center border-b border-border-color pb-3 mb-4">
+                            <span class="font-display text-gold text-sm">COMBO MASTER PLAN</span>
+                            <span class="text-xs text-muted-custom">Week 4 · Day 2</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm">Strength: Upper Body</span>
+                                <span class="text-xs text-gold">4 sets · 8-10 reps</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full w-2/3 bg-gold rounded-full"></div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm">Conditioning</span>
+                                <span class="text-xs text-gold">20 min HIIT</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full w-1/2 bg-gold rounded-full"></div>
+                            </div>
+                            <div class="pt-3 text-center text-muted-custom text-xs">Next session: tomorrow 7:00 AM</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FEATURED PROGRAMS SECTION -->
-    <section class="py-16 sm:py-20 border-t border-[var(--border-color)] section-padding bg-[var(--bg-secondary)]">
+    <!-- TESTIMONIALS -->
+    <section class="py-16 sm:py-20 border-t border-b border-border-color">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <!-- Section Header -->
             <div class="text-center mb-12 reveal-on-scroll">
-                <span class="text-xs font-semibold tracking-widest uppercase text-gold">Our Programs</span>
-                <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mt-3 mb-4">Choose Your Path</h2>
-                <p class="text-muted-custom max-w-2xl mx-auto">Select the program that fits your goals and start your transformation journey today.</p>
+                <span class="text-xs font-semibold tracking-widest uppercase text-gold">Success Stories</span>
+                <h2 class="font-display text-3xl sm:text-4xl font-semibold tracking-tight mt-3">Real Results, Real People</h2>
             </div>
-
-            <!-- Programs Grid -->
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- Beginner Program -->
-                <div class="glass-card rounded-2xl p-6 card-hover reveal-on-scroll">
-                    <div class="w-14 h-14 rounded-xl bg-brand-gold/10 flex items-center justify-center mb-4">
-                        <i data-lucide="trending-up" class="w-7 h-7 text-gold"></i>
-                    </div>
-                    <h3 class="font-display text-xl font-semibold mb-2">Beginner</h3>
-                    <p class="text-muted-custom text-sm mb-4">Perfect for those starting their fitness journey. Build a solid foundation with guided workouts.</p>
-                    <ul class="space-y-2 text-sm text-muted-custom mb-6">
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> 3 workouts/week</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> Basic nutrition guide</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> Form check videos</li>
-                    </ul>
-                    <a href="training.html" class="btn-outline w-full block text-center py-2 rounded-lg text-sm font-semibold">Learn More</a>
-                </div>
-
-                <!-- Intermediate Program -->
-                <div class="glass-card rounded-2xl p-6 card-hover reveal-on-scroll gold-glow" style="transition-delay: 0.1s;">
-                    <div class="w-14 h-14 rounded-xl bg-brand-gold/10 flex items-center justify-center mb-4">
-                        <i data-lucide="zap" class="w-7 h-7 text-gold"></i>
-                    </div>
-                    <h3 class="font-display text-xl font-semibold mb-2">Intermediate</h3>
-                    <p class="text-muted-custom text-sm mb-4">Take your training to the next level with advanced techniques and structured programs.</p>
-                    <ul class="space-y-2 text-sm text-muted-custom mb-6">
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> 5 workouts/week</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> Meal plan included</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> Progress tracking</li>
-                    </ul>
-                    <a href="training.html" class="btn-gold w-full block text-center py-2 rounded-lg text-sm font-semibold">Get Started</a>
-                </div>
-
-                <!-- Advanced Program -->
-                <div class="glass-card rounded-2xl p-6 card-hover reveal-on-scroll" style="transition-delay: 0.2s;">
-                    <div class="w-14 h-14 rounded-xl bg-brand-gold/10 flex items-center justify-center mb-4">
-                        <i data-lucide="flame" class="w-7 h-7 text-gold"></i>
-                    </div>
-                    <h3 class="font-display text-xl font-semibold mb-2">Advanced</h3>
-                    <p class="text-muted-custom text-sm mb-4">Elite training for serious athletes. Maximize performance and achieve peak condition.</p>
-                    <ul class="space-y-2 text-sm text-muted-custom mb-6">
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> 6 workouts/week</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> Custom meal plans</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400"></i> 1-on-1 coaching</li>
-                    </ul>
-                    <a href="training.html" class="btn-outline w-full block text-center py-2 rounded-lg text-sm font-semibold">Learn More</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- TESTIMONIAL SECTION -->
-    <section class="py-16 sm:py-20 border-t border-[var(--border-color)] section-padding">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <!-- Section Header -->
-            <div class="text-center mb-12 reveal-on-scroll">
-                <span class="text-xs font-semibold tracking-widest uppercase text-gold">Testimonials</span>
-                <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mt-3">What Our Clients Say</h2>
-            </div>
-
-            <!-- Testimonials Grid -->
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- Testimonial 1 -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="glass-card rounded-2xl p-6 reveal-on-scroll">
-                    <div class="star-rating">
-                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                    <div class="flex gap-1 mb-4">
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
                     </div>
-                    <p class="text-muted-custom text-sm mb-4">"ComboMaster completely changed my approach to fitness. I've lost 30 pounds and feel stronger than ever!"</p>
+                    <p class="text-sm leading-relaxed mb-4">"ComboMaster changed my life. Lost 28lbs and gained muscle definition I never thought possible. The accountability and structure kept me going."</p>
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center">
-                            <span class="text-gold font-semibold text-sm">JD</span>
-                        </div>
-                        <div>
-                            <p class="font-semibold text-sm">John Doe</p>
-                            <p class="text-xs text-muted-custom">Lost 30 lbs in 6 months</p>
-                        </div>
+                        <div class="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center"><span class="text-gold font-bold">JD</span></div>
+                        <div><h4 class="text-sm font-semibold">James Donovan</h4><p class="text-xs text-muted-custom">3 Months Transformation</p></div>
                     </div>
                 </div>
-
-                <!-- Testimonial 2 -->
                 <div class="glass-card rounded-2xl p-6 reveal-on-scroll" style="transition-delay: 0.1s;">
-                    <div class="star-rating">
-                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                    <div class="flex gap-1 mb-4">
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
                     </div>
-                    <p class="text-muted-custom text-sm mb-4">"The meal plans are a game-changer! Combined with the workouts, I achieved results I never thought possible."</p>
+                    <p class="text-sm leading-relaxed mb-4">"The meal plans alone are worth it. I've never felt more energetic. Training programs are challenging but scalable. Highly recommend!"</p>
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center">
-                            <span class="text-gold font-semibold text-sm">SM</span>
-                        </div>
-                        <div>
-                            <p class="font-semibold text-sm">Sarah Miller</p>
-                            <p class="text-xs text-muted-custom">Transformed in 4 months</p>
-                        </div>
+                        <div class="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center"><span class="text-gold font-bold">SR</span></div>
+                        <div><h4 class="text-sm font-semibold">Sarah Reynolds</h4><p class="text-xs text-muted-custom">Online Member</p></div>
                     </div>
                 </div>
-
-                <!-- Testimonial 3 -->
                 <div class="glass-card rounded-2xl p-6 reveal-on-scroll" style="transition-delay: 0.2s;">
-                    <div class="star-rating">
-                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                    <div class="flex gap-1 mb-4">
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-gold text-gold"></i>
                     </div>
-                    <p class="text-muted-custom text-sm mb-4">"The coaching team is incredible. They pushed me beyond my limits and helped me become the best version of myself."</p>
+                    <p class="text-sm leading-relaxed mb-4">"From beginner to advanced, the progression works. Hit new PRs and the community support is unmatched. Best decision I made for my health."</p>
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center">
-                            <span class="text-gold font-semibold text-sm">MR</span>
-                        </div>
-                        <div>
-                            <p class="font-semibold text-sm">Mike Rodriguez</p>
-                            <p class="text-xs text-muted-custom">Gained 15 lbs of muscle</p>
-                        </div>
+                        <div class="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center"><span class="text-gold font-bold">MC</span></div>
+                        <div><h4 class="text-sm font-semibold">Marcus Chen</h4><p class="text-xs text-muted-custom">Elite Member</p></div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA SECTION -->
-    <section class="py-16 sm:py-20 border-t border-[var(--border-color)] section-padding bg-[var(--bg-secondary)]">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <div class="reveal-on-scroll">
-                <span class="text-xs font-semibold tracking-widest uppercase text-gold">Ready to Start?</span>
-                <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3 mb-6">Transform Your Body Today</h2>
-                <p class="text-muted-custom text-lg mb-8 max-w-2xl mx-auto">Join hundreds of satisfied clients who have transformed their lives with ComboMaster Fitness.</p>
-                <div class="flex flex-wrap justify-center gap-4">
-                    <a href="membership.html" class="btn-gold px-8 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase">Start Free Trial</a>
-                    <a href="contact.html" class="btn-outline px-8 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase">Contact Us</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- FOOTER -->
-    <footer class="py-12 border-t border-[var(--border-color)]">
+    <footer class="py-12 border-t">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-                <!-- Company Info -->
                 <div class="col-span-2 md:col-span-1">
                     <a href="index.html" class="flex items-center gap-2 mb-4">
-                        <img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto">
+                        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-brand-gold to-amber-600"></div>
                         <span class="font-display text-lg text-gold">COMBOMASTER</span>
                     </a>
                     <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
                 </div>
-
-                <!-- Links -->
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Links</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
                         <li><a href="about.html" class="hover:text-gold transition-colors">About</a></li>
                         <li><a href="training.html" class="hover:text-gold transition-colors">Training</a></li>
                         <li><a href="membership.html" class="hover:text-gold transition-colors">Membership</a></li>
                     </ul>
                 </div>
-
-                <!-- Shop -->
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Shop</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
                         <li><a href="shop.html" class="hover:text-gold transition-colors">Supplements</a></li>
                         <li><a href="shop.html" class="hover:text-gold transition-colors">Attire</a></li>
                         <li><a href="shop.html" class="hover:text-gold transition-colors">Equipment</a></li>
                     </ul>
                 </div>
-
-                <!-- Connect -->
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Connect</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
                         <li><a href="contact.html" class="hover:text-gold transition-colors">Contact Us</a></li>
                         <li><a href="login.html" class="hover:text-gold transition-colors">Client Login</a></li>
                     </ul>
                 </div>
             </div>
-
-            <!-- Copyright -->
-            <div class="border-t border-[var(--border-color)] pt-6 text-center">
+            <div class="border-t border-border-color pt-6 text-center">
                 <p class="text-xs text-muted-custom">&copy; 2025 ComboMaster Fitness. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Custom JavaScript -->
-    <script src="script.js"></script>
+    <!-- JavaScript for Theme, Mobile Menu, Interactions -->
+    <script>
+        // Theme handling (light/dark mode)
+        function initTheme() {
+            const savedTheme = localStorage.getItem('comboMasterTheme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
+            if (!isDark) {
+                document.body.classList.add('light-theme');
+                updateThemeIcons('light');
+            } else {
+                document.body.classList.remove('light-theme');
+                updateThemeIcons('dark');
+            }
+        }
+
+        function updateThemeIcons(mode) {
+            const iconIds = ['theme-icon-desktop', 'theme-icon-mobile'];
+            iconIds.forEach(id => {
+                const iconEl = document.getElementById(id);
+                if (iconEl && window.lucide) {
+                    if (mode === 'dark') {
+                        iconEl.setAttribute('data-lucide', 'moon');
+                    } else {
+                        iconEl.setAttribute('data-lucide', 'sun');
+                    }
+                }
+            });
+            if (window.lucide && lucide.createIcons) lucide.createIcons();
+        }
+
+        function toggleTheme() {
+            if (document.body.classList.contains('light-theme')) {
+                document.body.classList.remove('light-theme');
+                localStorage.setItem('comboMasterTheme', 'dark');
+                updateThemeIcons('dark');
+                showToastMessage('Dark mode activated', 'moon');
+            } else {
+                document.body.classList.add('light-theme');
+                localStorage.setItem('comboMasterTheme', 'light');
+                updateThemeIcons('light');
+                showToastMessage('Light mode activated', 'sun');
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Toast notification helper
+        function showToastMessage(message, iconName = 'check-circle') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            if (!toast) return;
+            toastMsg.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // Mobile menu toggle
+        function closeMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu) mobileMenu.classList.remove('open');
+        }
+
+        // Scroll reveal observer
+        function initScrollReveal() {
+            const reveals = document.querySelectorAll('.reveal-on-scroll');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+            reveals.forEach(el => observer.observe(el));
+        }
+
+        // Navbar background effect on scroll
+        function handleNavbarScroll() {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.style.backdropFilter = 'blur(16px)';
+                nav.style.backgroundColor = 'var(--nav-bg)';
+            } else {
+                nav.style.backdropFilter = 'blur(12px)';
+            }
+        }
+
+        // Initialize everything on DOM ready
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            if (window.lucide) lucide.createIcons();
+            
+            // Mobile menu toggle event
+            const mobileToggleBtn = document.getElementById('mobile-toggle');
+            const mobileMenuDiv = document.getElementById('mobile-menu');
+            if (mobileToggleBtn && mobileMenuDiv) {
+                mobileToggleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    mobileMenuDiv.classList.toggle('open');
+                    setTimeout(() => { if(window.lucide) lucide.createIcons(); }, 50);
+                });
+            }
+            
+            // Theme toggle buttons
+            const desktopThemeBtn = document.getElementById('theme-toggle-desktop');
+            const mobileThemeBtn = document.getElementById('theme-toggle-mobile-btn');
+            if (desktopThemeBtn) desktopThemeBtn.addEventListener('click', toggleTheme);
+            if (mobileThemeBtn) mobileThemeBtn.addEventListener('click', toggleTheme);
+            
+            // Scroll & reveal
+            window.addEventListener('scroll', handleNavbarScroll);
+            initScrollReveal();
+            
+            // Re-run lucide after theme changes (class mutation observer)
+            const observer = new MutationObserver(() => {
+                if (window.lucide) lucide.createIcons();
+            });
+            observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+            
+            // Mobile menu close on link click
+            const mobileLinks = document.querySelectorAll('#mobile-menu a');
+            mobileLinks.forEach(link => link.addEventListener('click', closeMobileMenu));
+            
+            // Add border-color variable style for consistency
+            document.documentElement.style.setProperty('--border-color', getComputedStyle(document.body).getPropertyValue('--border-color'));
+        });
+        
+        // Expose close function globally
+        window.closeMobileMenu = closeMobileMenu;
+    </script>
 </body>
 </html>

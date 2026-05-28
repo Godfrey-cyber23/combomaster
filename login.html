@@ -4,77 +4,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — ComboMaster Fitness</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        display: ['Oswald', 'sans-serif'] 
+                    },
+                    colors: { 
+                        brand: { 
+                            gold: '#D4A853', 
+                            dark: '#0F0F0F', 
+                            darker: '#050505', 
+                            card: '#1A1A1A' 
+                        } 
+                    }
+                }
+            }
         }
     </script>
 </head>
 <body class="font-sans antialiased">
 
+    <!-- Toast Notification -->
     <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
         <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
         <span id="toast-message" class="text-sm font-medium"></span>
     </div>
 
+    <!-- Navigation (Simplified for login page, but includes theme toggle) -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between py-4">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
+                    <div class="hidden sm:block">
+                        <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
+                        <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
+                    </div>
+                </a>
+
+                <!-- Desktop: Theme toggle + Back to site -->
+                <div class="hidden lg:flex items-center gap-4">
+                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors flex items-center gap-1">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home
+                    </a>
+                </div>
+
+                <!-- Mobile: Theme toggle only -->
+                <div class="flex items-center gap-2 lg:hidden">
+                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
     <div class="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
-        <!-- Background -->
+        <!-- Background Image with Overlay -->
         <div class="absolute inset-0">
-            <img src="images/gym-interior.jpg" alt="Gym" class="w-full h-full object-cover opacity-20">
+            <img src="images/gym-interior.jpg" alt="Gym Interior" class="w-full h-full object-cover opacity-20">
             <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-base)] via-[var(--bg-base)]/90 to-[var(--bg-base)]/80"></div>
         </div>
 
+        <!-- Login Form Container -->
         <div class="relative z-10 w-full max-w-md">
+            <!-- Logo and Header -->
             <div class="text-center mb-8">
                 <a href="index.html" class="inline-block">
-                    <img src="images/gym_logo.jpg" alt="ComboMaster" class="h-16 w-auto mx-auto mb-4">
+                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-16 w-auto mx-auto mb-4">
                 </a>
                 <h1 class="font-display text-3xl font-semibold tracking-tight">CLIENT LOGIN</h1>
                 <p class="text-muted-custom text-sm mt-2">Access your dashboard, programs, and meal plans.</p>
             </div>
 
+            <!-- Login Card -->
             <div class="glass-card rounded-2xl p-6 sm:p-8 gold-glow">
-                <form onsubmit="handleLoginSubmit(event)" class="space-y-5">
+                <form id="loginForm" class="space-y-5" novalidate>
+                    <!-- Email Field -->
                     <div>
-                        <label class="text-sm text-muted-custom mb-1.5 block">Email Address</label>
+                        <label for="email" class="text-sm text-muted-custom mb-1.5 block">Email Address</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i data-lucide="mail" class="w-4 h-4 text-muted-custom"></i>
                             </div>
-                            <input type="email" required class="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-brand-gold/50 transition-colors" placeholder="you@example.com">
+                            <input 
+                                type="email" 
+                                id="email"
+                                name="email"
+                                required 
+                                class="form-input pl-10" 
+                                placeholder="you@example.com"
+                                autocomplete="email"
+                            >
                         </div>
                     </div>
+
+                    <!-- Password Field -->
                     <div>
-                        <label class="text-sm text-muted-custom mb-1.5 block">Password</label>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="password" class="text-sm text-muted-custom">Password</label>
+                            <a href="#" class="text-xs text-gold hover:underline" onclick="showToast('Password reset link sent to your email.')">Forgot password?</a>
+                        </div>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i data-lucide="lock" class="w-4 h-4 text-muted-custom"></i>
                             </div>
-                            <input type="password" required class="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-brand-gold/50 transition-colors" placeholder="••••••••">
+                            <input 
+                                type="password" 
+                                id="password"
+                                name="password"
+                                required 
+                                class="form-input pl-10 pr-12" 
+                                placeholder="••••••••"
+                                autocomplete="current-password"
+                                minlength="6"
+                            >
+                            <!-- Show/Hide Password Toggle -->
+                            <button 
+                                type="button" 
+                                id="togglePassword"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-custom hover:text-gold transition-colors"
+                                aria-label="Toggle password visibility"
+                            >
+                                <i data-lucide="eye" class="w-4 h-4" id="passwordIcon"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between text-sm">
-                        <label class="flex items-center gap-2 text-muted-custom cursor-pointer">
-                            <input type="checkbox" class="rounded border-gray-300 text-brand-gold focus:ring-brand-gold">
+
+                    <!-- Remember Me Checkbox -->
+                    <div class="flex items-center">
+                        <label class="flex items-center gap-2 text-sm text-muted-custom cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                id="remember"
+                                name="remember"
+                                class="rounded border-gray-300 text-brand-gold focus:ring-brand-gold bg-[var(--bg-secondary)]"
+                            >
                             Remember me
                         </label>
-                        <a href="#" class="text-gold hover:underline">Forgot password?</a>
                     </div>
-                    <button type="submit" class="btn-gold w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide uppercase flex items-center justify-center gap-2">
-                        <i data-lucide="log-in" class="w-4 h-4"></i> Sign In
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        class="btn-gold w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide uppercase flex items-center justify-center gap-2"
+                        id="loginButton"
+                    >
+                        <i data-lucide="log-in" class="w-4 h-4"></i> 
+                        <span id="loginButtonText">Sign In</span>
+                        <!-- Loading Spinner (hidden by default) -->
+                        <svg id="loginSpinner" class="animate-spin h-4 w-4 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
                     </button>
                 </form>
                 
+                <!-- Register Link -->
                 <div class="mt-6 text-center text-sm text-muted-custom">
-                    Not a member yet? <a href="membership.html" class="text-gold font-semibold hover:underline">Join Now</a>
+                    Not a member yet? 
+                    <a href="membership.html" class="text-gold font-semibold hover:underline">Join Now</a>
                 </div>
             </div>
             
-            <div class="mt-6 text-center">
+            <!-- Mobile Back to Home (visible only on small screens) -->
+            <div class="mt-6 text-center lg:hidden">
                 <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors inline-flex items-center gap-1">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home
                 </a>
@@ -82,6 +198,76 @@
         </div>
     </div>
 
+    <!-- Login Page Specific JavaScript -->
+    <script>
+        // Password visibility toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('passwordIcon');
+            
+            if (togglePassword && passwordInput && passwordIcon) {
+                togglePassword.addEventListener('click', function() {
+                    // Toggle password visibility
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    
+                    // Toggle icon
+                    passwordIcon.setAttribute('data-lucide', type === 'password' ? 'eye' : 'eye-off');
+                    lucide.createIcons();
+                });
+            }
+
+            // Enhanced login form handling
+            const loginForm = document.getElementById('loginForm');
+            const loginButton = document.getElementById('loginButton');
+            const loginButtonText = document.getElementById('loginButtonText');
+            const loginSpinner = document.getElementById('loginSpinner');
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form data
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    
+                    // Basic validation
+                    if (!email || !password) {
+                        showToast('Please fill in all fields.');
+                        return false;
+                    }
+                    
+                    if (password.length < 6) {
+                        showToast('Password must be at least 6 characters.');
+                        return false;
+                    }
+                    
+                    // Show loading state
+                    loginButton.disabled = true;
+                    loginButtonText.textContent = 'Signing in...';
+                    loginSpinner.classList.remove('hidden');
+                    
+                    // Simulate API call (replace with actual authentication)
+                    setTimeout(function() {
+                        showToast('Login successful! Redirecting to dashboard...');
+                        
+                        // Reset button state
+                        loginButton.disabled = false;
+                        loginButtonText.textContent = 'Sign In';
+                        loginSpinner.classList.add('hidden');
+                        
+                        // Redirect to dashboard (uncomment when ready)
+                        // window.location.href = 'dashboard.html';
+                    }, 1500);
+                    
+                    return false;
+                });
+            }
+        });
+    </script>
+
+    <!-- Main JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>

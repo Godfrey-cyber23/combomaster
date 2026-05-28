@@ -3,63 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us — ComboMaster Fitness</title>
+    <title>Contact Us — ComboMaster Fitness | Get In Touch</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- External CSS -->
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            gold: '#D4A853',
+                            dark: '#0F0F0F',
+                            darker: '#050505',
+                            card: '#1A1A1A'
+                        }
+                    }
+                }
+            }
         }
     </script>
 </head>
 <body class="font-sans antialiased">
 
-    <!-- Toast -->
-    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+    <!-- Toast Notification -->
+    <div id="toast" class="toast rounded-xl px-6 py-4 flex items-center gap-3 shadow-lg">
         <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
         <span id="toast-message" class="text-sm font-medium"></span>
     </div>
 
     <!-- Navigation -->
-    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex items-center justify-between py-4">
-                <a href="index.html" class="flex items-center gap-3">
-                    <img src="images/gym_logo.jpg" alt="Logo" class="h-10 w-auto">
-                    <span class="font-display text-xl text-gold hidden sm:block">COMBOMASTER</span>
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto object-contain">
+                    <div class="hidden sm:block">
+                        <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
+                        <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
+                    </div>
                 </a>
+
+                <!-- Desktop Menu -->
                 <div class="hidden lg:flex items-center gap-6">
-                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Home</a>
-                    <a href="about.html" class="text-sm text-muted-custom hover:text-gold transition-colors">About</a>
-                    <a href="training.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Training</a>
-                    <a href="mealplans.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
-                    <a href="shop.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Shop</a>
-                    <a href="transformations.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Results</a>
-                    <a href="contact.html" class="text-sm text-gold font-semibold">Contact</a>
+                    <a href="index.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="about.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">About</a>
+                    <a href="training.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Training</a>
+                    <a href="mealplans.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
+                    <a href="shop.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Shop</a>
+                    <a href="transformations.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Results</a>
+                    <a href="contact.html" class="text-sm tracking-wide text-gold font-semibold transition-colors">Contact</a>
                 </div>
+
+                <!-- Desktop CTA + Theme Toggle -->
                 <div class="hidden lg:flex items-center gap-3">
-                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <button id="theme-toggle-desktop" class="theme-toggle-btn" aria-label="Toggle light/dark mode">
+                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-desktop"></i>
+                    </button>
                     <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
                     <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
                 </div>
-                <div class="flex items-center gap-2 lg:hidden">
-                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
-                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i></button>
+
+                <!-- Mobile Menu Button + Theme Toggle -->
+                <div class="lg:hidden flex items-center gap-2">
+                    <button id="theme-toggle-mobile-btn" class="theme-toggle-btn p-2" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-mobile"></i>
+                    </button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle menu">
+                        <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
+                    </button>
                 </div>
             </div>
-            <!-- Mobile Menu -->
+
+            <!-- Mobile Menu Dropdown -->
             <div id="mobile-menu" class="mobile-menu lg:hidden">
                 <div class="pb-6 space-y-1">
-                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Home</a>
-                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">About</a>
-                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Training</a>
-                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Meal Plans</a>
-                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Shop</a>
-                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Results</a>
-                    <a href="contact.html" class="block py-3 px-4 text-gold font-semibold" onclick="closeMobileMenu()">Contact</a>
-                    <div class="pt-3 flex gap-2">
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Transformations</a>
+                    <a href="contact.html" class="block py-3 px-4 text-gold font-semibold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Contact</a>
+                    <div class="pt-3 flex gap-2 px-4">
                         <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
                         <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
                     </div>
@@ -69,85 +111,148 @@
     </nav>
 
     <!-- PAGE HERO -->
-    <section class="page-hero">
-        <img src="images/contact-hero.jpg" alt="Contact ComboMaster">
-        <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 text-center">
-            <span class="text-xs font-semibold tracking-widest uppercase text-gold">Contact</span>
-            <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
-                GET IN <span class="text-gradient">TOUCH</span>
+    <section class="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden">
+        <div class="absolute inset-0">
+            <img src="images/contact-hero.jpg" alt="Contact ComboMaster Fitness" class="w-full h-full object-cover opacity-40">
+            <div class="hero-overlay absolute inset-0"></div>
+            <div class="hero-bottom absolute inset-0"></div>
+        </div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-gold/30 bg-brand-gold/10 backdrop-blur-sm mb-6 animate-fade-in-up">
+                <div class="w-2 h-2 rounded-full bg-brand-gold pulse-gold"></div>
+                <span class="text-xs font-semibold tracking-widest uppercase text-gold">Get In Touch</span>
+            </div>
+            <h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-5 animate-fade-in-up" style="animation-delay: 0.1s">
+                CONTACT <span class="text-gradient">US</span>
             </h1>
-            <p class="text-muted-custom max-w-2xl mx-auto mt-4">Ready to start your transformation? Have questions? We'd love to hear from you.</p>
+            <p class="text-base sm:text-lg md:text-xl text-muted-custom max-w-2xl mx-auto animate-fade-in-up" style="animation-delay: 0.2s">
+                Ready to start your transformation? Have questions? We'd love to hear from you.
+            </p>
         </div>
     </section>
 
     <!-- CONTACT CONTENT -->
-    <section class="py-12 sm:py-16 section-padding">
+    <section class="py-16 md:py-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             
-            <div class="grid lg:grid-cols-2 gap-12">
+            <div class="grid lg:grid-cols-2 gap-8 lg:gap-12">
                 
-                <!-- Left Column: Info -->
-                <div class="reveal-on-scroll">
-                    <div class="space-y-5 mb-10">
+                <!-- Left Column: Contact Info -->
+                <div class="space-y-6 reveal-on-scroll">
+                    <!-- Section Header -->
+                    <div class="mb-6">
+                        <span class="text-xs font-semibold tracking-widest uppercase text-gold border-l-3 border-gold pl-3">Connect With Us</span>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-tight mt-3">Reach Out Anytime</h2>
+                        <p class="text-muted-custom text-sm mt-2">Our team is ready to assist you with any questions or inquiries.</p>
+                    </div>
+                    
+                    <div class="space-y-4">
                         <!-- Phone -->
-                        <div class="glass-card contact-info-card rounded-2xl p-6 flex items-start gap-4 card-hover">
-                            <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="phone" class="w-6 h-6 text-gold"></i></div>
-                            <div><h4 class="font-semibold mb-1">Phone</h4><p class="text-muted-custom text-sm">+260 97X XXX XXX</p></div>
-                        </div>
-                        <!-- WhatsApp -->
-                        <div class="glass-card contact-info-card rounded-2xl p-6 flex items-start gap-4 card-hover">
-                            <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0"><i data-lucide="message-circle" class="w-6 h-6 text-green-400"></i></div>
+                        <div class="glass-card contact-info-card rounded-2xl p-5 md:p-6 flex items-start gap-4 card-hover transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="phone" class="w-6 h-6 text-gold"></i>
+                            </div>
                             <div>
-                                <h4 class="font-semibold mb-1">WhatsApp</h4>
+                                <h4 class="font-semibold text-base mb-1">Phone</h4>
                                 <p class="text-muted-custom text-sm">+260 97X XXX XXX</p>
-                                <a href="#" class="text-green-400 text-sm font-semibold inline-flex items-center gap-1 mt-1 hover:underline">Chat Now <i data-lucide="external-link" class="w-3 h-3"></i></a>
+                                <p class="text-muted-custom text-sm">Mon-Fri, 9am - 6pm</p>
                             </div>
                         </div>
-                        <!-- Email -->
-                        <div class="glass-card contact-info-card rounded-2xl p-6 flex items-start gap-4 card-hover">
-                            <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0"><i data-lucide="mail" class="w-6 h-6 text-blue-400"></i></div>
-                            <div><h4 class="font-semibold mb-1">Email</h4><p class="text-muted-custom text-sm">info@combomasterfitness.com</p></div>
+                        
+                        <!-- WhatsApp -->
+                        <div class="glass-card contact-info-card rounded-2xl p-5 md:p-6 flex items-start gap-4 card-hover transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="message-circle" class="w-6 h-6 text-green-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-base mb-1">WhatsApp</h4>
+                                <p class="text-muted-custom text-sm">+260 97X XXX XXX</p>
+                                <a href="#" class="text-green-400 text-sm font-semibold inline-flex items-center gap-1 mt-1 hover:underline transition-all">
+                                    Chat Now <i data-lucide="external-link" class="w-3 h-3"></i>
+                                </a>
+                            </div>
                         </div>
+                        
+                        <!-- Email -->
+                        <div class="glass-card contact-info-card rounded-2xl p-5 md:p-6 flex items-start gap-4 card-hover transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="mail" class="w-6 h-6 text-blue-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-base mb-1">Email</h4>
+                                <p class="text-muted-custom text-sm">info@combomasterfitness.com</p>
+                                <p class="text-muted-custom text-sm">support@combomasterfitness.com</p>
+                            </div>
+                        </div>
+                        
                         <!-- Location -->
-                        <div class="glass-card contact-info-card rounded-2xl p-6 flex items-start gap-4 card-hover">
-                            <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center flex-shrink-0"><i data-lucide="map-pin" class="w-6 h-6 text-red-400"></i></div>
-                            <div><h4 class="font-semibold mb-1">Location</h4><p class="text-muted-custom text-sm">Lusaka, Zambia</p></div>
+                        <div class="glass-card contact-info-card rounded-2xl p-5 md:p-6 flex items-start gap-4 card-hover transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="map-pin" class="w-6 h-6 text-red-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-base mb-1">Location</h4>
+                                <p class="text-muted-custom text-sm">Lusaka, Zambia</p>
+                                <p class="text-muted-custom text-sm">View on Google Maps →</p>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Social Media -->
-                    <div>
-                        <h4 class="font-semibold mb-4">Follow Us</h4>
-                        <div class="flex gap-3">
-                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all"><i data-lucide="facebook" class="w-5 h-5 text-muted-custom"></i></a>
-                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all"><i data-lucide="instagram" class="w-5 h-5 text-muted-custom"></i></a>
-                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all"><i data-lucide="youtube" class="w-5 h-5 text-muted-custom"></i></a>
-                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all"><i data-lucide="twitter" class="w-5 h-5 text-muted-custom"></i></a>
+                    <div class="mt-8">
+                        <h4 class="font-semibold text-base mb-4">Follow Our Journey</h4>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all group">
+                                <i data-lucide="facebook" class="w-5 h-5 text-muted-custom group-hover:text-gold transition-colors"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all group">
+                                <i data-lucide="instagram" class="w-5 h-5 text-muted-custom group-hover:text-gold transition-colors"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all group">
+                                <i data-lucide="youtube" class="w-5 h-5 text-muted-custom group-hover:text-gold transition-colors"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all group">
+                                <i data-lucide="twitter" class="w-5 h-5 text-muted-custom group-hover:text-gold transition-colors"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 rounded-xl glass-card flex items-center justify-center hover:bg-brand-gold/10 hover:border-brand-gold/50 transition-all group">
+                                <i data-lucide="linkedin" class="w-5 h-5 text-muted-custom group-hover:text-gold transition-colors"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Column: Form -->
-                <div class="glass-card rounded-2xl p-6 sm:p-8 reveal-on-scroll">
-                    <h3 class="font-display text-2xl font-semibold tracking-tight mb-6">Send a Message</h3>
+                <!-- Right Column: Contact Form -->
+                <div class="glass-card rounded-2xl p-6 sm:p-8 md:p-10 reveal-on-scroll" style="animation-delay: 0.1s">
+                    <div class="mb-6">
+                        <h3 class="font-display text-2xl md:text-3xl font-bold tracking-tight mb-2">Send a Message</h3>
+                        <p class="text-muted-custom text-sm">Fill out the form and we'll get back to you within 24 hours.</p>
+                    </div>
+                    
                     <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-5">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="text-sm text-muted-custom mb-1.5 block">First Name</label>
-                                <input type="text" required class="form-input" placeholder="John">
+                                <label class="text-sm font-medium text-muted-custom mb-1.5 block">First Name *</label>
+                                <input type="text" required class="form-input w-full" placeholder="John">
                             </div>
                             <div>
-                                <label class="text-sm text-muted-custom mb-1.5 block">Last Name</label>
-                                <input type="text" required class="form-input" placeholder="Doe">
+                                <label class="text-sm font-medium text-muted-custom mb-1.5 block">Last Name *</label>
+                                <input type="text" required class="form-input w-full" placeholder="Doe">
                             </div>
                         </div>
+                        
                         <div>
-                            <label class="text-sm text-muted-custom mb-1.5 block">Email</label>
-                            <input type="email" required class="form-input" placeholder="john@example.com">
+                            <label class="text-sm font-medium text-muted-custom mb-1.5 block">Email Address *</label>
+                            <input type="email" required class="form-input w-full" placeholder="john@example.com">
                         </div>
+                        
                         <div>
-                            <label class="text-sm text-muted-custom mb-1.5 block">I'm interested in</label>
-                            <select class="form-input">
+                            <label class="text-sm font-medium text-muted-custom mb-1.5 block">Phone Number</label>
+                            <input type="tel" class="form-input w-full" placeholder="+260 XXX XXX XXX">
+                        </div>
+                        
+                        <div>
+                            <label class="text-sm font-medium text-muted-custom mb-1.5 block">I'm interested in *</label>
+                            <select class="form-input w-full" required>
                                 <option value="">Select an option</option>
                                 <option>Training Programs</option>
                                 <option>Meal Plans</option>
@@ -155,52 +260,137 @@
                                 <option>Competition Prep</option>
                                 <option>Shop Products</option>
                                 <option>Partnership Inquiry</option>
+                                <option>Membership Questions</option>
                                 <option>Other</option>
                             </select>
                         </div>
+                        
                         <div>
-                            <label class="text-sm text-muted-custom mb-1.5 block">Message</label>
-                            <textarea required rows="4" class="form-input resize-none" placeholder="Tell us about your goals..."></textarea>
+                            <label class="text-sm font-medium text-muted-custom mb-1.5 block">Message *</label>
+                            <textarea required rows="4" class="form-input w-full resize-none" placeholder="Tell us about your goals, questions, or how we can help..."></textarea>
                         </div>
-                        <button type="submit" class="btn-gold w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide uppercase flex items-center justify-center gap-2">
-                            <i data-lucide="send" class="w-4 h-4"></i> Send Message
+                        
+                        <button type="submit" class="btn-gold w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide uppercase flex items-center justify-center gap-2 transition-all group">
+                            <i data-lucide="send" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i> 
+                            Send Message
                         </button>
+                        
+                        <p class="text-xs text-muted-custom text-center pt-2">
+                            By submitting, you agree to our privacy policy. We respect your data.
+                        </p>
                     </form>
                 </div>
-
             </div>
         </div>
     </section>
 
-    <!-- FOOTER -->
+    <!-- FAQ Section -->
+    <section class="py-16 md:py-20 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 reveal-on-scroll">
+                <span class="text-xs font-semibold tracking-widest uppercase text-gold">FAQ</span>
+                <h2 class="font-display text-3xl sm:text-4xl font-bold tracking-tight mt-3">
+                    Frequently Asked <span class="text-gradient">Questions</span>
+                </h2>
+                <p class="text-muted-custom max-w-2xl mx-auto mt-4">
+                    Quick answers to common questions about our programs and services.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <div class="glass-card rounded-xl p-5 reveal-on-scroll">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="help-circle" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h4 class="font-semibold text-sm mb-2">How do I get started with a program?</h4>
+                            <p class="text-muted-custom text-sm">Simply fill out the contact form or book a free consultation call. We'll assess your goals and match you with the right program.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-5 reveal-on-scroll" style="animation-delay: 0.1s">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="help-circle" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h4 class="font-semibold text-sm mb-2">Can I access programs online?</h4>
+                            <p class="text-muted-custom text-sm">Yes! All our training and meal plans are available digitally. You can follow along from anywhere in the world.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-5 reveal-on-scroll" style="animation-delay: 0.2s">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="help-circle" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h4 class="font-semibold text-sm mb-2">Do you offer in-person training?</h4>
+                            <p class="text-muted-custom text-sm">Yes, we have select in-person coaching slots available in Lusaka. Contact us to check availability.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-5 reveal-on-scroll" style="animation-delay: 0.3s">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="help-circle" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h4 class="font-semibold text-sm mb-2">What is your refund policy?</h4>
+                            <p class="text-muted-custom text-sm">We offer a 7-day money-back guarantee for digital programs. For coaching, we have flexible terms—just ask!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section (Optional) -->
+    <section class="py-16 md:py-20 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10 reveal-on-scroll">
+                <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-tight">
+                    Find Us <span class="text-gradient">Here</span>
+                </h2>
+            </div>
+            <div class="glass-card rounded-2xl overflow-hidden reveal-on-scroll">
+                <div class="h-[300px] md:h-[400px] w-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                    <!-- Map placeholder - Replace with actual Google Maps embed if needed -->
+                    <div class="text-center">
+                        <i data-lucide="map" class="w-16 h-16 text-gold/40 mx-auto mb-3"></i>
+                        <p class="text-muted-custom text-sm">📍 Lusaka, Zambia</p>
+                        <p class="text-muted-custom text-xs mt-1">Interactive map available upon request</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="py-12 border-t border-[var(--border-color)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
                 <div class="col-span-2 md:col-span-1">
-                    <a href="index.html" class="flex items-center gap-2 mb-4"><img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto"><span class="font-display text-lg text-gold">COMBOMASTER</span></a>
+                    <a href="index.html" class="flex items-center gap-2 mb-4">
+                        <img src="images/gym_logo.jpg" alt="ComboMaster Fitness Logo" class="h-8 w-auto object-contain">
+                        <span class="font-display text-lg text-gold">COMBOMASTER</span>
+                    </a>
                     <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Links</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="training.html">Training</a></li>
-                        <li><a href="membership.html">Membership</a></li>
+                        <li><a href="about.html" class="hover:text-gold transition-colors">About</a></li>
+                        <li><a href="training.html" class="hover:text-gold transition-colors">Training</a></li>
+                        <li><a href="membership.html" class="hover:text-gold transition-colors">Membership</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Shop</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="shop.html">Supplements</a></li>
-                        <li><a href="shop.html">Attire</a></li>
-                        <li><a href="shop.html">Equipment</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Supplements</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Attire</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Equipment</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Connect</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="contact.html">Contact Us</a></li>
-                        <li><a href="login.html">Client Login</a></li>
+                        <li><a href="contact.html" class="hover:text-gold transition-colors">Contact Us</a></li>
+                        <li><a href="login.html" class="hover:text-gold transition-colors">Client Login</a></li>
                     </ul>
                 </div>
             </div>
@@ -210,6 +400,30 @@
         </div>
     </footer>
 
+    <!-- External JavaScript -->
     <script src="script.js"></script>
+    
+    <!-- Page-specific form handler -->
+    <script>
+        // Ensure form submission works with toast
+        window.handleContactSubmit = function(e) {
+            if (e) e.preventDefault();
+            if (typeof showToast === 'function') {
+                showToast('Message sent successfully! We\'ll get back to you soon.', 'check-circle');
+            } else {
+                alert('Message sent successfully! We\'ll get back to you soon.');
+            }
+            if (e && e.target) e.target.reset();
+            return false;
+        };
+        
+        // Also ensure theme toggle buttons are initialized if not already
+        document.addEventListener('DOMContentLoaded', function() {
+            // Reinitialize Lucide icons for any dynamic content
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
 </body>
 </html>

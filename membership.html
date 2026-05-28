@@ -4,61 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Membership — ComboMaster Fitness</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        display: ['Oswald', 'sans-serif'] 
+                    },
+                    colors: { 
+                        brand: { 
+                            gold: '#D4A853', 
+                            dark: '#0F0F0F', 
+                            darker: '#050505', 
+                            card: '#1A1A1A' 
+                        } 
+                    }
+                }
+            }
         }
     </script>
 </head>
 <body class="font-sans antialiased">
 
-    <!-- Toast -->
+    <!-- Toast Notification -->
     <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
         <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
         <span id="toast-message" class="text-sm font-medium"></span>
     </div>
 
     <!-- Navigation -->
-    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex items-center justify-between py-4">
-                <a href="index.html" class="flex items-center gap-3">
-                    <img src="images/gym_logo.jpg" alt="Logo" class="h-10 w-auto">
-                    <span class="font-display text-xl text-gold hidden sm:block">COMBOMASTER</span>
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
+                    <div class="hidden sm:block">
+                        <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
+                        <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
+                    </div>
                 </a>
+
+                <!-- Desktop Navigation -->
                 <div class="hidden lg:flex items-center gap-6">
-                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Home</a>
-                    <a href="about.html" class="text-sm text-muted-custom hover:text-gold transition-colors">About</a>
-                    <a href="training.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Training</a>
-                    <a href="mealplans.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
-                    <a href="shop.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Shop</a>
-                    <a href="transformations.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Results</a>
-                    <a href="contact.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Contact</a>
+                    <a href="index.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="about.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">About</a>
+                    <a href="training.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Training</a>
+                    <a href="mealplans.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
+                    <a href="shop.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Shop</a>
+                    <a href="transformations.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Results</a>
+                    <a href="contact.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Contact</a>
                 </div>
+
+                <!-- Desktop CTA Buttons -->
                 <div class="hidden lg:flex items-center gap-3">
-                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
                     <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
                     <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
                 </div>
+
+                <!-- Mobile Menu Buttons -->
                 <div class="flex items-center gap-2 lg:hidden">
-                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
-                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i></button>
+                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle menu">
+                        <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
+                    </button>
                 </div>
             </div>
+
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="mobile-menu lg:hidden">
                 <div class="pb-6 space-y-1">
-                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Home</a>
-                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">About</a>
-                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Training</a>
-                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Meal Plans</a>
-                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Shop</a>
-                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Results</a>
-                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Contact</a>
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Transformations</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg" onclick="closeMobileMenu()">Contact</a>
                     <div class="pt-3 flex gap-2">
                         <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
                         <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
@@ -68,7 +110,7 @@
         </div>
     </nav>
 
-    <!-- PAGE HERO -->
+    <!-- Page Hero -->
     <section class="page-hero">
         <img src="images/membership-hero.jpg" alt="ComboMaster Community">
         <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 text-center">
@@ -80,13 +122,14 @@
         </div>
     </section>
 
-    <!-- PRICING TIERS -->
+    <!-- Pricing Tiers -->
     <section class="py-12 sm:py-16 section-padding">
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
             
+            <!-- Pricing Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
                 
-                <!-- Starter -->
+                <!-- Starter Plan -->
                 <div class="glass-card card-hover rounded-2xl p-8 pricing-card reveal-on-scroll">
                     <div class="mb-6">
                         <h3 class="font-display text-xl font-semibold tracking-tight mb-1">Starter</h3>
@@ -96,18 +139,18 @@
                         <span class="font-display text-4xl font-semibold text-gold">$29</span>
                         <span class="text-muted-custom">/month</span>
                     </div>
-                    <ul class="space-y-3 mb-8 flex-grow">
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Access to workout library</li>
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Basic meal plan templates</li>
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Community forum access</li>
-                        <li class="pricing-feature disabled text-muted-custom"><i data-lucide="x" class="text-red-400/50"></i> Personal coaching</li>
-                        <li class="pricing-feature disabled text-muted-custom"><i data-lucide="x" class="text-red-400/50"></i> Progress tracking</li>
+                    <ul class="space-y-3 mb-8">
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Access to workout library</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Basic meal plan templates</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Community forum access</li>
+                        <li class="pricing-feature disabled"><i data-lucide="x"></i> Personal coaching</li>
+                        <li class="pricing-feature disabled"><i data-lucide="x"></i> Progress tracking</li>
                     </ul>
-                    <button onclick="showToast('Starter plan selected! Redirecting to checkout...')" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase">Choose Starter</button>
+                    <button onclick="showToast('Starter plan selected! Redirecting to checkout...')" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase mt-auto">Choose Starter</button>
                 </div>
 
-                <!-- Pro (Featured) -->
-                <div class="glass-card rounded-2xl p-8 pricing-card featured gold-glow reveal-on-scroll relative border-brand-gold/40">
+                <!-- Pro Plan (Featured) -->
+                <div class="glass-card rounded-2xl p-8 pricing-card featured gold-glow reveal-on-scroll relative border-brand-gold/40 transform md:scale-105">
                     <div class="popular-badge">Most Popular</div>
                     <div class="mb-6 pt-2">
                         <h3 class="font-display text-xl font-semibold tracking-tight mb-1">Pro</h3>
@@ -117,17 +160,17 @@
                         <span class="font-display text-4xl font-semibold text-gold">$79</span>
                         <span class="text-muted-custom">/month</span>
                     </div>
-                    <ul class="space-y-3 mb-8 flex-grow">
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> All workout programs</li>
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Customized meal plans</li>
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Weekly progress check-ins</li>
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Coach messaging</li>
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Fitness challenges</li>
+                    <ul class="space-y-3 mb-8">
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> All workout programs</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Customized meal plans</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Weekly progress check-ins</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Coach messaging</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Fitness challenges</li>
                     </ul>
-                    <button onclick="showToast('Pro plan selected! Redirecting to checkout...')" class="btn-gold w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase">Choose Pro</button>
+                    <button onclick="showToast('Pro plan selected! Redirecting to checkout...')" class="btn-gold w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase mt-auto">Choose Pro</button>
                 </div>
 
-                <!-- Elite -->
+                <!-- Elite Plan -->
                 <div class="glass-card card-hover rounded-2xl p-8 pricing-card reveal-on-scroll">
                     <div class="mb-6">
                         <h3 class="font-display text-xl font-semibold tracking-tight mb-1">Elite</h3>
@@ -137,20 +180,69 @@
                         <span class="font-display text-4xl font-semibold text-gold">$149</span>
                         <span class="text-muted-custom">/month</span>
                     </div>
-                    <ul class="space-y-3 mb-8 flex-grow">
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Everything in Pro</li>
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> 1-on-1 video coaching</li>
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Competition prep guidance</li>
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Posing sessions</li>
-                        <li class="pricing-feature text-muted-custom"><i data-lucide="check" class="text-green-400"></i> Priority support 24/7</li>
+                    <ul class="space-y-3 mb-8">
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Everything in Pro</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> 1-on-1 video coaching</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Competition prep guidance</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Posing sessions</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Priority support 24/7</li>
                     </ul>
-                    <button onclick="showToast('Elite plan selected! Redirecting to checkout...')" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase">Choose Elite</button>
+                    <button onclick="showToast('Elite plan selected! Redirecting to checkout...')" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase mt-auto">Choose Elite</button>
+                </div>
+            </div>
+
+            <!-- Feature Comparison Table -->
+            <div class="glass-card rounded-2xl p-6 sm:p-8 reveal-on-scroll">
+                <h2 class="font-display text-2xl font-semibold tracking-tight mb-6 text-center">Plan Comparison</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-[var(--border-color)]">
+                                <th class="text-left py-3 px-4 text-muted-custom font-medium">Feature</th>
+                                <th class="py-3 px-4 text-center text-muted-custom font-medium">Starter</th>
+                                <th class="py-3 px-4 text-center text-gold font-semibold">Pro</th>
+                                <th class="py-3 px-4 text-center text-muted-custom font-medium">Elite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-[var(--border-color)]">
+                                <td class="py-3 px-4">Workout Programs</td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
+                            </tr>
+                            <tr class="border-b border-[var(--border-color)]">
+                                <td class="py-3 px-4">Meal Plans</td>
+                                <td class="py-3 px-4 text-center text-muted-custom">Basic</td>
+                                <td class="py-3 px-4 text-center text-gold font-semibold">Custom</td>
+                                <td class="py-3 px-4 text-center text-gold font-semibold">Custom</td>
+                            </tr>
+                            <tr class="border-b border-[var(--border-color)]">
+                                <td class="py-3 px-4">Coach Support</td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
+                                <td class="py-3 px-4 text-center">Messaging</td>
+                                <td class="py-3 px-4 text-center text-gold font-semibold">Video Calls</td>
+                            </tr>
+                            <tr class="border-b border-[var(--border-color)]">
+                                <td class="py-3 px-4">Progress Tracking</td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">Competition Prep</td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CLIENT PORTAL PREVIEW -->
+    <!-- Client Portal Preview -->
     <section class="py-12 sm:py-16 border-t border-[var(--border-color)] section-padding">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
@@ -163,46 +255,88 @@
                     
                     <div class="space-y-5">
                         <div class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="download" class="w-5 h-5 text-gold"></i></div>
-                            <div><h4 class="font-semibold">Access Purchased Programs</h4><p class="text-sm text-muted-custom mt-1">Download workouts and meal plans anytime</p></div>
+                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="download" class="w-5 h-5 text-gold"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-sm">Access Purchased Programs</h4>
+                                <p class="text-xs text-muted-custom mt-1">Download workouts and meal plans anytime</p>
+                            </div>
                         </div>
                         <div class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="bar-chart-3" class="w-5 h-5 text-gold"></i></div>
-                            <div><h4 class="font-semibold">Track Your Progress</h4><p class="text-sm text-muted-custom mt-1">Log workouts, measurements, and photos</p></div>
+                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="bar-chart-3" class="w-5 h-5 text-gold"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-sm">Track Your Progress</h4>
+                                <p class="text-xs text-muted-custom mt-1">Log workouts, measurements, and photos</p>
+                            </div>
                         </div>
                         <div class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="message-circle" class="w-5 h-5 text-gold"></i></div>
-                            <div><h4 class="font-semibold">Communicate with Coaches</h4><p class="text-sm text-muted-custom mt-1">Get answers and support directly</p></div>
+                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="message-circle" class="w-5 h-5 text-gold"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-sm">Communicate with Coaches</h4>
+                                <p class="text-xs text-muted-custom mt-1">Get answers and support directly</p>
+                            </div>
                         </div>
                         <div class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0"><i data-lucide="swords" class="w-5 h-5 text-gold"></i></div>
-                            <div><h4 class="font-semibold">Join Fitness Challenges</h4><p class="text-sm text-muted-custom mt-1">Compete and stay motivated with the community</p></div>
+                            <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="swords" class="w-5 h-5 text-gold"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-sm">Join Fitness Challenges</h4>
+                                <p class="text-xs text-muted-custom mt-1">Compete and stay motivated with the community</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Dashboard Mockup -->
+                <!-- Right: Dashboard Mockup -->
                 <div class="reveal-on-scroll">
                     <div class="dashboard-mockup p-6">
                         <div class="flex items-center justify-between mb-6">
-                            <div><p class="text-xs text-muted-custom">Welcome back,</p><p class="font-semibold">John D.</p></div>
+                            <div>
+                                <p class="text-xs text-muted-custom">Welcome back,</p>
+                                <p class="font-semibold">John D.</p>
+                            </div>
                             <div class="w-10 h-10 rounded-full bg-brand-gold/20 overflow-hidden border-2 border-brand-gold/30">
-                                <img src="images/avatar.jpg" alt="User" class="w-full h-full object-cover">
+                                <img src="images/avatar.jpg" alt="User Avatar" class="w-full h-full object-cover">
                             </div>
                         </div>
                         <div class="grid grid-cols-3 gap-3 mb-6">
-                            <div class="dash-stat"><p class="text-xs text-muted-custom">Workouts</p><p class="font-display text-xl font-semibold text-gold">48</p></div>
-                            <div class="dash-stat"><p class="text-xs text-muted-custom">Weight</p><p class="font-display text-xl font-semibold text-green-400">-12kg</p></div>
-                            <div class="dash-stat"><p class="text-xs text-muted-custom">Streak</p><p class="font-display text-xl font-semibold text-gold">21</p></div>
+                            <div class="dash-stat">
+                                <p class="text-xs text-muted-custom">Workouts</p>
+                                <p class="font-display text-xl font-semibold text-gold">48</p>
+                            </div>
+                            <div class="dash-stat">
+                                <p class="text-xs text-muted-custom">Lost</p>
+                                <p class="font-display text-xl font-semibold text-green-400">-12kg</p>
+                            </div>
+                            <div class="dash-stat">
+                                <p class="text-xs text-muted-custom">Streak</p>
+                                <p class="font-display text-xl font-semibold text-gold">21</p>
+                            </div>
                         </div>
                         <div class="mb-6">
-                            <div class="flex justify-between text-xs mb-1"><span class="text-muted-custom">Monthly Goal</span><span class="text-gold font-semibold">78%</span></div>
-                            <div class="dash-progress-track"><div class="dash-progress-fill"></div></div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-muted-custom">Monthly Goal</span>
+                                <span class="text-gold font-semibold">78%</span>
+                            </div>
+                            <div class="dash-progress-track">
+                                <div class="dash-progress-fill"></div>
+                            </div>
                         </div>
                         <div class="dash-workout">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-lg bg-brand-gold/10 flex items-center justify-center"><i data-lucide="dumbbell" class="w-5 h-5 text-gold"></i></div>
-                                <div><p class="text-sm font-semibold">Upper Body Push</p><p class="text-xs text-muted-custom">Today • 45 min</p></div>
+                                <div class="w-10 h-10 rounded-lg bg-brand-gold/10 flex items-center justify-center">
+                                    <i data-lucide="dumbbell" class="w-5 h-5 text-gold"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold">Upper Body Push</p>
+                                    <p class="text-xs text-muted-custom">Today • 45 min</p>
+                                </div>
                             </div>
                             <button class="btn-gold px-3 py-1.5 rounded-lg text-xs font-semibold">Start</button>
                         </div>
@@ -213,35 +347,67 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
+    <!-- FAQ Section -->
+    <section class="py-12 sm:py-16 border-t border-[var(--border-color)] section-padding bg-[var(--bg-secondary)]">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10 reveal-on-scroll">
+                <span class="text-xs font-semibold tracking-widest uppercase text-gold">FAQ</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-semibold tracking-tight mt-3">Frequently Asked Questions</h2>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="glass-card rounded-xl p-6 reveal-on-scroll">
+                    <h3 class="font-semibold mb-2">Can I switch plans later?</h3>
+                    <p class="text-sm text-muted-custom">Yes! You can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6 reveal-on-scroll" style="transition-delay: 0.1s;">
+                    <h3 class="font-semibold mb-2">Is there a free trial?</h3>
+                    <p class="text-sm text-muted-custom">We offer a 7-day free trial on all plans. Cancel anytime before the trial ends and you won't be charged.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6 reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <h3 class="font-semibold mb-2">How do I cancel my membership?</h3>
+                    <p class="text-sm text-muted-custom">You can cancel anytime from your dashboard. Your access will continue until the end of your current billing period.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6 reveal-on-scroll" style="transition-delay: 0.3s;">
+                    <h3 class="font-semibold mb-2">What payment methods do you accept?</h3>
+                    <p class="text-sm text-muted-custom">We accept all major credit cards, PayPal, and Apple Pay. All payments are processed securely.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="py-12 border-t border-[var(--border-color)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
                 <div class="col-span-2 md:col-span-1">
-                    <a href="index.html" class="flex items-center gap-2 mb-4"><img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto"><span class="font-display text-lg text-gold">COMBOMASTER</span></a>
+                    <a href="index.html" class="flex items-center gap-2 mb-4">
+                        <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-8 w-auto">
+                        <span class="font-display text-lg text-gold">COMBOMASTER</span>
+                    </a>
                     <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
                 </div>
                 <div>
                     <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="training.html">Training</a></li>
-                        <li><a href="membership.html">Membership</a></li>
+                        <li><a href="about.html" class="hover:text-gold transition-colors">About</a></li>
+                        <li><a href="training.html" class="hover:text-gold transition-colors">Training</a></li>
+                        <li><a href="membership.html" class="hover:text-gold transition-colors">Membership</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="shop.html">Supplements</a></li>
-                        <li><a href="shop.html">Attire</a></li>
-                        <li><a href="shop.html">Equipment</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Supplements</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Attire</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Equipment</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="contact.html">Contact Us</a></li>
-                        <li><a href="login.html">Client Login</a></li>
+                        <li><a href="contact.html" class="hover:text-gold transition-colors">Contact Us</a></li>
+                        <li><a href="login.html" class="hover:text-gold transition-colors">Client Login</a></li>
                     </ul>
                 </div>
             </div>
@@ -251,6 +417,7 @@
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="script.js"></script>
 </body>
 </html>

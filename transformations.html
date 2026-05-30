@@ -7,12 +7,492 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
     <script>
         tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            gold: 'rgb(var(--gold-rgb) / <alpha-value>)',
+                            dark: 'var(--bg-base)',
+                            darker: 'var(--bg-secondary)',
+                            card: 'var(--card-bg-solid)'
+                        }
+                    }
+                }
+            }
         }
     </script>
+    <style>
+        /* ===== BASE & VARIABLES ===== */
+        :root {
+            --bg-base: #050505;
+            --bg-secondary: #0F0F0F;
+            --bg-card: rgba(26, 26, 26, 0.6);
+            --text-main: #F5F5F0;
+            --text-muted: #a3a3a3;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --gold-rgb: 212 168 83;
+            --gold: rgb(var(--gold-rgb));
+            --gold-accent: #B8943F;
+            --card-bg-solid: #1A1A1A;
+            --nav-bg: rgba(5, 5, 5, 0.9);
+            --hero-overlay-start: #050505;
+            --hero-overlay-mid: rgba(5, 5, 5, 0.85);
+            --hero-bottom-start: #050505;
+            --hero-bottom-mid: rgba(5, 5, 5, 0.4);
+            --tab-inactive: rgba(255, 255, 255, 0.05);
+            --tab-text: #F5F5F0;
+            --toast-bg: rgba(26, 26, 26, 0.9);
+            --input-bg: #0F0F0F;
+        }
+
+        body.light-theme {
+            --bg-base: #f8f9fc;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.8);
+            --text-main: #1e1e2a;
+            --text-muted: #4b5563;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --gold-rgb: 184 134 11;
+            --gold-accent: #9a7209;
+            --card-bg-solid: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --hero-overlay-start: #f8f9fc;
+            --hero-overlay-mid: rgba(248, 249, 252, 0.85);
+            --hero-bottom-start: #f8f9fc;
+            --hero-bottom-mid: rgba(248, 249, 252, 0.4);
+            --tab-inactive: rgba(0, 0, 0, 0.05);
+            --tab-text: #1e1e2a;
+            --toast-bg: rgba(255, 255, 255, 0.95);
+            --input-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-size: 1.125rem;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        .font-display {
+            font-family: 'Oswald', sans-serif;
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            z-index: 50;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .text-muted-custom {
+            color: var(--text-muted);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, var(--gold), #f5dfa0, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-gold {
+            color: var(--gold);
+        }
+
+        .border-gold {
+            border-color: var(--gold);
+        }
+
+        .hero-overlay {
+            background: linear-gradient(to right, var(--hero-overlay-start), var(--hero-overlay-mid), transparent);
+            transition: background 0.3s ease;
+        }
+
+        .hero-bottom {
+            background: linear-gradient(to top, var(--hero-bottom-start), transparent, var(--hero-bottom-mid));
+            transition: background 0.3s ease;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-gold {
+            background: var(--gold);
+            color: #050505;
+            transition: all 150ms ease;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-accent);
+            box-shadow: 0 0 20px rgba(var(--gold-rgb), 0.4);
+            transform: translateY(-1px);
+        }
+
+        body.light-theme .btn-gold {
+            color: #ffffff;
+        }
+
+        .btn-outline {
+            border: 1px solid rgba(var(--gold-rgb), 0.5);
+            color: var(--gold);
+            background: transparent;
+            transition: all 150ms ease;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-outline:hover {
+            background: rgba(var(--gold-rgb), 0.1);
+            border-color: var(--gold);
+            transform: translateY(-1px);
+        }
+
+        /* ===== CARDS & INTERACTIVE ELEMENTS ===== */
+        .card-hover {
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            border-color: rgba(var(--gold-rgb), 0.5);
+            transform: translateY(-4px);
+        }
+
+        .shop-tab.active {
+            background: var(--gold);
+            color: #050505;
+        }
+
+        .shop-tab:not(.active) {
+            background: var(--tab-inactive);
+            color: var(--tab-text);
+        }
+
+        /* ===== MOBILE MENU ===== */
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background-color: var(--bg-base);
+        }
+
+        .mobile-menu.open {
+            max-height: 800px;
+        }
+
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            background: var(--toast-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.4);
+            }
+            50% {
+                box-shadow: 0 0 20px 5px rgba(var(--gold-rgb), 0.15);
+            }
+        }
+
+        .pulse-gold {
+            animation: pulse-gold 3s infinite;
+        }
+
+        /* ===== SCROLL REVEAL ===== */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== CUSTOM SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-base);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--card-bg-solid);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        body.light-theme ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+        }
+
+        body.light-theme ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        /* ===== RESPONSIVE FIXES ===== */
+        @media (max-width: 640px) {
+            .hero-text {
+                font-size: 2.5rem !important;
+            }
+
+            .section-padding {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+        }
+
+        /* ===== PAGE HERO BANNERS ===== */
+        .page-hero {
+            position: relative;
+            padding-top: 8rem;
+            padding-bottom: 4rem;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, var(--bg-base), rgba(0, 0, 0, 0.3), var(--bg-base));
+            z-index: 1;
+        }
+
+        .page-hero img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.4;
+        }
+
+        .page-hero .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== CONTENT TABS ===== */
+        .tab-content {
+            animation: fadeInTab 0.4s ease;
+        }
+
+        @keyframes fadeInTab {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== THEME TOGGLE BUTTON ===== */
+        .theme-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+
+        /* ===== CRITICAL FIX: Ensure buttons are always clickable ===== */
+        button,
+        a,
+        [role="button"] {
+            pointer-events: auto !important;
+            cursor: pointer;
+        }
+
+        nav button,
+        nav a {
+            position: relative;
+            z-index: 60;
+        }
+
+        #mobile-toggle,
+        #theme-toggle,
+        #theme-toggle-mobile {
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        /* ===== LIGHT MODE SPECIFIC STYLES ===== */
+        body.light-theme .glass-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        body.light-theme nav {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .gold-glow {
+            box-shadow: 0 0 30px rgba(var(--gold-rgb), 0.1);
+        }
+
+        /* ===== UTILITY CLASSES FOR SPACING ===== */
+        .section-padding {
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+        }
+
+        @media (min-width: 768px) {
+            .section-padding {
+                padding-top: 5rem;
+                padding-bottom: 5rem;
+            }
+        }
+
+        /* ===== IMAGE PLACEHOLDER STYLES ===== */
+        .img-placeholder {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-base) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ===== BEFORE/AFTER IMAGES ===== */
+        .ba-images {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .ba-images img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .ba-badge {
+            position: absolute;
+            bottom: 0.5rem;
+            left: 0.5rem;
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .ba-badge.before {
+            background: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .ba-badge.after {
+            background: rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        /* ===== STAR RATING ===== */
+        .star-rating {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .star-rating svg {
+            width: 1rem;
+            height: 1rem;
+            color: var(--gold);
+            fill: var(--gold);
+        }
+
+        /* ===== TRANSFORMATION CARD ===== */
+        .transformation-card {
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .transformation-card:hover {
+            border-color: rgba(var(--gold-rgb), 0.5);
+            transform: translateY(-4px);
+        }
+    </style>
 </head>
 <body class="font-sans antialiased">
 
@@ -23,43 +503,52 @@
     </div>
 
     <!-- Navigation -->
-    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex items-center justify-between py-4">
-                <a href="index.html" class="flex items-center gap-3">
-                    <img src="images/gym_logo.jpg" alt="Logo" class="h-10 w-auto">
-                    <span class="font-display text-xl text-gold hidden sm:block">COMBOMASTER</span>
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-brand-gold to-amber-600 flex items-center justify-center text-white font-bold text-sm shadow-lg">CF</div>
+                    <div class="hidden sm:block">
+                        <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
+                        <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
+                    </div>
                 </a>
                 <div class="hidden lg:flex items-center gap-6">
-                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Home</a>
-                    <a href="about.html" class="text-sm text-muted-custom hover:text-gold transition-colors">About</a>
-                    <a href="training.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Training</a>
-                    <a href="mealplans.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
-                    <a href="shop.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Shop</a>
-                    <a href="transformations.html" class="text-sm text-gold font-semibold">Results</a>
-                    <a href="contact.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Contact</a>
+                    <a href="index.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="about.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">About</a>
+                    <a href="training.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Training</a>
+                    <a href="mealplans.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
+                    <a href="shop.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Shop</a>
+                    <a href="transformations.html" class="text-sm tracking-wide text-gold font-semibold transition-colors">Results</a>
+                    <a href="contact.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Contact</a>
                 </div>
                 <div class="hidden lg:flex items-center gap-3">
-                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <button id="theme-toggle-desktop" class="theme-toggle-btn" aria-label="Toggle light/dark mode">
+                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-desktop"></i>
+                    </button>
                     <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
                     <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
                 </div>
                 <div class="flex items-center gap-2 lg:hidden">
-                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
-                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i></button>
+                    <button id="theme-toggle-mobile" class="theme-toggle-btn p-2" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-mobile"></i>
+                    </button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle menu">
+                        <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
+                    </button>
                 </div>
             </div>
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="mobile-menu lg:hidden">
                 <div class="pb-6 space-y-1">
-                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Home</a>
-                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">About</a>
-                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Training</a>
-                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Meal Plans</a>
-                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Shop</a>
-                    <a href="transformations.html" class="block py-3 px-4 text-gold font-semibold" onclick="closeMobileMenu()">Results</a>
-                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Contact</a>
-                    <div class="pt-3 flex gap-2">
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-gold font-semibold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Results</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Contact</a>
+                    <div class="pt-3 flex gap-2 px-4">
                         <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
                         <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
                     </div>
@@ -158,8 +647,8 @@
                     </div>
                     <p class="text-muted-custom italic mb-6 text-base">"I tried everything before ComboMaster. What makes this different is the combination — the training, the food, the mindset coaching. It all works together. I lost 30kg and gained a whole new life."</p>
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-brand-gold/20 overflow-hidden border-2 border-brand-gold/30">
-                            <img src="images/testimonial1.jpg" alt="Grace" class="w-full h-full object-cover">
+                        <div class="w-12 h-12 rounded-full bg-brand-gold/20 overflow-hidden border-2 border-brand-gold/30 flex items-center justify-center">
+                            <span class="text-gold font-bold text-sm">GT</span>
                         </div>
                         <div>
                             <div class="font-semibold">Grace T.</div>
@@ -175,8 +664,8 @@
                     </div>
                     <p class="text-muted-custom italic mb-6 text-base">"The home workout program fit perfectly into my busy schedule. No gym needed, real results. I'm stronger now at 40 than I was at 25. Thank you ComboMaster!"</p>
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-brand-gold/20 overflow-hidden border-2 border-brand-gold/30">
-                            <img src="images/testimonial2.jpg" alt="Michael" class="w-full h-full object-cover">
+                        <div class="w-12 h-12 rounded-full bg-brand-gold/20 overflow-hidden border-2 border-brand-gold/30 flex items-center justify-center">
+                            <span class="text-gold font-bold text-sm">MB</span>
                         </div>
                         <div>
                             <div class="font-semibold">Michael B.</div>
@@ -207,30 +696,33 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
                 <div class="col-span-2 md:col-span-1">
-                    <a href="index.html" class="flex items-center gap-2 mb-4"><img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto"><span class="font-display text-lg text-gold">COMBOMASTER</span></a>
+                    <a href="index.html" class="flex items-center gap-2 mb-4">
+                        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-brand-gold to-amber-600"></div>
+                        <span class="font-display text-lg text-gold">COMBOMASTER</span>
+                    </a>
                     <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Links</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="training.html">Training</a></li>
-                        <li><a href="membership.html">Membership</a></li>
+                        <li><a href="about.html" class="hover:text-gold transition-colors">About</a></li>
+                        <li><a href="training.html" class="hover:text-gold transition-colors">Training</a></li>
+                        <li><a href="membership.html" class="hover:text-gold transition-colors">Membership</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Shop</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="shop.html">Supplements</a></li>
-                        <li><a href="shop.html">Attire</a></li>
-                        <li><a href="shop.html">Equipment</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Supplements</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Attire</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Equipment</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Connect</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="contact.html">Contact Us</a></li>
-                        <li><a href="login.html">Client Login</a></li>
+                        <li><a href="contact.html" class="hover:text-gold transition-colors">Contact Us</a></li>
+                        <li><a href="login.html" class="hover:text-gold transition-colors">Client Login</a></li>
                     </ul>
                 </div>
             </div>
@@ -240,6 +732,103 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- Inline JS -->
+    <script>
+        // ===== THEME TOGGLE =====
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'light') {
+                document.body.classList.add('light-theme');
+            }
+            updateThemeIcons();
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateThemeIcons();
+        }
+
+        function updateThemeIcons() {
+            const isLight = document.body.classList.contains('light-theme');
+            const iconName = isLight ? 'sun' : 'moon';
+
+            const desktopIcon = document.getElementById('theme-icon-desktop');
+            if (desktopIcon) desktopIcon.setAttribute('data-lucide', iconName);
+
+            const mobileIcon = document.getElementById('theme-icon-mobile');
+            if (mobileIcon) mobileIcon.setAttribute('data-lucide', iconName);
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // ===== MOBILE MENU =====
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu) menu.classList.remove('open');
+        }
+
+        function initMobileMenu() {
+            const toggle = document.getElementById('mobile-toggle');
+            const menu = document.getElementById('mobile-menu');
+
+            if (toggle && menu) {
+                toggle.addEventListener('click', function () {
+                    menu.classList.toggle('open');
+                });
+            }
+        }
+
+        // ===== TOAST =====
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            if (toast && msgEl) {
+                msgEl.textContent = message;
+                toast.classList.add('show');
+                setTimeout(function () {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // ===== SCROLL REVEAL =====
+        function initScrollReveal() {
+            const elements = document.querySelectorAll('.reveal-on-scroll');
+
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            elements.forEach(function (el) {
+                observer.observe(el);
+            });
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', function () {
+            initTheme();
+            initMobileMenu();
+            initScrollReveal();
+
+            const desktopToggle = document.getElementById('theme-toggle-desktop');
+            const mobileToggle = document.getElementById('theme-toggle-mobile');
+
+            if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
+            if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — ComboMaster Fitness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] },
+                    colors: { brand: { gold: 'rgb(var(--gold-rgb) / <alpha-value>)', dark: 'var(--bg-base)', darker: 'var(--bg-secondary)', card: 'var(--card-bg-solid)' } }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg-base: #050505; --bg-secondary: #0F0F0F; --bg-card: rgba(26, 26, 26, 0.6); --text-main: #F5F5F0;
+            --text-muted: #a3a3a3; --border-color: rgba(255, 255, 255, 0.08); --gold-rgb: 212 168 83; --gold: rgb(var(--gold-rgb));
+            --gold-accent: #B8943F; --card-bg-solid: #1A1A1A; --toast-bg: rgba(26, 26, 26, 0.9); --input-bg: #0F0F0F;
+        }
+        body.light-theme {
+            --bg-base: #f8f9fc; --bg-secondary: #f1f5f9; --bg-card: rgba(255, 255, 255, 0.8); --text-main: #1e1e2a;
+            --text-muted: #64748b; --border-color: rgba(0, 0, 0, 0.08); --gold-rgb: 184 134 11; --gold-accent: #9a7209;
+            --card-bg-solid: #ffffff; --toast-bg: rgba(255, 255, 255, 0.95); --input-bg: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { overflow-x: hidden; scroll-behavior: smooth; }
+        body { background-color: var(--bg-base); color: var(--text-main); font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        .font-display { font-family: 'Oswald', sans-serif; }
+        .glass-card { background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--border-color); transition: all 0.3s; }
+        body.light-theme .glass-card { box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .text-muted-custom { color: var(--text-muted); }
+        .text-gold { color: var(--gold); }
+        .text-gradient { background: linear-gradient(to right, var(--gold), #f5dfa0, var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .btn-gold { background: var(--gold); color: #050505; transition: all 150ms; cursor: pointer; border: none; font-weight: 600; }
+        .btn-gold:hover { background: var(--gold-accent); box-shadow: 0 0 20px rgba(var(--gold-rgb), 0.4); transform: translateY(-1px); }
+        body.light-theme .btn-gold { color: #fff; }
+        .btn-outline { border: 1px solid rgba(var(--gold-rgb), 0.5); color: var(--gold); background: transparent; transition: all 150ms; cursor: pointer; font-weight: 600; }
+        .btn-outline:hover { background: rgba(var(--gold-rgb), 0.1); border-color: var(--gold); }
+        .btn-danger { background: #ef4444; color: #fff; transition: all 150ms; cursor: pointer; border: none; font-weight: 600; }
+        .btn-danger:hover { background: #dc2626; }
+        .form-input { background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: var(--text-main); transition: border-color 0.2s; outline: none; font-family: 'Inter', sans-serif; width: 100%; }
+        .form-input::placeholder { color: var(--text-muted); opacity: 0.5; }
+        .form-input:focus { border-color: rgba(var(--gold-rgb), 0.5); box-shadow: 0 0 0 2px rgba(var(--gold-rgb), 0.1); }
+        .form-input.input-error { border-color: #ef4444; }
+        .field-error { color: #ef4444; font-size: 0.7rem; margin-top: 0.25rem; display: none; }
+        .field-error.visible { display: block; }
+
+        .sidebar { width: 260px; transition: width 0.3s ease, transform 0.3s ease; background: var(--bg-secondary); border-right: 1px solid var(--border-color); }
+        .sidebar.collapsed { width: 80px; }
+        .sidebar.collapsed .sidebar-text { display: none; }
+        .sidebar.collapsed .sidebar-header-text { display: none; }
+        .sidebar.collapsed .sidebar-badge { display: none; }
+        .main-content { margin-left: 260px; transition: margin-left 0.3s ease; min-height: 100vh; }
+        .main-content.expanded { margin-left: 80px; }
+        @media (max-width: 1024px) {
+            .sidebar { position: fixed; z-index: 45; transform: translateX(-100%); }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .main-content, .main-content.expanded { margin-left: 0; }
+        }
+
+        .sidebar-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 1.25rem; color: var(--text-muted); font-size: 0.875rem; border-radius: 0.5rem; margin: 0.125rem 0.75rem; transition: all 0.2s; cursor: pointer; white-space: nowrap; text-decoration: none; }
+        .sidebar-link:hover { background: rgba(var(--gold-rgb), 0.05); color: var(--text-main); }
+        .sidebar-link.active { background: rgba(var(--gold-rgb), 0.1); color: var(--gold); }
+        .stat-card { border-left: 4px solid var(--gold); }
+        .progress-ring-bg { stroke: var(--border-color); }
+        .progress-ring-fill { stroke: var(--gold); transition: stroke-dashoffset 0.6s ease; transform: rotate(-90deg); transform-origin: 50% 50%; }
+
+        .toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; transform: translateY(100px); opacity: 0; transition: all 0.4s; background: var(--toast-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--card-bg-solid); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+        .dash-table th { text-align: left; padding: 0.75rem 1rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
+        .dash-table td { padding: 0.75rem 1rem; font-size: 0.875rem; border-bottom: 1px solid var(--border-color); }
+        .dash-table tr:last-child td { border-bottom: none; }
+        .dash-table tr:hover td { background: rgba(var(--gold-rgb), 0.02); }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 1rem; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.3s; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        .chart-dot { transition: r 0.2s; }
+        .chart-dot:hover { r: 6; }
+
+        .custom-checkbox { appearance: none; -webkit-appearance: none; width: 1.1rem; height: 1.1rem; border: 1px solid var(--border-color); border-radius: 0.25rem; background-color: var(--input-bg); cursor: pointer; transition: all 0.15s; flex-shrink: 0; position: relative; }
+        .custom-checkbox:checked { background-color: var(--gold); border-color: var(--gold); }
+        .custom-checkbox:checked::after { content: ''; position: absolute; left: 3px; top: 0px; width: 5px; height: 9px; border: solid #050505; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+        .custom-checkbox:focus { box-shadow: 0 0 0 2px rgba(var(--gold-rgb), 0.15); }
+
+        .msg-bubble { max-width: 80%; padding: 0.75rem 1rem; border-radius: 1rem; font-size: 0.875rem; line-height: 1.5; }
+        .msg-sent { background: rgba(var(--gold-rgb), 0.15); border: 1px solid rgba(var(--gold-rgb), 0.2); }
+        .msg-received { background: var(--bg-secondary); border: 1px solid var(--border-color); }
+
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Toast -->
+    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500" id="toast-icon"></i>
+        <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal-overlay" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal-content p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="modal-title" class="font-display text-xl font-semibold"></h3>
+                <button onclick="closeModal()" class="text-muted-custom hover:text-[var(--text-main)] transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full flex flex-col z-50">
+        <div class="h-16 flex items-center px-5 border-b border-[var(--border-color)] flex-shrink-0">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="h-9 w-9 rounded-full bg-gradient-to-br from-brand-gold to-amber-600 flex items-center justify-center text-white font-bold text-xs shadow-lg flex-shrink-0">CF</div>
+                <div class="sidebar-header-text">
+                    <span class="font-display text-lg tracking-wide font-medium text-gold group-hover:text-white transition-colors leading-none">COMBOMASTER</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="p-4 border-b border-[var(--border-color)] flex-shrink-0">
+            <div class="glass-card rounded-lg p-1 flex">
+                <button onclick="switchRole('user')" id="role-user-btn" class="flex-1 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-md transition-all bg-brand-gold text-brand-darker">User</button>
+                <button onclick="switchRole('coach')" id="role-coach-btn" class="flex-1 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-md transition-all text-muted-custom">Coach</button>
+            </div>
+        </div>
+
+        <nav id="nav-user" class="flex-1 py-4 overflow-y-auto">
+            <div class="px-5 mb-2"><span class="sidebar-text text-[0.65rem] font-bold uppercase tracking-widest text-muted-custom">Main</span></div>
+            <a href="#" class="sidebar-link active" data-view="user-overview" data-role="user"><i data-lucide="layout-dashboard" class="w-5 h-5 flex-shrink-0"></i><span class="sidebar-text">Overview</span></a>
+            <a href="#" class="sidebar-link" data-view="user-workouts" data-role="user"><i data-lucide="dumbbell" class="w-5 h-5 flex-shrink-0"></i><span class="sidebar-text">Workouts</span></a>
+            <a href="#" class="sidebar-link" data-view="user-nutrition" data-role="user"><i data-lucide="utensils" class="w-5 h-5 flex-shrink-0"></i><span class="sidebar-text">Nutrition</span></a>
+            <a href="#" class="sidebar-link" data-view="user-progress" data-role="user"><i data-lucide="trending-up" class="w-5 h-5 flex-shrink-0"></i><span class="sidebar-text">Progress</span></a>
+            <div class="px-5 mt-6 mb-2"><span class="sidebar-text text-[0.65rem] font-bold uppercase tracking-widest text-muted-custom">Account</span></div>
+            <a href="#" class="sidebar-link" data-view="user-messages" data-role="user"><i data-lucide="message-square" class="w-5 h-5 flex-shrink-0"></i><span class="sidebar-text">Messages</span><span class="sidebar-badge ml-auto bg-brand-gold text-brand-darker text-[0.65rem] font-bold px-2 py-0.5 rounded-full">2</span></a>
+            <a href="#" class="sidebar-link" data-view="user-settings" data-role="user"><i data-lucide="settings" class="w-5 h-5 flex-shrink-0"></i><span class="sidebar-text">Settings</span></a>
+        </nav>
+
+        <nav id="nav-coach" class="flex-1 py-4 overflow-y-auto hidden">
+            <div class="px-5 mb-2"><span class="sidebar-text text-[0.65rem] font-bold uppercase tracking-widest text-muted-custom">Management</span></div>
+            <a href="#" class="sidebar-link active" data-view="coach-overview" data-role="coach"><i data-lucide="layout-dashboard" class="w-5 h-5 flex-shrink-0"></i><span class="sidebar-text">Overview</span></a>
+            <a href="#" class="sidebar-link" data-view="coach-clients" data-role="coach"><i data-lucide="users" class="w-5 h-5 flex-shrink-0"></i><span class="sidebar-text">Clients</span></a>
+            <a href="#" class="sidebar-link" data-view="coach-schedule" data-role="coach"><i data-lucide="calendar" class="w-5 h-5 flex-shrink-0"></i><span class="sidebar-text">Schedule</span></a>
+            <a href="#" class="sidebar-link" data-view="coach-programs" data-role="coach"><i data-lucide="file-text" class="w-5 h-5 flex-shrink-0"></i><span class="sidebar-text">Programs</span></a>
+            <div class="px-5 mt-6 mb-2"><span class="sidebar-text text-[0.65rem] font-bold uppercase tracking-widest text-muted-custom">Communication</span></div>
+            <a href="#" class="sidebar-link" data-view="coach-messages" data-role="coach"><i data-lucide="message-square" class="w-5 h-5 flex-shrink-0"></i><span class="sidebar-text">Messages</span><span class="sidebar-badge ml-auto bg-brand-gold text-brand-darker text-[0.65rem] font-bold px-2 py-0.5 rounded-full">5</span></a>
+        </nav>
+
+        <div class="p-4 border-t border-[var(--border-color)] flex-shrink-0">
+            <a href="#" onclick="event.preventDefault();logout()" class="sidebar-link !m-0 !p-2 justify-center text-red-400 hover:!bg-red-500/10"><i data-lucide="log-out" class="w-5 h-5"></i><span class="sidebar-text">Logout</span></a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content bg-[var(--bg-base)]">
+
+        <header class="sticky top-0 z-30 bg-[var(--bg-base)]/80 backdrop-blur-xl border-b border-[var(--border-color)] h-16 flex items-center px-4 lg:px-6 justify-between">
+            <div class="flex items-center gap-4">
+                <button class="p-2 text-muted-custom hover:text-gold transition-colors" onclick="toggleSidebar()"><i data-lucide="menu" class="w-5 h-5"></i></button>
+                <h2 id="page-title" class="font-display text-lg font-semibold tracking-tight hidden sm:block">Overview</h2>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="p-2 text-muted-custom hover:text-gold transition-colors" onclick="toggleTheme()"><i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon"></i></button>
+                <button class="p-2 text-muted-custom hover:text-gold transition-colors relative" onclick="showToast('No new notifications.','success')"><i data-lucide="bell" class="w-5 h-5"></i><span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span></button>
+                <div class="w-9 h-9 rounded-full bg-brand-gold/20 flex items-center justify-center text-gold font-bold text-xs border border-brand-gold/30 cursor-pointer" id="header-initials" onclick="navigateTo('user-settings')">JD</div>
+            </div>
+        </header>
+
+        <!-- ===== USER VIEWS ===== -->
+        <div id="view-user" class="p-4 lg:p-6 space-y-6">
+
+            <!-- USER: Overview -->
+            <div id="user-overview" class="view-section active space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div>
+                        <h1 class="font-display text-2xl font-semibold tracking-tight">Welcome back, <span class="text-gradient" id="greeting-name">User</span></h1>
+                        <p class="text-muted-custom text-sm mt-1" id="greeting-date"></p>
+                    </div>
+                    <button class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold uppercase flex items-center gap-2" onclick="openLogWorkoutModal()"><i data-lucide="plus" class="w-4 h-4"></i> Log Workout</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-card stat-card rounded-xl p-4"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Workouts</p><p class="font-display text-3xl font-semibold text-gold" id="stat-workouts">0</p><p class="text-xs text-muted-custom mt-1">Total completed</p></div>
+                    <div class="glass-card stat-card rounded-xl p-4"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Active Streak</p><p class="font-display text-3xl font-semibold text-gold"><span id="stat-streak">0</span><span class="text-base text-muted-custom ml-1">days</span></p><p class="text-xs text-green-400 mt-1">Keep going!</p></div>
+                    <div class="glass-card stat-card rounded-xl p-4"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Calories Burned</p><p class="font-display text-3xl font-semibold text-gold" id="stat-calories">0</p><p class="text-xs text-muted-custom mt-1">Weekly total</p></div>
+                    <div class="glass-card stat-card rounded-xl p-4"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Body Weight</p><p class="font-display text-3xl font-semibold text-gold"><span id="stat-weight">--</span><span class="text-base text-muted-custom ml-1">kg</span></p><p class="text-xs text-muted-custom mt-1">Last logged</p></div>
+                </div>
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 glass-card rounded-2xl p-5">
+                        <div class="flex justify-between items-center mb-6"><h3 class="font-display text-lg font-semibold tracking-tight">Activity Volume</h3><select class="form-input text-xs py-1 w-auto" onchange="showToast('Chart updated.','success')"><option>Last 7 Days</option><option>Last 30 Days</option></select></div>
+                        <div class="relative h-48 w-full">
+                            <svg viewBox="0 0 600 200" class="w-full h-full overflow-visible"><line x1="0" y1="50" x2="600" y2="50" stroke="var(--border-color)" stroke-width="1" stroke-dasharray="4"/><line x1="0" y1="100" x2="600" y2="100" stroke="var(--border-color)" stroke-width="1" stroke-dasharray="4"/><line x1="0" y1="150" x2="600" y2="150" stroke="var(--border-color)" stroke-width="1" stroke-dasharray="4"/><path d="M0,150 L100,80 L200,120 L300,40 L400,90 L500,60 L600,100 L600,200 L0,200 Z" fill="rgba(var(--gold-rgb), 0.1)" /><path d="M0,150 L100,80 L200,120 L300,40 L400,90 L500,60 L600,100" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><circle cx="0" cy="150" r="4" fill="var(--gold)" class="chart-dot"/><circle cx="100" cy="80" r="4" fill="var(--gold)" class="chart-dot"/><circle cx="200" cy="120" r="4" fill="var(--gold)" class="chart-dot"/><circle cx="300" cy="40" r="4" fill="var(--gold)" class="chart-dot"/><circle cx="400" cy="90" r="4" fill="var(--gold)" class="chart-dot"/><circle cx="500" cy="60" r="4" fill="var(--gold)" class="chart-dot"/><circle cx="600" cy="100" r="4" fill="var(--gold)" class="chart-dot"/></svg>
+                            <div class="absolute bottom-0 left-0 right-0 flex justify-between px-2 -mb-5 text-[0.65rem] text-muted-custom"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+                        </div>
+                    </div>
+                    <div class="glass-card rounded-2xl p-5">
+                        <h3 class="font-display text-lg font-semibold tracking-tight mb-6">Daily Macros</h3>
+                        <div class="flex justify-center mb-6"><div class="relative w-32 h-32"><svg class="w-full h-full" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" class="progress-ring-bg" stroke-width="8"/><circle cx="50" cy="50" r="40" fill="none" class="progress-ring-fill" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="57.8" stroke-linecap="round"/></svg><div class="absolute inset-0 flex flex-col items-center justify-center"><span class="font-display text-2xl font-bold text-gold">77%</span><span class="text-[0.6rem] text-muted-custom uppercase tracking-wider">Goal Hit</span></div></div></div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm"><span class="text-muted-custom">Protein</span><span class="font-semibold">120g <span class="text-muted-custom font-normal">/ 180g</span></span></div><div class="w-full h-2 bg-[var(--border-color)] rounded-full"><div class="h-full bg-blue-400 rounded-full" style="width:66%"></div></div>
+                            <div class="flex justify-between text-sm"><span class="text-muted-custom">Carbs</span><span class="font-semibold">200g <span class="text-muted-custom font-normal">/ 250g</span></span></div><div class="w-full h-2 bg-[var(--border-color)] rounded-full"><div class="h-full bg-green-400 rounded-full" style="width:80%"></div></div>
+                            <div class="flex justify-between text-sm"><span class="text-muted-custom">Fats</span><span class="font-semibold">55g <span class="text-muted-custom font-normal">/ 70g</span></span></div><div class="w-full h-2 bg-[var(--border-color)] rounded-full"><div class="h-full bg-purple-400 rounded-full" style="width:78%"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Today's Workout -->
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <div class="p-5 border-b border-[var(--border-color)] flex justify-between items-center"><h3 class="font-display text-lg font-semibold tracking-tight">Today's Workout: Upper Body Push</h3><span class="text-xs text-muted-custom">Est. 45 min</span></div>
+                    <div id="workout-checklist" class="divide-y divide-[var(--border-color)]">
+                        <label class="flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"><input type="checkbox" class="custom-checkbox" onchange="checkWorkoutCompletion()"><div class="flex-1"><p class="text-sm font-semibold">Bench Press</p><p class="text-xs text-muted-custom">4 sets × 8-10 reps • 80kg</p></div></label>
+                        <label class="flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"><input type="checkbox" class="custom-checkbox" onchange="checkWorkoutCompletion()"><div class="flex-1"><p class="text-sm font-semibold">Overhead Press</p><p class="text-xs text-muted-custom">3 sets × 10 reps • 40kg</p></div></label>
+                        <label class="flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"><input type="checkbox" class="custom-checkbox" onchange="checkWorkoutCompletion()"><div class="flex-1"><p class="text-sm font-semibold">Incline Dumbbell Fly</p><p class="text-xs text-muted-custom">3 sets × 12 reps • 16kg</p></div></label>
+                        <label class="flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"><input type="checkbox" class="custom-checkbox" onchange="checkWorkoutCompletion()"><div class="flex-1"><p class="text-sm font-semibold">Tricep Dips</p><p class="text-xs text-muted-custom">3 sets × 15 reps • Bodyweight</p></div></label>
+                    </div>
+                </div>
+                <!-- Upgrade CTA -->
+                <div id="upgrade-cta" class="glass-card rounded-2xl p-6 text-center" style="display:none;border-color:rgba(var(--gold-rgb),0.2)">
+                    <i data-lucide="crown" class="w-8 h-8 text-gold mx-auto mb-3"></i>
+                    <h3 class="font-display text-xl font-semibold tracking-tight mb-2">Unlock Your Full Potential</h3>
+                    <p class="text-sm text-muted-custom mb-5 max-w-lg mx-auto">Upgrade to access full workout programs, custom meal plans, progress tracking, and personal coaching.</p>
+                    <a href="membership.html" class="btn-gold px-8 py-3 rounded-lg text-sm font-semibold tracking-wide uppercase inline-flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4"></i> Upgrade Now</a>
+                </div>
+            </div>
+
+            <!-- USER: Workouts -->
+            <div id="user-workouts" class="view-section space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div><h1 class="font-display text-2xl font-semibold tracking-tight">My <span class="text-gradient">Workouts</span></h1><p class="text-muted-custom text-sm mt-1">Track and manage your training sessions.</p></div>
+                    <button class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold uppercase flex items-center gap-2" onclick="openLogWorkoutModal()"><i data-lucide="plus" class="w-4 h-4"></i> Log Workout</button>
+                </div>
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full dash-table"><thead><tr><th>Date</th><th>Type</th><th>Duration</th><th>Calories</th><th>Actions</th></tr></thead>
+                        <tbody id="workout-history">
+                            <tr><td>Today</td><td>Upper Body Push</td><td>45 min</td><td>380</td><td><button class="text-xs text-gold hover:underline" onclick="showToast('Workout details coming soon.','success')">View</button></td></tr>
+                            <tr><td>Yesterday</td><td>Lower Body</td><td>50 min</td><td>420</td><td><button class="text-xs text-gold hover:underline" onclick="showToast('Workout details coming soon.','success')">View</button></td></tr>
+                            <tr><td>2 days ago</td><td>Upper Body Pull</td><td>40 min</td><td>350</td><td><button class="text-xs text-gold hover:underline" onclick="showToast('Workout details coming soon.','success')">View</button></td></tr>
+                        </tbody></table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USER: Nutrition -->
+            <div id="user-nutrition" class="view-section space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div><h1 class="font-display text-2xl font-semibold tracking-tight">My <span class="text-gradient">Nutrition</span></h1><p class="text-muted-custom text-sm mt-1">Track your meals and hit your macro goals.</p></div>
+                    <button class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold uppercase flex items-center gap-2" onclick="openLogMealModal()"><i data-lucide="plus" class="w-4 h-4"></i> Log Meal</button>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-card rounded-xl p-4 text-center"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Calories</p><p class="font-display text-2xl font-semibold text-gold">1,700</p><p class="text-xs text-muted-custom">/ 2,200</p><div class="w-full h-2 bg-[var(--border-color)] rounded-full mt-2"><div class="h-full bg-brand-gold rounded-full" style="width:77%"></div></div></div>
+                    <div class="glass-card rounded-xl p-4 text-center"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Protein</p><p class="font-display text-2xl font-semibold text-blue-400">120g</p><p class="text-xs text-muted-custom">/ 180g</p><div class="w-full h-2 bg-[var(--border-color)] rounded-full mt-2"><div class="h-full bg-blue-400 rounded-full" style="width:66%"></div></div></div>
+                    <div class="glass-card rounded-xl p-4 text-center"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Carbs</p><p class="font-display text-2xl font-semibold text-green-400">200g</p><p class="text-xs text-muted-custom">/ 250g</p><div class="w-full h-2 bg-[var(--border-color)] rounded-full mt-2"><div class="h-full bg-green-400 rounded-full" style="width:80%"></div></div></div>
+                    <div class="glass-card rounded-xl p-4 text-center"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Fats</p><p class="font-display text-2xl font-semibold text-purple-400">55g</p><p class="text-xs text-muted-custom">/ 70g</p><div class="w-full h-2 bg-[var(--border-color)] rounded-full mt-2"><div class="h-full bg-purple-400 rounded-full" style="width:78%"></div></div></div>
+                </div>
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <div class="p-5 border-b border-[var(--border-color)]"><h3 class="font-display text-lg font-semibold tracking-tight">Today's Meals</h3></div>
+                    <div class="divide-y divide-[var(--border-color)]" id="meal-list">
+                        <div class="flex items-center justify-between p-4"><div><p class="text-xs text-muted-custom">Breakfast</p><p class="text-sm font-semibold">Protein Oats & Berries</p></div><div class="text-right"><p class="text-sm font-semibold">420 cal</p><p class="text-xs text-muted-custom">P: 30g C: 55g F: 12g</p></div><button class="ml-3 text-red-400 hover:text-red-300" onclick="this.closest('.flex').remove();showToast('Meal removed.','success')"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>
+                        <div class="flex items-center justify-between p-4"><div><p class="text-xs text-muted-custom">Lunch</p><p class="text-sm font-semibold">Grilled Chicken Bowl</p></div><div class="text-right"><p class="text-sm font-semibold">580 cal</p><p class="text-xs text-muted-custom">P: 45g C: 60g F: 18g</p></div><button class="ml-3 text-red-400 hover:text-red-300" onclick="this.closest('.flex').remove();showToast('Meal removed.','success')"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>
+                        <div class="flex items-center justify-between p-4"><div><p class="text-xs text-muted-custom">Dinner</p><p class="text-sm font-semibold">Salmon & Vegetables</p></div><div class="text-right"><p class="text-sm font-semibold">520 cal</p><p class="text-xs text-muted-custom">P: 38g C: 40g F: 22g</p></div><button class="ml-3 text-red-400 hover:text-red-300" onclick="this.closest('.flex').remove();showToast('Meal removed.','success')"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USER: Progress -->
+            <div id="user-progress" class="view-section space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div><h1 class="font-display text-2xl font-semibold tracking-tight">My <span class="text-gradient">Progress</span></h1><p class="text-muted-custom text-sm mt-1">Track your body composition and achievements.</p></div>
+                    <button class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold uppercase flex items-center gap-2" onclick="openLogWeightModal()"><i data-lucide="plus" class="w-4 h-4"></i> Log Weight</button>
+                </div>
+                <div class="grid sm:grid-cols-3 gap-4">
+                    <div class="glass-card stat-card rounded-xl p-4"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Start Weight</p><p class="font-display text-2xl font-semibold">94.5 kg</p></div>
+                    <div class="glass-card stat-card rounded-xl p-4"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Current Weight</p><p class="font-display text-2xl font-semibold text-gold" id="progress-current">82.5 kg</p></div>
+                    <div class="glass-card stat-card rounded-xl p-4"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Total Lost</p><p class="font-display text-2xl font-semibold text-green-400">-12.0 kg</p></div>
+                </div>
+                <div class="glass-card rounded-2xl p-5">
+                    <h3 class="font-display text-lg font-semibold tracking-tight mb-6">Weight Trend</h3>
+                    <div class="relative h-48 w-full">
+                        <svg viewBox="0 0 600 200" class="w-full h-full overflow-visible"><line x1="0" y1="50" x2="600" y2="50" stroke="var(--border-color)" stroke-width="1" stroke-dasharray="4"/><line x1="0" y1="100" x2="600" y2="100" stroke="var(--border-color)" stroke-width="1" stroke-dasharray="4"/><line x1="0" y1="150" x2="600" y2="150" stroke="var(--border-color)" stroke-width="1" stroke-dasharray="4"/><path d="M0,30 L75,45 L150,60 L225,80 L300,95 L375,110 L450,130 L525,145 L600,160 L600,200 L0,200 Z" fill="rgba(34,197,94,0.1)" /><path d="M0,30 L75,45 L150,60 L225,80 L300,95 L375,110 L450,130 L525,145 L600,160" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><circle cx="600" cy="160" r="5" fill="#22c55e"/></svg>
+                        <div class="absolute bottom-0 left-0 right-0 flex justify-between px-2 -mb-5 text-[0.65rem] text-muted-custom"><span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span><span>Week 5</span><span>Week 6</span><span>Week 7</span><span>Now</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USER: Messages -->
+            <div id="user-messages" class="view-section space-y-6">
+                <h1 class="font-display text-2xl font-semibold tracking-tight">My <span class="text-gradient">Messages</span></h1>
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <div class="p-5 border-b border-[var(--border-color)] flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center text-gold font-bold text-xs border border-brand-gold/30">CM</div>
+                        <div><p class="text-sm font-semibold">Coach Mike</p><p class="text-xs text-green-400">Online</p></div>
+                    </div>
+                    <div class="p-5 space-y-4 max-h-96 overflow-y-auto" id="msg-container">
+                        <div class="flex justify-start"><div class="msg-bubble msg-received">Hey! How's the upper body workout going today? 💪</div></div>
+                        <div class="flex justify-end"><div class="msg-bubble msg-sent">Just finished bench press! Hit a new PR on the last set 🎉</div></div>
+                        <div class="flex justify-start"><div class="msg-bubble msg-received">That's awesome! Make sure you're controlling the eccentric on the flyes. Slow and controlled.</div></div>
+                        <div class="flex justify-end"><div class="msg-bubble msg-sent">Will do. Should I increase weight on OHP?</div></div>
+                        <div class="flex justify-start"><div class="msg-bubble msg-received">Yeah, try 42.5kg. If it feels easy, go for 45kg on the last set. Listen to your body!</div></div>
+                    </div>
+                    <div class="p-4 border-t border-[var(--border-color)] flex gap-3">
+                        <input type="text" id="msg-input" class="form-input flex-1" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()">
+                        <button onclick="sendMessage()" class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USER: Settings -->
+            <div id="user-settings" class="view-section space-y-6">
+                <h1 class="font-display text-2xl font-semibold tracking-tight">Account <span class="text-gradient">Settings</span></h1>
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-display text-lg font-semibold tracking-tight mb-5">Profile Information</h3>
+                        <form onsubmit="event.preventDefault();saveProfile()" class="space-y-4">
+                            <div><label class="text-xs text-muted-custom block mb-1">Full Name</label><input type="text" id="settings-name" class="form-input"></div>
+                            <div><label class="text-xs text-muted-custom block mb-1">Email</label><input type="email" id="settings-email" class="form-input" disabled><p class="text-[0.65rem] text-muted-custom mt-1">Email cannot be changed here.</p></div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="text-xs text-muted-custom block mb-1">Height (cm)</label><input type="number" id="settings-height" class="form-input" placeholder="175"></div>
+                                <div><label class="text-xs text-muted-custom block mb-1">Weight (kg)</label><input type="number" id="settings-weight" class="form-input" placeholder="82.5"></div>
+                            </div>
+                            <button type="submit" class="btn-gold w-full py-3 rounded-lg text-sm font-semibold uppercase">Save Changes</button>
+                        </form>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="glass-card rounded-2xl p-6">
+                            <h3 class="font-display text-lg font-semibold tracking-tight mb-5">Change Password</h3>
+                            <form onsubmit="event.preventDefault();changePassword()" class="space-y-4">
+                                <div><label class="text-xs text-muted-custom block mb-1">Current Password</label><input type="password" id="current-pass" class="form-input" placeholder="••••••••" minlength="8"></div>
+                                <div><label class="text-xs text-muted-custom block mb-1">New Password</label><input type="password" id="new-pass" class="form-input" placeholder="Min. 8 characters" minlength="8"></div>
+                                <div><label class="text-xs text-muted-custom block mb-1">Confirm New Password</label><input type="password" id="confirm-pass" class="form-input" placeholder="Re-enter new password" minlength="8"></div>
+                                <div id="pass-error" class="field-error"></div>
+                                <button type="submit" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold uppercase">Update Password</button>
+                            </form>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6">
+                            <h3 class="font-display text-lg font-semibold tracking-tight mb-4">Preferences</h3>
+                            <div class="flex items-center justify-between py-3 border-b border-[var(--border-color)]"><span class="text-sm">Dark Mode</span><button onclick="toggleTheme()" class="btn-outline px-3 py-1 rounded-lg text-xs" id="theme-toggle-label">Toggle</button></div>
+                            <div class="flex items-center justify-between py-3 border-b border-[var(--border-color)]"><span class="text-sm">Email Notifications</span><input type="checkbox" class="custom-checkbox" checked onchange="showToast(this.checked?'Notifications enabled.':'Notifications disabled.','success')"></div>
+                            <div class="flex items-center justify-between py-3"><span class="text-sm">Units</span><select class="form-input w-24 text-xs py-1" onchange="showToast('Units updated.','success')"><option>Metric</option><option>Imperial</option></select></div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 border-red-500/20">
+                            <h3 class="font-display text-lg font-semibold tracking-tight mb-2 text-red-400">Danger Zone</h3>
+                            <p class="text-xs text-muted-custom mb-4">Once deleted, your account cannot be recovered.</p>
+                            <button onclick="if(confirm('Are you sure? This action is irreversible.')){showToast('Account deletion requested.','error');setTimeout(()=>logout(),2000)}" class="btn-danger w-full py-3 rounded-lg text-sm font-semibold uppercase">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== COACH VIEWS ===== -->
+        <div id="view-coach" class="p-4 lg:p-6 space-y-6 hidden">
+
+            <!-- COACH: Overview -->
+            <div id="coach-overview" class="view-section active space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div><h1 class="font-display text-2xl font-semibold tracking-tight">Coach <span class="text-gradient">Dashboard</span></h1><p class="text-muted-custom text-sm mt-1">Manage your clients and schedule.</p></div>
+                    <button class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold uppercase flex items-center gap-2" onclick="openAddClientModal()"><i data-lucide="user-plus" class="w-4 h-4"></i> Add Client</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-card stat-card rounded-xl p-4"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Active Clients</p><p class="font-display text-3xl font-semibold text-gold">32</p><p class="text-xs text-muted-custom mt-1">+2 this month</p></div>
+                    <div class="glass-card stat-card rounded-xl p-4"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Check-ins Today</p><p class="font-display text-3xl font-semibold text-gold">3</p><p class="text-xs text-muted-custom mt-1">Next: 10:00 AM</p></div>
+                    <div class="glass-card stat-card rounded-xl p-4"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Pending Reviews</p><p class="font-display text-3xl font-semibold text-gold">8</p><p class="text-xs text-red-400 mt-1">Action required</p></div>
+                    <div class="glass-card stat-card rounded-xl p-4"><p class="text-xs text-muted-custom uppercase tracking-wider mb-1">Revenue (MTD)</p><p class="font-display text-3xl font-semibold text-gold">$2,480</p><p class="text-xs text-green-400 mt-1">+12%</p></div>
+                </div>
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 glass-card rounded-2xl overflow-hidden">
+                        <div class="p-5 border-b border-[var(--border-color)] flex justify-between items-center"><h3 class="font-display text-lg font-semibold tracking-tight">Client Status</h3></div>
+                        <div class="overflow-x-auto"><table class="w-full dash-table"><thead><tr><th>Client</th><th>Program</th><th>Status</th><th>Action</th></tr></thead><tbody>
+                            <tr><td class="font-medium">James M.</td><td class="text-muted-custom">Fat Loss</td><td><span class="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">On Track</span></td><td><button class="text-xs text-gold hover:underline" onclick="navigateTo('coach-clients')">View</button></td></tr>
+                            <tr><td class="font-medium">Sarah K.</td><td class="text-muted-custom">Muscle Gain</td><td><span class="text-xs bg-yellow-500/10 text-yellow-400 px-2 py-1 rounded-full">Stalling</span></td><td><button class="text-xs text-gold hover:underline" onclick="navigateTo('coach-messages')">Message</button></td></tr>
+                            <tr><td class="font-medium">David C.</td><td class="text-muted-custom">Comp Prep</td><td><span class="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">Ahead</span></td><td><button class="text-xs text-gold hover:underline" onclick="navigateTo('coach-clients')">View</button></td></tr>
+                            <tr><td class="font-medium">Grace T.</td><td class="text-muted-custom">Lifestyle</td><td><span class="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-full">MIA</span></td><td><button class="text-xs text-gold hover:underline" onclick="showToast('Reminder sent to Grace.','success')">Nudge</button></td></tr>
+                        </tbody></table></div>
+                    </div>
+                    <div class="glass-card rounded-2xl overflow-hidden">
+                        <div class="p-5 border-b border-[var(--border-color)]"><h3 class="font-display text-lg font-semibold tracking-tight">Today's Schedule</h3></div>
+                        <div class="p-4 space-y-4">
+                            <div class="flex gap-3"><div class="flex flex-col items-center"><span class="text-xs font-bold text-gold">09:00</span><div class="w-px h-full bg-[var(--border-color)] mt-1"></div></div><div class="p-3 rounded-lg bg-[var(--bg-secondary)] flex-1 border border-[var(--border-color)]"><p class="text-sm font-semibold">Client Check-in</p><p class="text-xs text-muted-custom">James M. - Progress Photos</p></div></div>
+                            <div class="flex gap-3"><div class="flex flex-col items-center"><span class="text-xs font-bold text-gold">10:30</span></div><div class="p-3 rounded-lg bg-[var(--bg-secondary)] flex-1 border border-[var(--border-color)]"><p class="text-sm font-semibold">1-on-1 Video Call</p><p class="text-xs text-muted-custom">David C. - Peak Week</p></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COACH: Clients -->
+            <div id="coach-clients" class="view-section space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div><h1 class="font-display text-2xl font-semibold tracking-tight">Client <span class="text-gradient">Management</span></h1></div>
+                    <button class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold uppercase flex items-center gap-2" onclick="openAddClientModal()"><i data-lucide="user-plus" class="w-4 h-4"></i> Add Client</button>
+                </div>
+                <div class="glass-card rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="w-full dash-table"><thead><tr><th>Client</th><th>Program</th><th>Plan</th><th>Status</th><th>Last Check-in</th><th>Action</th></tr></thead><tbody>
+                    <tr><td class="font-medium">James Mitchell</td><td class="text-muted-custom">Fat Loss</td><td class="text-muted-custom">Pro</td><td><span class="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">On Track</span></td><td class="text-muted-custom text-xs">Today</td><td><button class="text-xs text-gold hover:underline" onclick="navigateTo('coach-messages')">Message</button></td></tr>
+                    <tr><td class="font-medium">Sarah Kim</td><td class="text-muted-custom">Muscle Gain</td><td class="text-muted-custom">Pro</td><td><span class="text-xs bg-yellow-500/10 text-yellow-400 px-2 py-1 rounded-full">Stalling</span></td><td class="text-muted-custom text-xs">Yesterday</td><td><button class="text-xs text-gold hover:underline" onclick="navigateTo('coach-messages')">Message</button></td></tr>
+                    <tr><td class="font-medium">David Chen</td><td class="text-muted-custom">Comp Prep</td><td class="text-muted-custom">Elite</td><td><span class="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">Ahead</span></td><td class="text-muted-custom text-xs">Tomorrow</td><td><button class="text-xs text-gold hover:underline" onclick="navigateTo('coach-messages')">Message</button></td></tr>
+                    <tr><td class="font-medium">Grace Thompson</td><td class="text-muted-custom">Lifestyle</td><td class="text-muted-custom">Starter</td><td><span class="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-full">MIA</span></td><td class="text-muted-custom text-xs">3 days ago</td><td><button class="text-xs text-gold hover:underline" onclick="showToast('Reminder sent.','success')">Nudge</button></td></tr>
+                    <tr><td class="font-medium">Alex Rivera</td><td class="text-muted-custom">Strength</td><td class="text-muted-custom">Pro</td><td><span class="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">On Track</span></td><td class="text-muted-custom text-xs">Today</td><td><button class="text-xs text-gold hover:underline" onclick="navigateTo('coach-messages')">Message</button></td></tr>
+                </tbody></table></div></div>
+            </div>
+
+            <!-- COACH: Schedule -->
+            <div id="coach-schedule" class="view-section space-y-6">
+                <h1 class="font-display text-2xl font-semibold tracking-tight">My <span class="text-gradient">Schedule</span></h1>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" id="schedule-cards">
+                    <div class="glass-card rounded-xl p-5"><div class="flex items-center gap-3 mb-3"><span class="text-xs font-bold text-gold bg-brand-gold/10 px-2 py-1 rounded">09:00</span><span class="text-xs text-muted-custom">Today</span></div><p class="text-sm font-semibold">James M. Check-in</p><p class="text-xs text-muted-custom">Progress photos & measurements</p><button onclick="showToast('Session started.','success')" class="btn-outline mt-3 px-3 py-1.5 rounded-lg text-xs font-semibold">Start Session</button></div>
+                    <div class="glass-card rounded-xl p-5"><div class="flex items-center gap-3 mb-3"><span class="text-xs font-bold text-gold bg-brand-gold/10 px-2 py-1 rounded">10:30</span><span class="text-xs text-muted-custom">Today</span></div><p class="text-sm font-semibold">David C. 1-on-1</p><p class="text-xs text-muted-custom">Peak week adjustments</p><button onclick="showToast('Video call launching...','success')" class="btn-outline mt-3 px-3 py-1.5 rounded-lg text-xs font-semibold">Join Call</button></div>
+                    <div class="glass-card rounded-xl p-5"><div class="flex items-center gap-3 mb-3"><span class="text-xs font-bold text-gold bg-brand-gold/10 px-2 py-1 rounded">14:00</span><span class="text-xs text-muted-custom">Today</span></div><p class="text-sm font-semibold">Grace T. Follow-up</p><p class="text-xs text-muted-custom">Missed check-in discussion</p><button onclick="showToast('Reminder sent to Grace.','success')" class="btn-outline mt-3 px-3 py-1.5 rounded-lg text-xs font-semibold">Send Reminder</button></div>
+                    <div class="glass-card rounded-xl p-5"><div class="flex items-center gap-3 mb-3"><span class="text-xs font-bold text-muted-custom bg-[var(--bg-secondary)] px-2 py-1 rounded">11:00</span><span class="text-xs text-muted-custom">Tomorrow</span></div><p class="text-sm font-semibold">Sarah K. Review</p><p class="text-xs text-muted-custom">Program stall analysis</p></div>
+                    <div class="glass-card rounded-xl p-5"><div class="flex items-center gap-3 mb-3"><span class="text-xs font-bold text-muted-custom bg-[var(--bg-secondary)] px-2 py-1 rounded">15:00</span><span class="text-xs text-muted-custom">Tomorrow</span></div><p class="text-sm font-semibold">Alex R. Check-in</p><p class="text-xs text-muted-custom">Strength program review</p></div>
+                </div>
+            </div>
+
+            <!-- COACH: Programs -->
+            <div id="coach-programs" class="view-section space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div><h1 class="font-display text-2xl font-semibold tracking-tight">My <span class="text-gradient">Programs</span></h1></div>
+                    <button class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold uppercase flex items-center gap-2" onclick="openCreateProgramModal()"><i data-lucide="plus" class="w-4 h-4"></i> Create Program</button>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="glass-card card-hover rounded-2xl p-5"><div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center mb-3"><i data-lucide="flame" class="w-5 h-5 text-gold"></i></div><h4 class="font-semibold text-sm">Fat Loss Blueprint</h4><p class="text-xs text-muted-custom mt-1">12-week progressive program</p><div class="flex items-center justify-between mt-4"><span class="text-xs text-muted-custom">8 clients assigned</span><button onclick="showToast('Editing program...','success')" class="text-xs text-gold hover:underline">Edit</button></div></div>
+                    <div class="glass-card card-hover rounded-2xl p-5"><div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center mb-3"><i data-lucide="dumbbell" class="w-5 h-5 text-gold"></i></div><h4 class="font-semibold text-sm">Muscle Gain System</h4><p class="text-xs text-muted-custom mt-1">16-week hypertrophy focused</p><div class="flex items-center justify-between mt-4"><span class="text-xs text-muted-custom">5 clients assigned</span><button onclick="showToast('Editing program...','success')" class="text-xs text-gold hover:underline">Edit</button></div></div>
+                    <div class="glass-card card-hover rounded-2xl p-5"><div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center mb-3"><i data-lucide="trophy" class="w-5 h-5 text-gold"></i></div><h4 class="font-semibold text-sm">Competition Prep</h4><p class="text-xs text-muted-custom mt-1">20-week peak performance</p><div class="flex items-center justify-between mt-4"><span class="text-xs text-muted-custom">2 clients assigned</span><button onclick="showToast('Editing program...','success')" class="text-xs text-gold hover:underline">Edit</button></div></div>
+                    <div class="glass-card card-hover rounded-2xl p-5"><div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center mb-3"><i data-lucide="heart" class="w-5 h-5 text-gold"></i></div><h4 class="font-semibold text-sm">Lifestyle Balance</h4><p class="text-xs text-muted-custom mt-1">Flexible maintenance program</p><div class="flex items-center justify-between mt-4"><span class="text-xs text-muted-custom">12 clients assigned</span><button onclick="showToast('Editing program...','success')" class="text-xs text-gold hover:underline">Edit</button></div></div>
+                    <div class="glass-card card-hover rounded-2xl p-5"><div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center mb-3"><i data-lucide="zap" class="w-5 h-5 text-gold"></i></div><h4 class="font-semibold text-sm">Strength Foundations</h4><p class="text-xs text-muted-custom mt-1">8-week beginner program</p><div class="flex items-center justify-between mt-4"><span class="text-xs text-muted-custom">5 clients assigned</span><button onclick="showToast('Editing program...','success')" class="text-xs text-gold hover:underline">Edit</button></div></div>
+                </div>
+            </div>
+
+            <!-- COACH: Messages -->
+            <div id="coach-messages" class="view-section space-y-6">
+                <h1 class="font-display text-2xl font-semibold tracking-tight">Coach <span class="text-gradient">Messages</span></h1>
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="glass-card rounded-2xl overflow-hidden">
+                        <div class="p-4 border-b border-[var(--border-color)]"><input type="text" class="form-input text-xs" placeholder="Search clients..." oninput="filterCoachChats(this.value)"></div>
+                        <div id="coach-chat-list" class="divide-y divide-[var(--border-color)] max-h-96 overflow-y-auto">
+                            <button class="w-full flex items-center gap-3 p-4 hover:bg-[var(--bg-secondary)] transition-colors text-left" onclick="selectCoachChat('James M.')"><div class="w-9 h-9 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 font-bold text-xs">JM</div><div class="flex-1 min-w-0"><p class="text-sm font-semibold truncate">James Mitchell</p><p class="text-xs text-muted-custom truncate">Hit a new PR today!</p></div><span class="text-[0.6rem] text-muted-custom flex-shrink-0">2m</span></button>
+                            <button class="w-full flex items-center gap-3 p-4 hover:bg-[var(--bg-secondary)] transition-colors text-left" onclick="selectCoachChat('Sarah K.')"><div class="w-9 h-9 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-400 font-bold text-xs">SK</div><div class="flex-1 min-w-0"><p class="text-sm font-semibold truncate">Sarah Kim</p><p class="text-xs text-muted-custom truncate">Should I increase weight?</p></div><span class="text-[0.6rem] text-muted-custom flex-shrink-0">1h</span></button>
+                            <button class="w-full flex items-center gap-3 p-4 hover:bg-[var(--bg-secondary)] transition-colors text-left" onclick="selectCoachChat('David C.')"><div class="w-9 h-9 rounded-full bg-brand-gold/10 flex items-center justify-center text-gold font-bold text-xs">DC</div><div class="flex-1 min-w-0"><p class="text-sm font-semibold truncate">David Chen</p><p class="text-xs text-muted-custom truncate">Peak week starting Monday</p></div><span class="text-[0.6rem] text-muted-custom flex-shrink-0">3h</span></button>
+                            <button class="w-full flex items-center gap-3 p-4 hover:bg-[var(--bg-secondary)] transition-colors text-left" onclick="selectCoachChat('Grace T.')"><div class="w-9 h-9 rounded-full bg-red-500/10 flex items-center justify-center text-red-400 font-bold text-xs">GT</div><div class="flex-1 min-w-0"><p class="text-sm font-semibold truncate">Grace Thompson</p><p class="text-xs text-muted-custom truncate">Sorry I missed check-in</p></div><span class="text-[0.6rem] text-muted-custom flex-shrink-0">1d</span></button>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 glass-card rounded-2xl overflow-hidden">
+                        <div class="p-5 border-b border-[var(--border-color)] flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center text-gold font-bold text-xs border border-brand-gold/30" id="coach-chat-avatar">JM</div><div><p class="text-sm font-semibold" id="coach-chat-name">James Mitchell</p><p class="text-xs text-green-400">Online</p></div></div>
+                        <div class="p-5 space-y-4 max-h-80 overflow-y-auto" id="coach-msg-container">
+                            <div class="flex justify-start"><div class="msg-bubble msg-received">Hey Coach! Just finished the workout.</div></div>
+                            <div class="flex justify-end"><div class="msg-bubble msg-sent">Great work! How did the bench feel?</div></div>
+                            <div class="flex justify-start"><div class="msg-bubble msg-received">Hit a new PR! 80kg for 8 reps 💪</div></div>
+                        </div>
+                        <div class="p-4 border-t border-[var(--border-color)] flex gap-3">
+                            <input type="text" id="coach-msg-input" class="form-input flex-1" placeholder="Reply..." onkeydown="if(event.key==='Enter')sendCoachMessage()">
+                            <button onclick="sendCoachMessage()" class="btn-gold px-4 py-2 rounded-lg text-xs font-semibold">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // ===== AUTH CHECK =====
+        function checkAuth() { if (!localStorage.getItem('userName')) { window.location.href = 'login.html'; return false; } return true; }
+
+        // ===== USER DATA =====
+        var userData = JSON.parse(localStorage.getItem('dashData') || '{}');
+
+        function initUserData() {
+            var name = localStorage.getItem('userName') || 'User';
+            var email = localStorage.getItem('userEmail') || '';
+            var plan = localStorage.getItem('selectedPlan') || 'free';
+            var firstName = name.split(' ')[0];
+            var initials = name.split(' ').map(function(p){return p.charAt(0).toUpperCase()}).join('').substring(0,2) || 'CM';
+
+            document.getElementById('greeting-name').textContent = firstName;
+            document.getElementById('header-initials').textContent = initials;
+            document.getElementById('settings-name').value = name;
+            document.getElementById('settings-email').value = email;
+            if (userData.height) document.getElementById('settings-height').value = userData.height;
+            if (userData.weight) document.getElementById('settings-weight').value = userData.weight;
+
+            var dateEl = document.getElementById('greeting-date');
+            if (dateEl) { var d = new Date(); dateEl.textContent = d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
+
+            // Stats from localStorage or defaults
+            document.getElementById('stat-workouts').textContent = userData.workouts || 0;
+            document.getElementById('stat-streak').textContent = userData.streak || 0;
+            document.getElementById('stat-calories').textContent = (userData.calories || 0).toLocaleString();
+            document.getElementById('stat-weight').textContent = userData.weight || '--';
+
+            if (userData.weight) document.getElementById('progress-current').textContent = userData.weight + ' kg';
+
+            // Upgrade CTA
+            if (plan === 'free') document.getElementById('upgrade-cta').style.display = 'block';
+        }
+
+        function saveDashData() { localStorage.setItem('dashData', JSON.stringify(userData)); }
+
+        // ===== LOGOUT =====
+        function logout() { localStorage.removeItem('userName'); localStorage.removeItem('userEmail'); localStorage.removeItem('selectedPlan'); localStorage.removeItem('dashData'); window.location.href = 'login.html'; }
+
+        // ===== THEME =====
+        function initTheme() { if (localStorage.getItem('theme')==='light') document.body.classList.add('light-theme'); updateThemeIcons(); }
+        function toggleTheme() { document.body.classList.toggle('light-theme'); localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark'); updateThemeIcons(); }
+        function updateThemeIcons() { var i=document.getElementById('theme-icon'); if(i){i.setAttribute('data-lucide',document.body.classList.contains('light-theme')?'sun':'moon'); if(window.lucide)lucide.createIcons();} }
+
+        // ===== SIDEBAR =====
+        function toggleSidebar() { var s=document.getElementById('sidebar'),o=document.getElementById('sidebar-overlay'),m=document.getElementById('main-content'); if(window.innerWidth<1024){s.classList.toggle('mobile-open');o.classList.toggle('hidden');}else{s.classList.toggle('collapsed');m.classList.toggle('expanded');} }
+
+        // ===== ROLE SWITCH =====
+        function switchRole(role) {
+            document.getElementById('view-user').classList.toggle('hidden',role!=='user');
+            document.getElementById('view-coach').classList.toggle('hidden',role!=='coach');
+            document.getElementById('nav-user').classList.toggle('hidden',role!=='user');
+            document.getElementById('nav-coach').classList.toggle('hidden',role!=='coach');
+            var ub=document.getElementById('role-user-btn'),cb=document.getElementById('role-coach-btn');
+            if(role==='user'){ub.classList.add('bg-brand-gold','text-brand-darker');ub.classList.remove('text-muted-custom');cb.classList.remove('bg-brand-gold','text-brand-darker');cb.classList.add('text-muted-custom');navigateTo('user-overview');}
+            else{cb.classList.add('bg-brand-gold','text-brand-darker');cb.classList.remove('text-muted-custom');ub.classList.remove('bg-brand-gold','text-brand-darker');ub.classList.add('text-muted-custom');navigateTo('coach-overview');}
+            if(window.innerWidth<1024&&document.getElementById('sidebar').classList.contains('mobile-open'))toggleSidebar();
+        }
+
+        // ===== NAVIGATION =====
+        function navigateTo(viewId) {
+            document.querySelectorAll('.view-section').forEach(function(v){v.classList.remove('active')});
+            var target = document.getElementById(viewId);
+            if (target) target.classList.add('active');
+
+            document.querySelectorAll('.sidebar-link').forEach(function(l){l.classList.remove('active')});
+            var link = document.querySelector('.sidebar-link[data-view="'+viewId+'"]');
+            if (link) link.classList.add('active');
+
+            var titles = {'user-overview':'Overview','user-workouts':'Workouts','user-nutrition':'Nutrition','user-progress':'Progress','user-messages':'Messages','user-settings':'Settings','coach-overview':'Overview','coach-clients':'Clients','coach-schedule':'Schedule','coach-programs':'Programs','coach-messages':'Messages'};
+            document.getElementById('page-title').textContent = titles[viewId] || 'Dashboard';
+
+            if(window.innerWidth<1024&&document.getElementById('sidebar').classList.contains('mobile-open'))toggleSidebar();
+        }
+
+        function setupNav() {
+            document.querySelectorAll('.sidebar-link[data-view]').forEach(function(link){
+                link.addEventListener('click',function(e){e.preventDefault();navigateTo(this.getAttribute('data-view'));});
+            });
+        }
+
+        // ===== TOAST =====
+        function showToast(msg,type) { var t=document.getElementById('toast'),m=document.getElementById('toast-message'),ic=document.getElementById('toast-icon'); if(t&&m){m.textContent=msg; if(ic){if(type==='error'){ic.setAttribute('data-lucide','alert-circle');ic.className='w-5 h-5 text-red-500';}else{ic.setAttribute('data-lucide','check-circle');ic.className='w-5 h-5 text-green-500';} if(window.lucide)lucide.createIcons();} t.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(function(){t.classList.remove('show')},3500);} }
+
+        // ===== MODAL =====
+        function openModal(title,html){document.getElementById('modal-title').textContent=title;document.getElementById('modal-body').innerHTML=html;document.getElementById('modal-overlay').classList.add('active');if(window.lucide)lucide.createIcons();}
+        function closeModal(){document.getElementById('modal-overlay').classList.remove('active');}
+
+        // ===== WORKOUT COMPLETION CHECK =====
+        function checkWorkoutCompletion() {
+            var checks = document.querySelectorAll('#workout-checklist .custom-checkbox');
+            var done = 0; checks.forEach(function(c){if(c.checked)done++;});
+            if (done === checks.length && done > 0) {
+                userData.workouts = (userData.workouts||0)+1;
+                userData.streak = (userData.streak||0)+1;
+                userData.calories = (userData.calories||0)+380;
+                saveDashData();
+                document.getElementById('stat-workouts').textContent = userData.workouts;
+                document.getElementById('stat-streak').textContent = userData.streak;
+                document.getElementById('stat-calories').textContent = userData.calories.toLocaleString();
+                showToast('🎉 Workout complete! Stats updated.','success');
+            }
+        }
+
+        // ===== MESSAGING =====
+        function sendMessage() {
+            var input = document.getElementById('msg-input');
+            var text = input.value.trim();
+            if (!text) return;
+            var container = document.getElementById('msg-container');
+            container.innerHTML += '<div class="flex justify-end"><div class="msg-bubble msg-sent">'+escapeHtml(text)+'</div></div>';
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+            setTimeout(function(){
+                container.innerHTML += '<div class="flex justify-start"><div class="msg-bubble msg-received">Got it! Keep pushing hard 💪</div></div>';
+                container.scrollTop = container.scrollHeight;
+            }, 1500);
+        }
+
+        function sendCoachMessage() {
+            var input = document.getElementById('coach-msg-input');
+            var text = input.value.trim();
+            if (!text) return;
+            var container = document.getElementById('coach-msg-container');
+            container.innerHTML += '<div class="flex justify-end"><div class="msg-bubble msg-sent">'+escapeHtml(text)+'</div></div>';
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+            setTimeout(function(){
+                container.innerHTML += '<div class="flex justify-start"><div class="msg-bubble msg-received">Thanks Coach! Will do.</div></div>';
+                container.scrollTop = container.scrollHeight;
+            }, 1500);
+        }
+
+        function selectCoachChat(name) {
+            document.getElementById('coach-chat-name').textContent = name;
+            document.getElementById('coach-chat-avatar').textContent = name.split(' ').map(function(w){return w[0]}).join('');
+            var container = document.getElementById('coach-msg-container');
+            container.innerHTML = '<div class="flex justify-start"><div class="msg-bubble msg-received">Hi Coach!</div></div>';
+        }
+
+        function filterCoachChats(query) {
+            var buttons = document.querySelectorAll('#coach-chat-list button');
+            buttons.forEach(function(btn){ btn.style.display = btn.textContent.toLowerCase().includes(query.toLowerCase()) ? '' : 'none'; });
+        }
+
+        function escapeHtml(t) { var d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+
+        // ===== MODALS =====
+        function openLogWorkoutModal() {
+            openModal('Log Workout', '<form onsubmit="event.preventDefault();logWorkout()" class="space-y-4"><div><label class="text-xs text-muted-custom block mb-1">Workout Type</label><select id="modal-workout-type" class="form-input"><option>Upper Body Push</option><option>Upper Body Pull</option><option>Lower Body</option><option>Full Body</option><option>Cardio</option></select></div><div><label class="text-xs text-muted-custom block mb-1">Duration (min)</label><input type="number" id="modal-workout-dur" class="form-input" placeholder="45" required></div><div><label class="text-xs text-muted-custom block mb-1">Notes</label><textarea id="modal-workout-notes" class="form-input" rows="3" placeholder="How did it feel?"></textarea></div><button type="submit" class="btn-gold w-full py-3 rounded-lg text-sm font-semibold uppercase">Save Workout</button></form>');
+        }
+
+        function logWorkout() {
+            var type = document.getElementById('modal-workout-type').value;
+            var dur = document.getElementById('modal-workout-dur').value || '45';
+            var cals = Math.round(parseInt(dur) * 8.5);
+            var row = '<tr><td>Just now</td><td>'+type+'</td><td>'+dur+' min</td><td>'+cals+'</td><td><button class="text-xs text-gold hover:underline" onclick="showToast(\'Details coming soon.\',\'success\')">View</button></td></tr>';
+            var tbody = document.getElementById('workout-history');
+            if(tbody) tbody.insertAdjacentHTML('afterbegin',row);
+            userData.workouts = (userData.workouts||0)+1;
+            userData.streak = (userData.streak||0)+1;
+            userData.calories = (userData.calories||0)+cals;
+            saveDashData();
+            document.getElementById('stat-workouts').textContent = userData.workouts;
+            document.getElementById('stat-streak').textContent = userData.streak;
+            document.getElementById('stat-calories').textContent = userData.calories.toLocaleString();
+            closeModal();
+            showToast('Workout logged! +'+cals+' calories burned.','success');
+        }
+
+        function openLogMealModal() {
+            openModal('Log Meal', '<form onsubmit="event.preventDefault();logMeal()" class="space-y-4"><div><label class="text-xs text-muted-custom block mb-1">Meal</label><select id="modal-meal-type" class="form-input"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></div><div><label class="text-xs text-muted-custom block mb-1">Food Description</label><input type="text" id="modal-meal-desc" class="form-input" placeholder="e.g. Chicken breast & rice" required></div><div class="grid grid-cols-2 gap-4"><div><label class="text-xs text-muted-custom block mb-1">Calories</label><input type="number" id="modal-meal-cal" class="form-input" placeholder="450" required></div><div><label class="text-xs text-muted-custom block mb-1">Protein (g)</label><input type="number" id="modal-meal-pro" class="form-input" placeholder="35"></div></div><button type="submit" class="btn-gold w-full py-3 rounded-lg text-sm font-semibold uppercase">Save Meal</button></form>');
+        }
+
+        function logMeal() {
+            var meal = document.getElementById('modal-meal-type').value;
+            var desc = document.getElementById('modal-meal-desc').value;
+            var cal = document.getElementById('modal-meal-cal').value;
+            var pro = document.getElementById('modal-meal-pro').value || '0';
+            var list = document.getElementById('meal-list');
+            if(list) list.innerHTML += '<div class="flex items-center justify-between p-4"><div><p class="text-xs text-muted-custom">'+meal+'</p><p class="text-sm font-semibold">'+escapeHtml(desc)+'</p></div><div class="text-right"><p class="text-sm font-semibold">'+cal+' cal</p><p class="text-xs text-muted-custom">P: '+pro+'g</p></div><button class="ml-3 text-red-400 hover:text-red-300" onclick="this.closest(\'.flex\').remove();showToast(\'Meal removed.\',\'success\')"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>';
+            closeModal();
+            if(window.lucide) lucide.createIcons();
+            showToast('Meal logged successfully!','success');
+        }
+
+        function openLogWeightModal() {
+            openModal('Log Weight', '<form onsubmit="event.preventDefault();logWeight()" class="space-y-4"><div><label class="text-xs text-muted-custom block mb-1">Weight (kg)</label><input type="number" step="0.1" id="modal-weight" class="form-input" placeholder="82.5" required></div><button type="submit" class="btn-gold w-full py-3 rounded-lg text-sm font-semibold uppercase">Save Weight</button></form>');
+        }
+
+        function logWeight() {
+            var w = document.getElementById('modal-weight').value;
+            userData.weight = w;
+            saveDashData();
+            document.getElementById('stat-weight').textContent = w;
+            document.getElementById('progress-current').textContent = w + ' kg';
+            document.getElementById('settings-weight').value = w;
+            closeModal();
+            showToast('Weight logged: ' + w + ' kg','success');
+        }
+
+        function openAddClientModal() {
+            openModal('Add New Client', '<form onsubmit="event.preventDefault();showToast(\'Client invite sent!\',\'success\');closeModal()" class="space-y-4"><div class="grid grid-cols-2 gap-4"><div><label class="text-xs text-muted-custom block mb-1">First Name</label><input type="text" class="form-input" required></div><div><label class="text-xs text-muted-custom block mb-1">Last Name</label><input type="text" class="form-input" required></div></div><div><label class="text-xs text-muted-custom block mb-1">Email</label><input type="email" class="form-input" required></div><div><label class="text-xs text-muted-custom block mb-1">Assign Program</label><select class="form-input"><option>Fat Loss Blueprint</option><option>Muscle Gain System</option><option>Competition Prep</option><option>Lifestyle Balance</option></select></div><button type="submit" class="btn-gold w-full py-3 rounded-lg text-sm font-semibold uppercase">Send Invite</button></form>');
+        }
+
+        function openCreateProgramModal() {
+            openModal('Create Program', '<form onsubmit="event.preventDefault();showToast(\'Program created!\',\'success\');closeModal()" class="space-y-4"><div><label class="text-xs text-muted-custom block mb-1">Program Name</label><input type="text" class="form-input" placeholder="e.g. Summer Shred" required></div><div><label class="text-xs text-muted-custom block mb-1">Duration</label><select class="form-input"><option>4 weeks</option><option>8 weeks</option><option>12 weeks</option><option>16 weeks</option></select></div><div><label class="text-xs text-muted-custom block mb-1">Goal</label><select class="form-input"><option>Fat Loss</option><option>Muscle Gain</option><option>Strength</option><option>Competition Prep</option><option>Lifestyle</option></select></div><div><label class="text-xs text-muted-custom block mb-1">Description</label><textarea class="form-input" rows="3" placeholder="Brief description..."></textarea></div><button type="submit" class="btn-gold w-full py-3 rounded-lg text-sm font-semibold uppercase">Create Program</button></form>');
+        }
+
+        // ===== SETTINGS =====
+        function saveProfile() {
+            var name = document.getElementById('settings-name').value.trim();
+            var height = document.getElementById('settings-height').value;
+            var weight = document.getElementById('settings-weight').value;
+            if (!name) { showToast('Name is required.','error'); return; }
+            localStorage.setItem('userName', name);
+            if (height) userData.height = height;
+            if (weight) { userData.weight = weight; document.getElementById('stat-weight').textContent = weight; document.getElementById('progress-current').textContent = weight + ' kg'; }
+            saveDashData();
+            document.getElementById('greeting-name').textContent = name.split(' ')[0];
+            document.getElementById('header-initials').textContent = name.split(' ').map(function(p){return p.charAt(0).toUpperCase()}).join('').substring(0,2)||'CM';
+            showToast('Profile saved!','success');
+        }
+
+        function changePassword() {
+            var curr = document.getElementById('current-pass').value;
+            var newP = document.getElementById('new-pass').value;
+            var conf = document.getElementById('confirm-pass').value;
+            var errEl = document.getElementById('pass-error');
+            errEl.classList.remove('visible'); errEl.textContent = '';
+
+            if (!curr||!newP||!conf) { errEl.textContent='All fields are required.'; errEl.classList.add('visible'); return; }
+            if (newP.length < 8) { errEl.textContent='New password must be at least 8 characters.'; errEl.classList.add('visible'); return; }
+            if (newP !== conf) { errEl.textContent='Passwords do not match.'; errEl.classList.add('visible'); return; }
+
+            // Call PHP to verify current password and update
+            fetch('api/changepassword.php', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({email:localStorage.getItem('userEmail'),currentPassword:curr,newPassword:newP})
+            }).then(function(r){return r.json()}).then(function(data){
+                if(data.message && data.message.toLowerCase().includes('success')){showToast('Password updated!','success');document.getElementById('current-pass').value='';document.getElementById('new-pass').value='';document.getElementById('confirm-pass').value='';}
+                else{showToast(data.message||'Failed to update password.','error');}
+            }).catch(function(){showToast('Cannot connect to server.','error');});
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) return;
+            initTheme();
+            initUserData();
+            setupNav();
+            if(window.lucide) lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

@@ -1,273 +1,970 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — ComboMaster Fitness</title>
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
-    
-    <!-- Tailwind Configuration -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { 
-                        sans: ['Inter', 'sans-serif'], 
-                        display: ['Oswald', 'sans-serif'] 
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif']
                     },
-                    colors: { 
-                        brand: { 
-                            gold: '#D4A853', 
-                            dark: '#0F0F0F', 
-                            darker: '#050505', 
-                            card: '#1A1A1A' 
-                        } 
+                    colors: {
+                        brand: {
+                            gold: 'rgb(var(--gold-rgb) / <alpha-value>)',
+                            dark: 'var(--bg-base)',
+                            darker: 'var(--bg-secondary)',
+                            card: 'var(--card-bg-solid)'
+                        }
                     }
                 }
             }
         }
     </script>
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-secondary: #0F0F0F;
+            --bg-card: rgba(26, 26, 26, 0.6);
+            --text-main: #F5F5F0;
+            --text-muted: #a3a3a3;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --gold-rgb: 212 168 83;
+            --gold: rgb(var(--gold-rgb));
+            --gold-accent: #B8943F;
+            --card-bg-solid: #1A1A1A;
+            --nav-bg: rgba(5, 5, 5, 0.9);
+            --toast-bg: rgba(26, 26, 26, 0.9);
+            --input-bg: #0F0F0F;
+        }
+
+        body.light-theme {
+            --bg-base: #f8f9fc;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.8);
+            --text-main: #1e1e2a;
+            --text-muted: #4b5563;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --gold-rgb: 184 134 11;
+            --gold-accent: #9a7209;
+            --card-bg-solid: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --toast-bg: rgba(255, 255, 255, 0.95);
+            --input-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            overflow-x: hidden;
+            max-width: 100vw;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-size: 1.125rem;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .font-display {
+            font-family: 'Oswald', sans-serif;
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            z-index: 50;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+        }
+
+        nav.nav-scrolled {
+            background-color: rgba(5, 5, 5, 0.98);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-theme nav.nav-scrolled {
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ===== UTILITY ===== */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .text-muted-custom {
+            color: var(--text-muted);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, var(--gold), #f5dfa0, var(--gold));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-gold {
+            color: var(--gold);
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-gold {
+            background: var(--gold);
+            color: #050505;
+            transition: all 150ms ease;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-accent);
+            box-shadow: 0 0 30px rgba(var(--gold-rgb), 0.5);
+            transform: translateY(-2px);
+        }
+
+        body.light-theme .btn-gold {
+            color: #ffffff;
+        }
+
+        .btn-outline {
+            border: 1px solid rgba(var(--gold-rgb), 0.5);
+            color: var(--gold);
+            background: transparent;
+            transition: all 150ms ease;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-outline:hover {
+            background: rgba(var(--gold-rgb), 0.1);
+            border-color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            background: var(--toast-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* ===== HERO ANIMATIONS ===== */
+        @keyframes heroFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+                filter: blur(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes wordSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+                filter: blur(10px);
+            }
+
+            60% {
+                opacity: 1;
+                filter: blur(0);
+            }
+
+            80% {
+                transform: translateY(-4%);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes lineExpand {
+            from {
+                width: 0;
+                opacity: 0;
+            }
+
+            to {
+                width: 60px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes heroImageZoom {
+            from {
+                transform: scale(1.15);
+            }
+
+            to {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0) scale(0);
+            }
+
+            15% {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-200px) translateX(var(--drift, 20px)) scale(0);
+            }
+        }
+
+        @keyframes goldShimmer {
+            0% {
+                background-position: 200% center;
+            }
+
+            100% {
+                background-position: -200% center;
+            }
+        }
+
+        @keyframes pulse-gold {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 20px 5px rgba(var(--gold-rgb), 0.15);
+            }
+        }
+
+        @keyframes cardReveal {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+                filter: blur(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        .hero-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            filter: blur(6px);
+            animation: heroFadeIn 0.9s var(--delay, 0s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hero-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+            filter: blur(10px);
+            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hero-word.text-gradient {
+            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both,
+                goldShimmer 3s 2s ease-in-out 1 both;
+        }
+
+        .hero-line {
+            width: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            animation: lineExpand 0.8s var(--delay, 0s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hero-bg-img {
+            animation: heroImageZoom 25s ease-out forwards;
+        }
+
+        .particle {
+            position: absolute;
+            width: var(--size, 3px);
+            height: var(--size, 3px);
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--gold), 0 0 20px rgba(var(--gold-rgb), 0.3);
+            opacity: 0;
+            animation: particleFloat var(--dur, 12s) var(--d, 0s) infinite ease-in-out;
+        }
+
+        .pulse-gold {
+            animation: pulse-gold 3s infinite;
+        }
+
+        .card-reveal {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+            filter: blur(8px);
+            animation: cardReveal 1s 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        /* ===== HERO TITLE — FIXED CENTERING ===== */
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 4.5rem);
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+            text-align: center;
+            width: 100%;
+        }
+
+        .hero-title-line {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0 0.35em;
+        }
+
+        /* ===== COMPACT FORM INPUTS ===== */
+        .form-input {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8125rem;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.5;
+            width: 100%;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        .form-input:focus {
+            border-color: rgba(var(--gold-rgb), 0.5);
+            box-shadow: 0 0 0 2px rgba(var(--gold-rgb), 0.08);
+        }
+
+        /* ===== FIELD ERROR STATE ===== */
+        .form-input.input-error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+        }
+
+        .field-error {
+            color: #ef4444;
+            font-size: 0.65rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .field-error.visible {
+            display: block;
+        }
+
+        /* ===== THEME TOGGLE ===== */
+        .theme-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+
+        button,
+        a,
+        [role="button"] {
+            pointer-events: auto !important;
+            cursor: pointer;
+        }
+
+        nav button,
+        nav a {
+            position: relative;
+            z-index: 60;
+        }
+
+        #theme-toggle-desktop,
+        #theme-toggle-mobile {
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body.light-theme .glass-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        body.light-theme nav {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* ===== CUSTOM SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-base);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--card-bg-solid);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        body.light-theme ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+        }
+
+        body.light-theme ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        /* ===== CHECKBOX ===== */
+        .custom-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1rem;
+            height: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            background-color: var(--input-bg);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .custom-checkbox:checked {
+            background-color: var(--gold);
+            border-color: var(--gold);
+        }
+
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 3px;
+            top: 0px;
+            width: 5px;
+            height: 9px;
+            border: solid #050505;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        body.light-theme .custom-checkbox:checked::after {
+            border-color: #ffffff;
+        }
+
+        .custom-checkbox:focus {
+            box-shadow: 0 0 0 2px rgba(var(--gold-rgb), 0.15);
+        }
+
+        /* ===== REDUCED MOTION ===== */
+        @media (prefers-reduced-motion: reduce) {
+
+            .hero-animate,
+            .hero-word,
+            .hero-line,
+            .particle,
+            .hero-bg-img,
+            .card-reveal {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important;
+            }
+        }
+    </style>
 </head>
+
 <body class="font-sans antialiased">
 
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
-        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500" id="toast-icon"></i>
         <span id="toast-message" class="text-sm font-medium"></span>
     </div>
 
-    <!-- Navigation (Simplified for login page, but includes theme toggle) -->
-    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex items-center justify-between py-4">
-                <!-- Logo -->
                 <a href="index.html" class="flex items-center gap-3 group">
                     <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
                     <div class="hidden sm:block">
-                        <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
-                        <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
+                        <span
+                            class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
+                        <span
+                            class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
                     </div>
                 </a>
-
-                <!-- Desktop: Theme toggle + Back to site -->
                 <div class="hidden lg:flex items-center gap-4">
-                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle theme">
-                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    <button id="theme-toggle-desktop" class="theme-toggle-btn" aria-label="Toggle light/dark mode">
+                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-desktop"></i>
                     </button>
-                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors flex items-center gap-1">
+                    <a href="index.html"
+                        class="text-sm text-muted-custom hover:text-gold transition-colors flex items-center gap-1.5">
                         <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home
                     </a>
                 </div>
-
-                <!-- Mobile: Theme toggle only -->
                 <div class="flex items-center gap-2 lg:hidden">
-                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle theme">
-                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    <button id="theme-toggle-mobile" class="theme-toggle-btn p-2" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-mobile"></i>
                     </button>
+                    <a href="index.html" class="p-2 text-muted-custom hover:text-gold transition-colors"
+                        aria-label="Back to Home">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Login Section -->
-    <div class="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
-        <!-- Background Image with Overlay -->
+    <!-- ============================================ -->
+    <!-- FULL-SCREEN LOGIN SECTION -->
+    <!-- ============================================ -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+        <!-- Background Image -->
         <div class="absolute inset-0">
-            <img src="images/gym-interior.jpg" alt="Gym Interior" class="w-full h-full object-cover opacity-20">
-            <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-base)] via-[var(--bg-base)]/90 to-[var(--bg-base)]/80"></div>
+            <img src="images/gym-interior.jpg" alt="" class="hero-bg-img w-full h-full object-cover select-none"
+                draggable="false" onerror="this.src='images/IMG-20260524-WA0037.jpg'">
         </div>
 
-        <!-- Login Form Container -->
-        <div class="relative z-10 w-full max-w-md">
-            <!-- Logo and Header -->
-            <div class="text-center mb-8">
-                <a href="index.html" class="inline-block">
-                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-16 w-auto mx-auto mb-4">
-                </a>
-                <h1 class="font-display text-3xl font-semibold tracking-tight">CLIENT LOGIN</h1>
-                <p class="text-muted-custom text-sm mt-2">Access your dashboard, programs, and meal plans.</p>
+        <!-- Overlays -->
+        <div class="absolute inset-0 bg-black/70"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-[#050505]/70"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-[#050505]/80 via-transparent to-[#050505]"></div>
+
+        <!-- Gold ambient glow -->
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-amber-500/[0.03] blur-[150px] pointer-events-none">
+        </div>
+
+        <!-- Gold floating particles -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+            <span class="particle" style="left:12%; top:50%; --size:3px; --d:0s; --dur:14s; --drift:20px;"></span>
+            <span class="particle" style="left:28%; top:25%; --size:2px; --d:3s; --dur:12s; --drift:-12px;"></span>
+            <span class="particle" style="left:68%; top:18%; --size:3px; --d:1s; --dur:16s; --drift:18px;"></span>
+            <span class="particle" style="left:85%; top:55%; --size:2px; --d:5s; --dur:11s; --drift:-25px;"></span>
+            <span class="particle" style="left:42%; top:75%; --size:3px; --d:2s; --dur:13s; --drift:8px;"></span>
+            <span class="particle" style="left:58%; top:35%; --size:2px; --d:7s; --dur:15s; --drift:-18px;"></span>
+        </div>
+
+        <!-- Login Content -->
+        <div class="relative z-10 w-full max-w-sm mx-auto px-4 pt-20 pb-8">
+
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <div class="hero-animate" style="--delay: 0.1s">
+                    <a href="index.html" class="inline-block">
+                        <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-14 w-auto mx-auto mb-4">
+                    </a>
+                </div>
+
+                <div class="flex justify-center mb-5 hero-animate" style="--delay: 0.3s">
+                    <div class="hero-line" style="--delay: 0.4s"></div>
+                </div>
+
+                <h1 class="font-display font-semibold tracking-tight mb-3 hero-title">
+                    <span class="hero-title-line">
+                        <span class="hero-word" style="--i:0">CLIENT</span>
+                        <span class="hero-word text-gradient" style="--i:1">LOGIN</span>
+                    </span>
+                </h1>
+
+                <div class="hero-animate" style="--delay: 1.1s">
+                    <p class="text-xs sm:text-sm text-muted-custom">Access your dashboard, programs, and meal plans.</p>
+                </div>
             </div>
 
             <!-- Login Card -->
-            <div class="glass-card rounded-2xl p-6 sm:p-8 gold-glow">
-                <form id="loginForm" class="space-y-5" novalidate>
-                    <!-- Email Field -->
+            <div class="glass-card rounded-2xl p-5 sm:p-6 card-reveal">
+                <form id="loginForm" class="space-y-3.5" novalidate>
+                    <!-- Email -->
                     <div>
-                        <label for="email" class="text-sm text-muted-custom mb-1.5 block">Email Address</label>
+                        <label for="email" class="text-xs font-medium text-muted-custom mb-1 block">Email
+                            Address</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i data-lucide="mail" class="w-4 h-4 text-muted-custom"></i>
+                            <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+                                <i data-lucide="mail" class="w-3.5 h-3.5 text-muted-custom"></i>
                             </div>
-                            <input 
-                                type="email" 
-                                id="email"
-                                name="email"
-                                required 
-                                class="form-input pl-10" 
-                                placeholder="you@example.com"
-                                autocomplete="email"
-                            >
+                            <input type="email" id="email" name="email" required class="form-input pl-8"
+                                placeholder="you@example.com" autocomplete="email">
                         </div>
+                        <div class="field-error" id="email-error"></div>
                     </div>
 
-                    <!-- Password Field -->
+                    <!-- Password -->
                     <div>
-                        <div class="flex items-center justify-between mb-1.5">
-                            <label for="password" class="text-sm text-muted-custom">Password</label>
-                            <a href="#" class="text-xs text-gold hover:underline" onclick="showToast('Password reset link sent to your email.')">Forgot password?</a>
+                        <div class="flex items-center justify-between mb-1">
+                            <label for="password" class="text-xs font-medium text-muted-custom">Password</label>
+                            <a href="forgotpassword.html" class="text-[0.65rem] text-gold hover:underline">Forgot
+                                password?</a>
                         </div>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i data-lucide="lock" class="w-4 h-4 text-muted-custom"></i>
+                            <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+                                <i data-lucide="lock" class="w-3.5 h-3.5 text-muted-custom"></i>
                             </div>
-                            <input 
-                                type="password" 
-                                id="password"
-                                name="password"
-                                required 
-                                class="form-input pl-10 pr-12" 
-                                placeholder="••••••••"
-                                autocomplete="current-password"
-                                minlength="6"
-                            >
-                            <!-- Show/Hide Password Toggle -->
-                            <button 
-                                type="button" 
-                                id="togglePassword"
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-custom hover:text-gold transition-colors"
-                                aria-label="Toggle password visibility"
-                            >
-                                <i data-lucide="eye" class="w-4 h-4" id="passwordIcon"></i>
+                            <input type="password" id="password" name="password" required class="form-input pl-8 pr-9"
+                                placeholder="••••••••" autocomplete="current-password" minlength="6">
+                            <button type="button" id="togglePassword"
+                                class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-muted-custom hover:text-gold transition-colors"
+                                aria-label="Toggle password visibility">
+                                <i data-lucide="eye" class="w-3.5 h-3.5" id="passwordIcon"></i>
                             </button>
                         </div>
+                        <div class="field-error" id="password-error"></div>
                     </div>
 
-                    <!-- Remember Me Checkbox -->
-                    <div class="flex items-center">
-                        <label class="flex items-center gap-2 text-sm text-muted-custom cursor-pointer">
-                            <input 
-                                type="checkbox" 
-                                id="remember"
-                                name="remember"
-                                class="rounded border-gray-300 text-brand-gold focus:ring-brand-gold bg-[var(--bg-secondary)]"
-                            >
-                            Remember me
-                        </label>
+                    <!-- Remember Me -->
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="remember" name="remember" class="custom-checkbox">
+                        <label for="remember" class="text-xs text-muted-custom cursor-pointer select-none">Remember
+                            me</label>
                     </div>
 
-                    <!-- Submit Button -->
-                    <button 
-                        type="submit" 
-                        class="btn-gold w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide uppercase flex items-center justify-center gap-2"
-                        id="loginButton"
-                    >
-                        <i data-lucide="log-in" class="w-4 h-4"></i> 
+                    <!-- Submit -->
+                    <button type="submit"
+                        class="btn-gold w-full py-2.5 rounded-lg text-xs font-semibold tracking-wide uppercase flex items-center justify-center gap-2 mt-1"
+                        id="loginButton">
+                        <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
                         <span id="loginButtonText">Sign In</span>
-                        <!-- Loading Spinner (hidden by default) -->
-                        <svg id="loginSpinner" class="animate-spin h-4 w-4 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg id="loginSpinner" class="animate-spin h-3.5 w-3.5 hidden"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
                         </svg>
                     </button>
                 </form>
-                
+
                 <!-- Register Link -->
-                <div class="mt-6 text-center text-sm text-muted-custom">
-                    Not a member yet? 
-                    <a href="membership.html" class="text-gold font-semibold hover:underline">Join Now</a>
+                <div class="mt-4 text-center text-xs text-muted-custom">
+                    Not a member yet?
+                    <a href="signup.html" class="text-gold font-semibold hover:underline">Join Now</a>
                 </div>
             </div>
-            
-            <!-- Mobile Back to Home (visible only on small screens) -->
-            <div class="mt-6 text-center lg:hidden">
-                <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors inline-flex items-center gap-1">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home
+
+            <!-- Mobile Back Link -->
+            <div class="mt-5 text-center lg:hidden hero-animate" style="--delay: 2s">
+                <a href="index.html"
+                    class="text-xs text-muted-custom hover:text-gold transition-colors inline-flex items-center gap-1">
+                    <i data-lucide="arrow-left" class="w-3 h-3"></i> Back to Home
                 </a>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Login Page Specific JavaScript -->
     <script>
-        // Password visibility toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            const togglePassword = document.getElementById('togglePassword');
-            const passwordInput = document.getElementById('password');
-            const passwordIcon = document.getElementById('passwordIcon');
-            
-            if (togglePassword && passwordInput && passwordIcon) {
-                togglePassword.addEventListener('click', function() {
-                    // Toggle password visibility
-                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        // ===== THEME TOGGLE =====
+        function initTheme() {
+            var saved = localStorage.getItem('theme');
+            if (saved === 'light') document.body.classList.add('light-theme');
+            updateThemeIcons();
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            var isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateThemeIcons();
+        }
+
+        function updateThemeIcons() {
+            var isLight = document.body.classList.contains('light-theme');
+            var iconName = isLight ? 'sun' : 'moon';
+            var desktopIcon = document.getElementById('theme-icon-desktop');
+            if (desktopIcon) desktopIcon.setAttribute('data-lucide', iconName);
+            var mobileIcon = document.getElementById('theme-icon-mobile');
+            if (mobileIcon) mobileIcon.setAttribute('data-lucide', iconName);
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // ===== TOAST =====
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            var msgEl = document.getElementById('toast-message');
+            var iconEl = document.getElementById('toast-icon');
+            if (toast && msgEl) {
+                msgEl.textContent = message;
+                if (iconEl) {
+                    if (type === 'error') {
+                        iconEl.setAttribute('data-lucide', 'alert-circle');
+                        iconEl.className = 'w-5 h-5 text-red-500';
+                    } else {
+                        iconEl.setAttribute('data-lucide', 'check-circle');
+                        iconEl.className = 'w-5 h-5 text-green-500';
+                    }
+                    if (window.lucide) lucide.createIcons();
+                }
+                toast.classList.add('show');
+                clearTimeout(window._toastTimer);
+                window._toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 4000);
+            }
+        }
+
+        // ===== CLEAR FIELD ERRORS =====
+        function clearFieldErrors() {
+            var errors = document.querySelectorAll('.field-error');
+            errors.forEach(function (el) {
+                el.textContent = '';
+                el.classList.remove('visible');
+            });
+            var inputs = document.querySelectorAll('.form-input');
+            inputs.forEach(function (el) {
+                el.classList.remove('input-error');
+            });
+        }
+
+        function showFieldError(fieldId, message) {
+            var errorEl = document.getElementById(fieldId + '-error');
+            var inputEl = document.getElementById(fieldId);
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.add('visible');
+            }
+            if (inputEl) {
+                inputEl.classList.add('input-error');
+            }
+        }
+
+        // ===== NAVBAR SCROLL =====
+        function initNavScroll() {
+            var nav = document.getElementById('navbar');
+            if (!nav) return;
+            var ticking = false;
+            window.addEventListener('scroll', function () {
+                if (!ticking) {
+                    requestAnimationFrame(function () {
+                        nav.classList.toggle('nav-scrolled', window.scrollY > 60);
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        }
+
+        // ===== PASSWORD TOGGLE =====
+        function initPasswordToggle() {
+            var toggleBtn = document.getElementById('togglePassword');
+            var passwordInput = document.getElementById('password');
+            var passwordIcon = document.getElementById('passwordIcon');
+
+            if (toggleBtn && passwordInput && passwordIcon) {
+                toggleBtn.addEventListener('click', function () {
+                    var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                     passwordInput.setAttribute('type', type);
-                    
-                    // Toggle icon
                     passwordIcon.setAttribute('data-lucide', type === 'password' ? 'eye' : 'eye-off');
-                    lucide.createIcons();
+                    if (window.lucide) lucide.createIcons();
                 });
             }
+        }
 
-            // Enhanced login form handling
-            const loginForm = document.getElementById('loginForm');
-            const loginButton = document.getElementById('loginButton');
-            const loginButtonText = document.getElementById('loginButtonText');
-            const loginSpinner = document.getElementById('loginSpinner');
+        // ===== CLEAR ERRORS ON INPUT =====
+        function initClearErrorsOnType() {
+            var inputs = document.querySelectorAll('.form-input');
+            inputs.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    input.classList.remove('input-error');
+                    var fieldId = input.getAttribute('id');
+                    var errorEl = document.getElementById(fieldId + '-error');
+                    if (errorEl) {
+                        errorEl.textContent = '';
+                        errorEl.classList.remove('visible');
+                    }
+                });
+            });
+        }
+
+        // ===== LOGIN FORM — CONNECTED TO PHP BACKEND =====
+        function initLoginForm() {
+            var loginForm = document.getElementById('loginForm');
+            var loginButton = document.getElementById('loginButton');
+            var loginButtonText = document.getElementById('loginButtonText');
+            var loginSpinner = document.getElementById('loginSpinner');
 
             if (loginForm) {
-                loginForm.addEventListener('submit', function(e) {
+                loginForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
-                    
-                    // Get form data
-                    const email = document.getElementById('email').value;
-                    const password = document.getElementById('password').value;
-                    
-                    // Basic validation
-                    if (!email || !password) {
-                        showToast('Please fill in all fields.');
+                    clearFieldErrors();
+
+                    var email = document.getElementById('email').value.trim();
+                    var password = document.getElementById('password').value;
+
+                    // ===== Client-side validation =====
+                    var hasError = false;
+
+                    if (!email) {
+                        showFieldError('email', 'Email address is required.');
+                        hasError = true;
+                    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        showFieldError('email', 'Please enter a valid email address.');
+                        hasError = true;
+                    }
+
+                    if (!password) {
+                        showFieldError('password', 'Password is required.');
+                        hasError = true;
+                    } else if (password.length < 6) {
+                        showFieldError('password', 'Password must be at least 6 characters.');
+                        hasError = true;
+                    }
+
+                    if (hasError) {
+                        showToast('Please fix the errors above.', 'error');
                         return false;
                     }
-                    
-                    if (password.length < 6) {
-                        showToast('Password must be at least 6 characters.');
-                        return false;
-                    }
-                    
-                    // Show loading state
+
+                    // ===== Show loading state =====
                     loginButton.disabled = true;
                     loginButtonText.textContent = 'Signing in...';
                     loginSpinner.classList.remove('hidden');
-                    
-                    // Simulate API call (replace with actual authentication)
-                    setTimeout(function() {
-                        showToast('Login successful! Redirecting to dashboard...');
-                        
-                        // Reset button state
+
+                    try {
+                        // ===== Send data to PHP backend =====
+                        var response = await fetch('api/login.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                email: email,
+                                password: password
+                            })
+                        });
+
+                        var data = await response.json();
+
+                        if (response.ok) {
+                            showToast(data.message || 'Login successful!', 'success');
+
+                            // Store user info
+                            if (data.id) localStorage.setItem('userId', data.id);
+                            if (data.name) localStorage.setItem('userName', data.name);
+                            if (data.email) localStorage.setItem('userEmail', data.email);
+
+                            // Redirect to dashboard
+                            setTimeout(function () {
+                                window.location.href = 'dashboard.html';
+                            }, 1500);
+                        } else {
+                            // ===== Server returned an error =====
+                            var errorMsg = data.message || 'Invalid credentials. Please try again.';
+
+                            // Show specific field errors based on server response
+                            if (errorMsg.toLowerCase().includes('email')) {
+                                showFieldError('email', errorMsg);
+                            } else if (errorMsg.toLowerCase().includes('password') || errorMsg.toLowerCase().includes('invalid')) {
+                                showFieldError('password', errorMsg);
+                                showFieldError('email', ''); // Clear email error but highlight it
+                                var emailInput = document.getElementById('email');
+                                if (emailInput) emailInput.classList.add('input-error');
+                            }
+
+                            showToast(errorMsg, 'error');
+                            loginButton.disabled = false;
+                            loginButtonText.textContent = 'Sign In';
+                            loginSpinner.classList.add('hidden');
+                        }
+
+                    } catch (error) {
+                        // ===== Network / server error =====
+                        console.error('Login error:', error);
+                        showToast('Cannot connect to server. Please try again later.', 'error');
                         loginButton.disabled = false;
                         loginButtonText.textContent = 'Sign In';
                         loginSpinner.classList.add('hidden');
-                        
-                        // Redirect to dashboard (uncomment when ready)
-                        // window.location.href = 'dashboard.html';
-                    }, 1500);
-                    
+                    }
+
                     return false;
                 });
             }
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', function () {
+            initTheme();
+            initNavScroll();
+            initPasswordToggle();
+            initLoginForm();
+            initClearErrorsOnType();
+
+            var desktopToggle = document.getElementById('theme-toggle-desktop');
+            var mobileToggle = document.getElementById('theme-toggle-mobile');
+            if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
+            if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
+
+            if (window.lucide) lucide.createIcons();
         });
     </script>
-
-    <!-- Main JavaScript -->
-    <script src="script.js"></script>
 </body>
+
 </html>

@@ -7,12 +7,415 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
     <script>
         tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Oswald', 'sans-serif'] } } }
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            gold: 'rgb(var(--gold-rgb) / <alpha-value>)',
+                            dark: 'var(--bg-base)',
+                            darker: 'var(--bg-secondary)',
+                            card: 'var(--card-bg-solid)'
+                        }
+                    }
+                }
+            }
         }
     </script>
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-secondary: #0F0F0F;
+            --bg-card: rgba(26, 26, 26, 0.6);
+            --text-main: #F5F5F0;
+            --text-muted: #a3a3a3;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --gold-rgb: 212 168 83;
+            --gold: rgb(var(--gold-rgb));
+            --gold-accent: #B8943F;
+            --card-bg-solid: #1A1A1A;
+            --nav-bg: rgba(5, 5, 5, 0.9);
+            --tab-inactive: rgba(255, 255, 255, 0.05);
+            --tab-text: #F5F5F0;
+            --toast-bg: rgba(26, 26, 26, 0.9);
+            --input-bg: #0F0F0F;
+        }
+
+        body.light-theme {
+            --bg-base: #f8f9fc;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.8);
+            --text-main: #1e1e2a;
+            --text-muted: #4b5563;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --gold-rgb: 184 134 11;
+            --gold-accent: #9a7209;
+            --card-bg-solid: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --tab-inactive: rgba(0, 0, 0, 0.05);
+            --tab-text: #1e1e2a;
+            --toast-bg: rgba(255, 255, 255, 0.95);
+            --input-bg: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { overflow-x: hidden; max-width: 100vw; scroll-behavior: smooth; }
+
+        body {
+            font-size: 1.125rem;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .font-display { font-family: 'Oswald', sans-serif; }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            z-index: 50;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+        }
+
+        nav.nav-scrolled {
+            background-color: rgba(5, 5, 5, 0.98);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-theme nav.nav-scrolled {
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ===== UTILITY ===== */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .text-muted-custom { color: var(--text-muted); }
+
+        .text-gradient {
+            background: linear-gradient(to right, var(--gold), #f5dfa0, var(--gold));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-gold { color: var(--gold); }
+        .border-gold { border-color: var(--gold); }
+
+        /* ===== BUTTONS ===== */
+        .btn-gold {
+            background: var(--gold);
+            color: #050505;
+            transition: all 150ms ease;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-accent);
+            box-shadow: 0 0 30px rgba(var(--gold-rgb), 0.5);
+            transform: translateY(-2px);
+        }
+
+        body.light-theme .btn-gold { color: #ffffff; }
+
+        .btn-outline {
+            border: 1px solid rgba(var(--gold-rgb), 0.5);
+            color: var(--gold);
+            background: transparent;
+            transition: all 150ms ease;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-outline:hover {
+            background: rgba(var(--gold-rgb), 0.1);
+            border-color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(var(--gold-rgb), 0.15);
+        }
+
+        /* ===== CARDS ===== */
+        .card-hover {
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            border-color: rgba(var(--gold-rgb), 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(var(--gold-rgb), 0.08);
+        }
+
+        .shop-tab.active { background: var(--gold); color: #050505; }
+        .shop-tab:not(.active) { background: var(--tab-inactive); color: var(--tab-text); }
+        .shop-tab { cursor: pointer; transition: all 0.2s ease; }
+
+        /* ===== MOBILE MENU ===== */
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background-color: var(--bg-base);
+        }
+        .mobile-menu.open { max-height: 800px; }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            background: var(--toast-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        /* ===== HERO ANIMATIONS ===== */
+        @keyframes heroFadeIn {
+            from { opacity: 0; transform: translateY(30px); filter: blur(6px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        @keyframes wordSlideUp {
+            from { opacity: 0; transform: translateY(100%); filter: blur(10px); }
+            60% { opacity: 1; filter: blur(0); }
+            80% { transform: translateY(-4%); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        @keyframes lineExpand {
+            from { width: 0; opacity: 0; }
+            to { width: 80px; opacity: 1; }
+        }
+
+        @keyframes heroImageZoom {
+            from { transform: scale(1.15); }
+            to { transform: scale(1.05); }
+        }
+
+        @keyframes particleFloat {
+            0% { opacity: 0; transform: translateY(0) translateX(0) scale(0); }
+            15% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 0.4; }
+            100% { opacity: 0; transform: translateY(-200px) translateX(var(--drift, 20px)) scale(0); }
+        }
+
+        @keyframes goldShimmer {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+
+        @keyframes scrollBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(var(--gold-rgb), 0.15); }
+        }
+
+        @keyframes tabSlideIn {
+            from { opacity: 0; transform: translateY(16px) scale(0.98); filter: blur(4px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        .hero-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            filter: blur(6px);
+            animation: heroFadeIn 0.9s var(--delay, 0s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hero-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+            filter: blur(10px);
+            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hero-word.text-gradient {
+            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both,
+                       goldShimmer 3s 2s ease-in-out 1 both;
+        }
+
+        .hero-line {
+            width: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            animation: lineExpand 0.8s var(--delay, 0s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hero-bg-img {
+            animation: heroImageZoom 25s ease-out forwards;
+        }
+
+        .particle {
+            position: absolute;
+            width: var(--size, 3px);
+            height: var(--size, 3px);
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--gold), 0 0 20px rgba(var(--gold-rgb), 0.3);
+            opacity: 0;
+            animation: particleFloat var(--dur, 12s) var(--d, 0s) infinite ease-in-out;
+        }
+
+        .scroll-indicator {
+            animation: scrollBounce 2s 2.5s infinite ease-in-out;
+        }
+
+        .pulse-gold { animation: pulse-gold 3s infinite; }
+
+        /* ===== HERO RESPONSIVE TYPOGRAPHY ===== */
+        .hero-title {
+            font-size: clamp(2.2rem, 6.5vw, 6.5rem);
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+        }
+
+        @media (min-width: 768px) {
+            .hero-title-line { white-space: nowrap; }
+        }
+
+        /* ===== SCROLL REVEAL ===== */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px) scale(0.97);
+            filter: blur(4px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
+
+        /* ===== TAB CONTENT ANIMATION ===== */
+        .tab-content {
+            animation: tabSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        /* ===== PRODUCT CARDS ===== */
+        .product-image-square {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-base) 100%);
+        }
+
+        .product-image-square img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .product-image-tall {
+            position: relative;
+            width: 100%;
+            padding-bottom: 130%;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-base) 100%);
+        }
+
+        .product-image-tall img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card-hover:hover .product-image-square img,
+        .card-hover:hover .product-image-tall img {
+            transform: scale(1.08);
+        }
+
+        .product-content {
+            padding: 1rem 1.25rem 1.25rem;
+        }
+
+        /* ===== CUSTOM SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--card-bg-solid); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+        body.light-theme ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+        body.light-theme ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+        @media (max-width: 640px) {
+            .section-padding { padding-top: 3rem; padding-bottom: 3rem; }
+        }
+
+        .theme-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .theme-toggle-btn:hover { border-color: var(--gold); transform: scale(1.05); }
+
+        button, a, [role="button"] { pointer-events: auto !important; cursor: pointer; }
+        nav button, nav a { position: relative; z-index: 60; }
+        #mobile-toggle, #theme-toggle-desktop, #theme-toggle-mobile {
+            cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation;
+        }
+
+        body.light-theme .glass-card { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); }
+        body.light-theme nav { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
+
+        .section-padding { padding-top: 4rem; padding-bottom: 4rem; }
+        @media (min-width: 768px) { .section-padding { padding-top: 5rem; padding-bottom: 5rem; } }
+
+        /* ===== REDUCED MOTION ===== */
+        @media (prefers-reduced-motion: reduce) {
+            .hero-animate, .hero-word, .hero-line, .particle,
+            .hero-bg-img, .scroll-indicator, .tab-content {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important;
+            }
+            .reveal-on-scroll {
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
 </head>
 <body class="font-sans antialiased">
 
@@ -23,43 +426,51 @@
     </div>
 
     <!-- Navigation -->
-    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--bg-base)]/90 backdrop-blur-xl border-b border-[var(--border-color)]">
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex items-center justify-between py-4">
-                <a href="index.html" class="flex items-center gap-3">
-                    <img src="images/gym_logo.jpg" alt="Logo" class="h-10 w-auto">
-                    <span class="font-display text-xl text-gold hidden sm:block">COMBOMASTER</span>
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
+                    <div class="hidden sm:block">
+                        <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
+                        <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
+                    </div>
                 </a>
                 <div class="hidden lg:flex items-center gap-6">
-                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Home</a>
-                    <a href="about.html" class="text-sm text-muted-custom hover:text-gold transition-colors">About</a>
-                    <a href="training.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Training</a>
-                    <a href="mealplans.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
-                    <a href="shop.html" class="text-sm text-gold font-semibold">Shop</a>
-                    <a href="transformations.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Results</a>
-                    <a href="contact.html" class="text-sm text-muted-custom hover:text-gold transition-colors">Contact</a>
+                    <a href="index.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Home</a>
+                    <a href="about.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">About</a>
+                    <a href="training.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Training</a>
+                    <a href="mealplans.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
+                    <a href="shop.html" class="text-sm tracking-wide text-gold font-semibold transition-colors">Shop</a>
+                    <a href="transformations.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Results</a>
+                    <a href="contact.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Contact</a>
                 </div>
                 <div class="hidden lg:flex items-center gap-3">
-                    <button id="theme-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
+                    <button id="theme-toggle-desktop" class="theme-toggle-btn" aria-label="Toggle light/dark mode">
+                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-desktop"></i>
+                    </button>
                     <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
                     <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
                 </div>
                 <div class="flex items-center gap-2 lg:hidden">
-                    <button id="theme-toggle-mobile" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="moon" class="w-5 h-5"></i></button>
-                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors"><i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i></button>
+                    <button id="theme-toggle-mobile" class="theme-toggle-btn p-2" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-mobile"></i>
+                    </button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle menu">
+                        <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
+                    </button>
                 </div>
             </div>
-            <!-- Mobile Menu -->
             <div id="mobile-menu" class="mobile-menu lg:hidden">
                 <div class="pb-6 space-y-1">
-                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Home</a>
-                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">About</a>
-                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Training</a>
-                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Meal Plans</a>
-                    <a href="shop.html" class="block py-3 px-4 text-gold font-semibold" onclick="closeMobileMenu()">Shop</a>
-                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Results</a>
-                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold" onclick="closeMobileMenu()">Contact</a>
-                    <div class="pt-3 flex gap-2">
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">About</a>
+                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Training</a>
+                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Meal Plans</a>
+                    <a href="shop.html" class="block py-3 px-4 text-gold font-semibold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Shop</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Results</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Contact</a>
+                    <div class="pt-3 flex gap-2 px-4">
                         <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
                         <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
                     </div>
@@ -68,36 +479,109 @@
         </div>
     </nav>
 
-    <!-- PAGE HERO -->
-    <section class="page-hero">
-        <img src="images/shop-hero.jpg" alt="ComboMaster Store">
-        <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 text-center">
-            <span class="text-xs font-semibold tracking-widest uppercase text-gold">Shop</span>
-            <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
-                THE <span class="text-gradient">COMBOMASTER</span> STORE
+    <!-- ============================================ -->
+    <!-- HERO SECTION -->
+    <!-- ============================================ -->
+    <section id="hero" class="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+
+        <!-- Background Image -->
+        <div class="absolute inset-0">
+            <img
+                src="images/shop-hero.jpg"
+                alt=""
+                class="hero-bg-img w-full h-full object-cover select-none"
+                draggable="false"
+                onerror="this.src='https://picsum.photos/seed/gymshopdark/1920/1080.jpg'"
+            >
+        </div>
+
+        <!-- Overlays -->
+        <div class="absolute inset-0 bg-black/60"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/30 to-[#050505]/60"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-[#050505]/70 via-transparent to-[#050505]"></div>
+
+        <!-- Gold ambient glow -->
+        <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-amber-500/[0.04] blur-[150px] pointer-events-none"></div>
+
+        <!-- Gold floating particles -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+            <span class="particle" style="left:8%; top:55%; --size:3px; --d:0s; --dur:14s; --drift:25px;"></span>
+            <span class="particle" style="left:20%; top:28%; --size:2px; --d:3s; --dur:12s; --drift:-15px;"></span>
+            <span class="particle" style="left:74%; top:20%; --size:4px; --d:1s; --dur:16s; --drift:20px;"></span>
+            <span class="particle" style="left:90%; top:48%; --size:2px; --d:5s; --dur:11s; --drift:-30px;"></span>
+            <span class="particle" style="left:45%; top:72%; --size:3px; --d:2s; --dur:13s; --drift:10px;"></span>
+            <span class="particle" style="left:60%; top:38%; --size:2px; --d:7s; --dur:15s; --drift:-20px;"></span>
+        </div>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center pt-24 pb-20 w-full">
+
+            <!-- Badge -->
+            <div class="hero-animate" style="--delay: 0.1s">
+                <div class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-brand-gold/30 bg-brand-gold/[0.08] backdrop-blur-sm mb-8">
+                    <div class="w-2 h-2 rounded-full bg-brand-gold pulse-gold"></div>
+                    <span class="text-[0.7rem] sm:text-xs font-semibold tracking-[0.15em] sm:tracking-[0.2em] uppercase text-gold">Shop</span>
+                </div>
+            </div>
+
+            <!-- Decorative Gold Line -->
+            <div class="flex justify-center mb-8 hero-animate" style="--delay: 0.3s">
+                <div class="hero-line" style="--delay: 0.4s"></div>
+            </div>
+
+            <!-- Title — word-by-word animation -->
+            <h1 class="font-display font-semibold tracking-tight mb-8 hero-title">
+                <span class="hero-title-line">
+                    <span class="hero-word" style="--i:0">THE</span>
+                    <span class="hero-word text-gradient" style="--i:1">COMBOMASTER</span>
+                </span>
+                <br class="hidden sm:inline">
+                <span class="hero-title-line">
+                    <span class="hero-word" style="--i:2">STORE</span>
+                </span>
             </h1>
-            <p class="text-muted-custom max-w-2xl mx-auto mt-4">Everything you need to fuel your transformation — supplements, apparel, and equipment.</p>
+
+            <!-- Second decorative line -->
+            <div class="flex justify-center mb-8 hero-animate" style="--delay: 1.2s">
+                <div class="hero-line" style="--delay: 1.3s"></div>
+            </div>
+
+            <!-- Description -->
+            <div class="hero-animate" style="--delay: 1.1s">
+                <p class="text-sm sm:text-base md:text-lg lg:text-xl text-muted-custom leading-relaxed max-w-2xl mx-auto">
+                    Everything you need to fuel your transformation — supplements, apparel, and equipment.
+                </p>
+            </div>
+
+            <!-- Scroll hint -->
+            <div class="hero-animate mt-14" style="--delay: 1.8s">
+                <a href="#products" class="scroll-indicator inline-flex flex-col items-center gap-2 text-muted-custom hover:text-gold transition-colors">
+                    <span class="text-[0.6rem] tracking-[0.25em] uppercase">Browse</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </a>
+            </div>
         </div>
     </section>
 
+    <!-- ============================================ -->
     <!-- SHOP TABS SECTION -->
-    <section class="py-12 sm:py-16 section-padding">
+    <!-- ============================================ -->
+    <section id="products" class="py-12 sm:py-16 section-padding">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            
+
             <!-- Tab Buttons -->
             <div class="flex flex-wrap justify-center gap-3 mb-10 reveal-on-scroll">
-                <button onclick="switchTab('shop', 'supplements')" id="shop-tab-supplements" class="shop-tab active px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase transition-all">Supplements</button>
-                <button onclick="switchTab('shop', 'attire')" id="shop-tab-attire" class="shop-tab px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase transition-all">Gym Attire</button>
-                <button onclick="switchTab('shop', 'equipment')" id="shop-tab-equipment" class="shop-tab px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase transition-all">Equipment</button>
+                <button onclick="switchTab('shop', 'supplements')" id="shop-tab-supplements" class="shop-tab active px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase">Supplements</button>
+                <button onclick="switchTab('shop', 'attire')" id="shop-tab-attire" class="shop-tab px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase">Gym Attire</button>
+                <button onclick="switchTab('shop', 'equipment')" id="shop-tab-equipment" class="shop-tab px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase">Equipment</button>
             </div>
 
             <!-- SUPPLEMENTS CONTENT -->
             <div id="shop-supplements" class="shop-content tab-content">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-                    <!-- Product 1 -->
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
                         <div class="product-image-square">
-                            <img src="images/shop-protein.jpg" alt="Whey Protein">
+                            <img src="images/shop-protein.jpg" alt="Whey Protein" onerror="this.src='https://picsum.photos/seed/wheyprotein/400/400.jpg'">
                         </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">Whey Protein</h4>
@@ -107,10 +591,9 @@
                         </div>
                     </div>
 
-                    <!-- Product 2 -->
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
                         <div class="product-image-square">
-                            <img src="images/shop-gainer.jpg" alt="Mass Gainer">
+                            <img src="images/shop-gainer.jpg" alt="Mass Gainer" onerror="this.src='https://picsum.photos/seed/massgainer/400/400.jpg'">
                         </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">Mass Gainer</h4>
@@ -120,10 +603,9 @@
                         </div>
                     </div>
 
-                    <!-- Product 3 -->
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.12s;">
                         <div class="product-image-square">
-                            <img src="images/shop-preworkout.jpg" alt="Pre-Workout">
+                            <img src="images/shop-preworkout.jpg" alt="Pre-Workout" onerror="this.src='https://picsum.photos/seed/preworkout/400/400.jpg'">
                         </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">Pre-Workout</h4>
@@ -133,10 +615,9 @@
                         </div>
                     </div>
 
-                    <!-- Product 4 -->
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.18s;">
                         <div class="product-image-square">
-                            <img src="images/shop-fatburner.jpg" alt="Fat Burner">
+                            <img src="images/shop-fatburner.jpg" alt="Fat Burner" onerror="this.src='https://picsum.photos/seed/fatburner/400/400.jpg'">
                         </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">Fat Burner</h4>
@@ -146,10 +627,9 @@
                         </div>
                     </div>
 
-                    <!-- Product 5 -->
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.24s;">
                         <div class="product-image-square">
-                            <img src="images/shop-vitamins.jpg" alt="Vitamins">
+                            <img src="images/shop-vitamins.jpg" alt="Vitamins" onerror="this.src='https://picsum.photos/seed/vitapack/400/400.jpg'">
                         </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">Vitamin Pack</h4>
@@ -164,8 +644,10 @@
             <!-- GYM ATTIRE CONTENT -->
             <div id="shop-attire" class="shop-content tab-content hidden">
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
-                        <div class="product-image-tall"><img src="images/shop-tshirt.jpg" alt="Gym T-Shirt"></div>
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
+                        <div class="product-image-tall">
+                            <img src="images/shop-tshirt.jpg" alt="Gym T-Shirt" onerror="this.src='https://picsum.photos/seed/gymtshirt/400/520.jpg'">
+                        </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">CM Gym T-Shirt</h4>
                             <p class="text-xs text-muted-custom mb-2">S / M / L / XL</p>
@@ -173,8 +655,11 @@
                             <button onclick="showToast('Gym T-Shirt added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
                         </div>
                     </div>
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
-                        <div class="product-image-tall"><img src="images/shop-vest.jpg" alt="Training Vest"></div>
+
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
+                        <div class="product-image-tall">
+                            <img src="images/shop-vest.jpg" alt="Training Vest" onerror="this.src='https://picsum.photos/seed/trainingvest/400/520.jpg'">
+                        </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">CM Training Vest</h4>
                             <p class="text-xs text-muted-custom mb-2">S / M / L / XL</p>
@@ -182,8 +667,11 @@
                             <button onclick="showToast('Training Vest added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
                         </div>
                     </div>
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
-                        <div class="product-image-tall"><img src="images/shop-shorts.jpg" alt="Workout Shorts"></div>
+
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.12s;">
+                        <div class="product-image-tall">
+                            <img src="images/shop-shorts.jpg" alt="Workout Shorts" onerror="this.src='https://picsum.photos/seed/workoutshorts/400/520.jpg'">
+                        </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">CM Workout Shorts</h4>
                             <p class="text-xs text-muted-custom mb-2">M / L / XL</p>
@@ -191,8 +679,11 @@
                             <button onclick="showToast('Workout Shorts added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
                         </div>
                     </div>
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
-                        <div class="product-image-tall"><img src="images/shop-hoodie.jpg" alt="Gym Hoodie"></div>
+
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.18s;">
+                        <div class="product-image-tall">
+                            <img src="images/shop-hoodie.jpg" alt="Gym Hoodie" onerror="this.src='https://picsum.photos/seed/gymhoodie/400/520.jpg'">
+                        </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">CM Gym Hoodie</h4>
                             <p class="text-xs text-muted-custom mb-2">M / L / XL / XXL</p>
@@ -206,9 +697,9 @@
             <!-- GYM EQUIPMENT CONTENT -->
             <div id="shop-equipment" class="shop-content tab-content hidden">
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
                         <div class="product-image-square">
-                            <img src="images/shop-dumbbells.jpg" alt="Dumbbells">
+                            <img src="images/shop-dumbbells.jpg" alt="Dumbbells" onerror="this.src='https://picsum.photos/seed/dumbbellset/400/400.jpg'">
                         </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">Dumbbell Set</h4>
@@ -217,9 +708,10 @@
                             <button onclick="showToast('Dumbbell Set added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
                         </div>
                     </div>
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
                         <div class="product-image-square">
-                            <img src="images/shop-bands.jpg" alt="Resistance Bands">
+                            <img src="images/shop-bands.jpg" alt="Resistance Bands" onerror="this.src='https://picsum.photos/seed/resbands/400/400.jpg'">
                         </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">Resistance Bands</h4>
@@ -228,9 +720,10 @@
                             <button onclick="showToast('Resistance Bands added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
                         </div>
                     </div>
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.12s;">
                         <div class="product-image-square">
-                            <img src="images/shop-rope.jpg" alt="Speed Rope">
+                            <img src="images/shop-rope.jpg" alt="Speed Rope" onerror="this.src='https://picsum.photos/seed/speedrope/400/400.jpg'">
                         </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">Speed Rope</h4>
@@ -239,9 +732,10 @@
                             <button onclick="showToast('Speed Rope added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
                         </div>
                     </div>
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden product-card reveal-on-scroll">
+
+                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.18s;">
                         <div class="product-image-square">
-                            <img src="images/shop-abroller.jpg" alt="Ab Roller">
+                            <img src="images/shop-abroller.jpg" alt="Ab Roller" onerror="this.src='https://picsum.photos/seed/abroller/400/400.jpg'">
                         </div>
                         <div class="product-content text-center">
                             <h4 class="font-semibold text-sm mb-1">Ab Roller</h4>
@@ -261,30 +755,33 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
                 <div class="col-span-2 md:col-span-1">
-                    <a href="index.html" class="flex items-center gap-2 mb-4"><img src="images/gym_logo.jpg" alt="Logo" class="h-8 w-auto"><span class="font-display text-lg text-gold">COMBOMASTER</span></a>
+                    <a href="index.html" class="flex items-center gap-2 mb-4">
+                        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-brand-gold to-amber-600"></div>
+                        <span class="font-display text-lg text-gold">COMBOMASTER</span>
+                    </a>
                     <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Links</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Links</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="training.html">Training</a></li>
-                        <li><a href="membership.html">Membership</a></li>
+                        <li><a href="about.html" class="hover:text-gold transition-colors">About</a></li>
+                        <li><a href="training.html" class="hover:text-gold transition-colors">Training</a></li>
+                        <li><a href="membership.html" class="hover:text-gold transition-colors">Membership</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Shop</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Shop</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="shop.html">Supplements</a></li>
-                        <li><a href="shop.html">Attire</a></li>
-                        <li><a href="shop.html">Equipment</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Supplements</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Attire</a></li>
+                        <li><a href="shop.html" class="hover:text-gold transition-colors">Equipment</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3">Connect</h4>
+                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Connect</h4>
                     <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="contact.html">Contact Us</a></li>
-                        <li><a href="login.html">Client Login</a></li>
+                        <li><a href="contact.html" class="hover:text-gold transition-colors">Contact Us</a></li>
+                        <li><a href="login.html" class="hover:text-gold transition-colors">Client Login</a></li>
                     </ul>
                 </div>
             </div>
@@ -294,6 +791,151 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // ===== THEME TOGGLE =====
+        function initTheme() {
+            var saved = localStorage.getItem('theme');
+            if (saved === 'light') document.body.classList.add('light-theme');
+            updateThemeIcons();
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            var isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateThemeIcons();
+        }
+
+        function updateThemeIcons() {
+            var isLight = document.body.classList.contains('light-theme');
+            var iconName = isLight ? 'sun' : 'moon';
+            var desktopIcon = document.getElementById('theme-icon-desktop');
+            if (desktopIcon) desktopIcon.setAttribute('data-lucide', iconName);
+            var mobileIcon = document.getElementById('theme-icon-mobile');
+            if (mobileIcon) mobileIcon.setAttribute('data-lucide', iconName);
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // ===== MOBILE MENU =====
+        function closeMobileMenu() {
+            var menu = document.getElementById('mobile-menu');
+            if (menu) menu.classList.remove('open');
+        }
+
+        function initMobileMenu() {
+            var toggle = document.getElementById('mobile-toggle');
+            var menu = document.getElementById('mobile-menu');
+            if (toggle && menu) {
+                toggle.addEventListener('click', function () { menu.classList.toggle('open'); });
+            }
+        }
+
+        // ===== TOAST =====
+        function showToast(message) {
+            var toast = document.getElementById('toast');
+            var msgEl = document.getElementById('toast-message');
+            if (toast && msgEl) {
+                msgEl.textContent = message;
+                toast.classList.add('show');
+                setTimeout(function () { toast.classList.remove('show'); }, 3000);
+            }
+        }
+
+        // ===== SCROLL REVEAL =====
+        var scrollObserver = null;
+
+        function initScrollReveal() {
+            var elements = document.querySelectorAll('.reveal-on-scroll:not(.is-visible)');
+            if (scrollObserver) scrollObserver.disconnect();
+
+            scrollObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        scrollObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+            elements.forEach(function (el) { scrollObserver.observe(el); });
+        }
+
+        // ===== NAVBAR SCROLL =====
+        function initNavScroll() {
+            var nav = document.getElementById('navbar');
+            if (!nav) return;
+            var ticking = false;
+            window.addEventListener('scroll', function () {
+                if (!ticking) {
+                    requestAnimationFrame(function () {
+                        nav.classList.toggle('nav-scrolled', window.scrollY > 60);
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        }
+
+        // ===== HERO PARALLAX =====
+        function initHeroParallax() {
+            var heroImg = document.querySelector('.hero-bg-img');
+            if (!heroImg) return;
+            var ticking = false;
+            window.addEventListener('scroll', function () {
+                if (!ticking) {
+                    requestAnimationFrame(function () {
+                        var scrolled = window.scrollY;
+                        var heroEl = document.getElementById('hero');
+                        if (heroEl && scrolled < heroEl.offsetHeight) {
+                            heroImg.style.transform = 'scale(1.05) translateY(' + (scrolled * 0.25) + 'px)';
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        }
+
+        // ===== TAB SWITCHING =====
+        function switchTab(group, tabName) {
+            var allContents = document.querySelectorAll('.' + group + '-content');
+            allContents.forEach(function (content) { content.classList.add('hidden'); });
+
+            var targetContent = document.getElementById(group + '-' + tabName);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+                targetContent.style.animation = 'none';
+                targetContent.offsetHeight;
+                targetContent.style.animation = '';
+            }
+
+            var allTabs = document.querySelectorAll('[id^="' + group + '-tab-"]');
+            allTabs.forEach(function (tab) { tab.classList.remove('active'); });
+
+            var activeTab = document.getElementById(group + '-tab-' + tabName);
+            if (activeTab) activeTab.classList.add('active');
+
+            // Reset & re-init scroll reveal for newly visible items
+            var newCards = targetContent ? targetContent.querySelectorAll('.reveal-on-scroll') : [];
+            newCards.forEach(function (el) { el.classList.remove('is-visible'); });
+            initScrollReveal();
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', function () {
+            initTheme();
+            initMobileMenu();
+            initScrollReveal();
+            initNavScroll();
+            initHeroParallax();
+
+            var desktopToggle = document.getElementById('theme-toggle-desktop');
+            var mobileToggle = document.getElementById('theme-toggle-mobile');
+            if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
+            if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
+
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
 </body>
 </html>

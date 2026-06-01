@@ -5,16 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ComboMaster Fitness — Transform Your Body, Master Your Life</title>
 
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
@@ -37,7 +31,6 @@
     </script>
 
     <style>
-        /* ===== BASE & VARIABLES ===== */
         :root {
             --bg-base: #050505;
             --bg-secondary: #0F0F0F;
@@ -50,10 +43,6 @@
             --gold-accent: #B8943F;
             --card-bg-solid: #1A1A1A;
             --nav-bg: rgba(5, 5, 5, 0.9);
-            --hero-overlay-start: #050505;
-            --hero-overlay-mid: rgba(5, 5, 5, 0.85);
-            --hero-bottom-start: #050505;
-            --hero-bottom-mid: rgba(5, 5, 5, 0.4);
             --tab-inactive: rgba(255, 255, 255, 0.05);
             --tab-text: #F5F5F0;
             --toast-bg: rgba(26, 26, 26, 0.9);
@@ -71,27 +60,14 @@
             --gold-accent: #9a7209;
             --card-bg-solid: #ffffff;
             --nav-bg: rgba(255, 255, 255, 0.95);
-            --hero-overlay-start: #f8f9fc;
-            --hero-overlay-mid: rgba(248, 249, 252, 0.85);
-            --hero-bottom-start: #f8f9fc;
-            --hero-bottom-mid: rgba(248, 249, 252, 0.4);
             --tab-inactive: rgba(0, 0, 0, 0.05);
             --tab-text: #1e1e2a;
             --toast-bg: rgba(255, 255, 255, 0.95);
             --input-bg: #ffffff;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            overflow-x: hidden;
-            max-width: 100vw;
-            scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { overflow-x: hidden; max-width: 100vw; scroll-behavior: smooth; }
 
         body {
             font-size: 1.125rem;
@@ -101,17 +77,25 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* ===== TYPOGRAPHY ===== */
-        .font-display {
-            font-family: 'Oswald', sans-serif;
-        }
+        .font-display { font-family: 'Oswald', sans-serif; }
 
         /* ===== NAVIGATION ===== */
         nav {
             z-index: 50;
             background-color: var(--nav-bg);
             backdrop-filter: blur(12px);
-            transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+        }
+
+        nav.nav-scrolled {
+            background-color: rgba(5, 5, 5, 0.98);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-theme nav.nav-scrolled {
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
         }
 
         /* ===== UTILITY CLASSES ===== */
@@ -123,34 +107,18 @@
             transition: all 0.3s ease;
         }
 
-        .text-muted-custom {
-            color: var(--text-muted);
-        }
+        .text-muted-custom { color: var(--text-muted); }
 
         .text-gradient {
             background: linear-gradient(to right, var(--gold), #f5dfa0, var(--gold));
+            background-size: 200% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .text-gold {
-            color: var(--gold);
-        }
-
-        .border-gold {
-            border-color: var(--gold);
-        }
-
-        .hero-overlay {
-            background: linear-gradient(to right, var(--hero-overlay-start), var(--hero-overlay-mid), transparent);
-            transition: background 0.3s ease;
-        }
-
-        .hero-bottom {
-            background: linear-gradient(to top, var(--hero-bottom-start), transparent, var(--hero-bottom-mid));
-            transition: background 0.3s ease;
-        }
+        .text-gold { color: var(--gold); }
+        .border-gold { border-color: var(--gold); }
 
         /* ===== BUTTONS ===== */
         .btn-gold {
@@ -164,13 +132,11 @@
 
         .btn-gold:hover {
             background: var(--gold-accent);
-            box-shadow: 0 0 20px rgba(var(--gold-rgb), 0.4);
-            transform: translateY(-1px);
+            box-shadow: 0 0 30px rgba(var(--gold-rgb), 0.5);
+            transform: translateY(-2px);
         }
 
-        body.light-theme .btn-gold {
-            color: #ffffff;
-        }
+        body.light-theme .btn-gold { color: #ffffff; }
 
         .btn-outline {
             border: 1px solid rgba(var(--gold-rgb), 0.5);
@@ -184,10 +150,11 @@
         .btn-outline:hover {
             background: rgba(var(--gold-rgb), 0.1);
             border-color: var(--gold);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(var(--gold-rgb), 0.15);
         }
 
-        /* ===== CARDS & INTERACTIVE ELEMENTS ===== */
+        /* ===== CARDS ===== */
         .card-hover {
             transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -195,17 +162,11 @@
         .card-hover:hover {
             border-color: rgba(var(--gold-rgb), 0.5);
             transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(var(--gold-rgb), 0.08);
         }
 
-        .shop-tab.active {
-            background: var(--gold);
-            color: #050505;
-        }
-
-        .shop-tab:not(.active) {
-            background: var(--tab-inactive);
-            color: var(--tab-text);
-        }
+        .shop-tab.active { background: var(--gold); color: #050505; }
+        .shop-tab:not(.active) { background: var(--tab-inactive); color: var(--tab-text); }
 
         /* ===== MOBILE MENU ===== */
         .mobile-menu {
@@ -214,12 +175,9 @@
             transition: max-height 0.4s ease;
             background-color: var(--bg-base);
         }
+        .mobile-menu.open { max-height: 800px; }
 
-        .mobile-menu.open {
-            max-height: 800px;
-        }
-
-        /* ===== TOAST NOTIFICATION ===== */
+        /* ===== TOAST ===== */
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -232,92 +190,174 @@
             backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
         }
+        .toast.show { transform: translateY(0); opacity: 1; }
 
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        /* ===== ANIMATIONS ===== */
-        @keyframes fadeInUp {
+        /* ===== HERO ANIMATIONS ===== */
+        @keyframes heroFadeIn {
             from {
                 opacity: 0;
                 transform: translateY(30px);
+                filter: blur(6px);
             }
             to {
                 opacity: 1;
                 transform: translateY(0);
+                filter: blur(0);
             }
         }
 
-        .animate-fade-in-up {
-            animation: fadeInUp 0.8s ease forwards;
+        @keyframes wordSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+                filter: blur(10px);
+            }
+            60% {
+                opacity: 1;
+                filter: blur(0);
+            }
+            80% {
+                transform: translateY(-4%);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
         }
 
-        @keyframes pulse-gold {
-            0%, 100% {
-                box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.4);
+        @keyframes lineExpand {
+            from { width: 0; opacity: 0; }
+            to { width: 80px; opacity: 1; }
+        }
+
+        @keyframes heroImageZoom {
+            from { transform: scale(1.15); }
+            to { transform: scale(1.05); }
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0) scale(0);
+            }
+            15% {
+                opacity: 0.7;
+                transform: scale(1);
             }
             50% {
-                box-shadow: 0 0 20px 5px rgba(var(--gold-rgb), 0.15);
+                opacity: 0.4;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-200px) translateX(var(--drift, 20px)) scale(0);
             }
         }
 
-        .pulse-gold {
-            animation: pulse-gold 3s infinite;
+        @keyframes scrollBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        @keyframes goldShimmer {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+
+        .hero-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            filter: blur(6px);
+            animation: heroFadeIn 0.9s var(--delay, 0s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hero-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+            filter: blur(10px);
+            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hero-word.text-gradient {
+            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both,
+                       goldShimmer 3s 2s ease-in-out 1 both;
+        }
+
+        .hero-line {
+            width: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            animation: lineExpand 0.8s var(--delay, 0s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hero-bg-img {
+            animation: heroImageZoom 25s ease-out forwards;
+        }
+
+        .particle {
+            position: absolute;
+            width: var(--size, 3px);
+            height: var(--size, 3px);
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--gold), 0 0 20px rgba(var(--gold-rgb), 0.3);
+            opacity: 0;
+            animation: particleFloat var(--dur, 12s) var(--d, 0s) infinite ease-in-out;
+        }
+
+        .scroll-indicator {
+            animation: scrollBounce 2s 2.5s infinite ease-in-out;
+        }
+
+        /* ===== HERO RESPONSIVE TYPOGRAPHY ===== */
+        .hero-title {
+            font-size: clamp(2.2rem, 6.5vw, 6.5rem);
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+        }
+
+        @media (min-width: 768px) {
+            .hero-title-line {
+                white-space: nowrap;
+            }
         }
 
         /* ===== SCROLL REVEAL ===== */
         .reveal-on-scroll {
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: translateY(30px) scale(0.97);
+            filter: blur(4px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .reveal-on-scroll.is-visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
+            filter: blur(0);
         }
+
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(var(--gold-rgb), 0.15); }
+        }
+
+        .pulse-gold { animation: pulse-gold 3s infinite; }
 
         /* ===== CUSTOM SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--card-bg-solid); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+        body.light-theme ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+        body.light-theme ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-base);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--card-bg-solid);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--gold);
-        }
-
-        body.light-theme ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-        }
-
-        body.light-theme ::-webkit-scrollbar-thumb:hover {
-            background: var(--gold);
-        }
-
-        /* ===== RESPONSIVE FIXES ===== */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 640px) {
-            .hero-text {
-                font-size: 2.5rem !important;
-            }
-
-            .section-padding {
-                padding-top: 3rem;
-                padding-bottom: 3rem;
-            }
+            .section-padding { padding-top: 3rem; padding-bottom: 3rem; }
         }
 
-        /* ===== PAGE HERO BANNERS ===== */
+        /* ===== PAGE HERO ===== */
         .page-hero {
             position: relative;
             padding-top: 8rem;
@@ -325,7 +365,6 @@
             overflow: hidden;
             border-bottom: 1px solid var(--border-color);
         }
-
         .page-hero::before {
             content: '';
             position: absolute;
@@ -333,38 +372,15 @@
             background: linear-gradient(to bottom, var(--bg-base), rgba(0, 0, 0, 0.3), var(--bg-base));
             z-index: 1;
         }
+        .page-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.4; }
+        .page-hero .hero-content { position: relative; z-index: 2; }
 
-        .page-hero img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.4;
-        }
-
-        .page-hero .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        /* ===== CONTENT TABS ===== */
-        .tab-content {
-            animation: fadeInTab 0.4s ease;
-        }
-
+        .tab-content { animation: fadeInTab 0.4s ease; }
         @keyframes fadeInTab {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== THEME TOGGLE BUTTON ===== */
         .theme-toggle-btn {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -376,67 +392,52 @@
             transition: all 0.2s ease;
             cursor: pointer;
         }
-
         .theme-toggle-btn:hover {
             border-color: var(--gold);
             transform: scale(1.05);
         }
 
-        /* ===== CRITICAL FIX: Ensure buttons are always clickable ===== */
-        button,
-        a,
-        [role="button"] {
-            pointer-events: auto !important;
-            cursor: pointer;
-        }
-
-        nav button,
-        nav a {
-            position: relative;
-            z-index: 60;
-        }
-
-        #mobile-toggle,
-        #theme-toggle,
-        #theme-toggle-mobile {
+        button, a, [role="button"] { pointer-events: auto !important; cursor: pointer; }
+        nav button, nav a { position: relative; z-index: 60; }
+        #mobile-toggle, #theme-toggle-desktop, #theme-toggle-mobile {
             cursor: pointer;
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
         }
 
-        /* ===== LIGHT MODE SPECIFIC STYLES ===== */
-        body.light-theme .glass-card {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-        }
+        body.light-theme .glass-card { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); }
+        body.light-theme nav { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
 
-        body.light-theme nav {
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
+        .section-padding { padding-top: 4rem; padding-bottom: 4rem; }
+        @media (min-width: 768px) { .section-padding { padding-top: 5rem; padding-bottom: 5rem; } }
 
-        body.light-theme .gold-glow {
-            box-shadow: 0 0 30px rgba(var(--gold-rgb), 0.1);
-        }
-
-        /* ===== UTILITY CLASSES FOR SPACING ===== */
-        .section-padding {
-            padding-top: 4rem;
-            padding-bottom: 4rem;
-        }
-
-        @media (min-width: 768px) {
-            .section-padding {
-                padding-top: 5rem;
-                padding-bottom: 5rem;
-            }
-        }
-
-        /* ===== IMAGE PLACEHOLDER STYLES ===== */
         .img-placeholder {
             background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-base) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        /* ===== REDUCED MOTION ===== */
+        @media (prefers-reduced-motion: reduce) {
+            .hero-animate,
+            .hero-word,
+            .hero-line,
+            .particle,
+            .hero-bg-img,
+            .scroll-indicator {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important;
+            }
+            .reveal-on-scroll {
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important;
+                transition: none !important;
+            }
         }
     </style>
 </head>
@@ -449,21 +450,16 @@
     </div>
 
     <!-- Navigation -->
-    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex items-center justify-between py-4">
-                <!-- Logo -->
                 <a href="index.html" class="flex items-center gap-3 group">
-                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-brand-gold to-amber-600 flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                        CF
-                    </div>
+                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
                     <div class="hidden sm:block">
                         <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
                         <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
                     </div>
                 </a>
-
-                <!-- Desktop Menu -->
                 <div class="hidden lg:flex items-center gap-6">
                     <a href="index.html" class="text-sm tracking-wide text-gold font-semibold transition-colors">Home</a>
                     <a href="about.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">About</a>
@@ -473,8 +469,6 @@
                     <a href="transformations.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Results</a>
                     <a href="contact.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Contact</a>
                 </div>
-
-                <!-- Desktop CTA + Theme Toggle -->
                 <div class="hidden lg:flex items-center gap-3">
                     <button id="theme-toggle-desktop" class="theme-toggle-btn" aria-label="Toggle light/dark mode">
                         <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-desktop"></i>
@@ -482,8 +476,6 @@
                     <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
                     <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
                 </div>
-
-                <!-- Mobile Menu Button + Theme Toggle -->
                 <div class="lg:hidden flex items-center gap-2">
                     <button id="theme-toggle-mobile" class="theme-toggle-btn p-2" aria-label="Toggle theme">
                         <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-mobile"></i>
@@ -493,8 +485,6 @@
                     </button>
                 </div>
             </div>
-
-            <!-- Mobile Menu Dropdown -->
             <div id="mobile-menu" class="mobile-menu lg:hidden">
                 <div class="pb-6 space-y-1">
                     <a href="index.html" class="block py-3 px-4 text-gold font-semibold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Home</a>
@@ -513,74 +503,159 @@
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
-    <section class="relative min-h-screen flex items-center overflow-hidden">
+    <!-- ============================================ -->
+    <!-- HERO SECTION — with background image, centered content, professional animations -->
+    <!-- ============================================ -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+        <!-- Background Image — Replace src with your own hero image -->
         <div class="absolute inset-0">
-            <div class="absolute inset-0 bg-gradient-to-br from-brand-dark via-brand-darker to-black opacity-80"></div>
-            <div class="hero-overlay absolute inset-0"></div>
-            <div class="hero-bottom absolute inset-0"></div>
+            <img
+                src="images/hero-gym.jpg"
+                alt=""
+                class="hero-bg-img w-full h-full object-cover select-none"
+                draggable="false"
+            >
         </div>
 
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-20 w-full">
-            <div class="max-w-3xl">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-gold/30 bg-brand-gold/10 backdrop-blur-sm mb-6 animate-fade-in-up">
+        <!-- Overlay: dark base + gradients to keep black & gold theme -->
+        <div class="absolute inset-0 bg-black/55"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/30 to-[#050505]/60"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-[#050505]/70 via-transparent to-[#050505]"></div>
+
+        <!-- Gold ambient glow -->
+        <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-amber-500/[0.04] blur-[150px] pointer-events-none"></div>
+
+        <!-- Gold floating particles -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+            <span class="particle" style="left:8%; top:65%; --size:3px; --d:0s; --dur:14s; --drift:25px;"></span>
+            <span class="particle" style="left:18%; top:40%; --size:2px; --d:3s; --dur:12s; --drift:-15px;"></span>
+            <span class="particle" style="left:75%; top:25%; --size:4px; --d:1s; --dur:16s; --drift:20px;"></span>
+            <span class="particle" style="left:85%; top:55%; --size:2px; --d:5s; --dur:11s; --drift:-30px;"></span>
+            <span class="particle" style="left:50%; top:80%; --size:3px; --d:2s; --dur:13s; --drift:10px;"></span>
+            <span class="particle" style="left:35%; top:20%; --size:2px; --d:7s; --dur:15s; --drift:-20px;"></span>
+            <span class="particle" style="left:62%; top:70%; --size:3px; --d:4s; --dur:10s; --drift:35px;"></span>
+            <span class="particle" style="left:92%; top:35%; --size:2px; --d:6s; --dur:17s; --drift:-10px;"></span>
+        </div>
+
+        <!-- Hero Content — centered -->
+        <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center pt-24 pb-24 w-full">
+
+            <!-- Badge -->
+            <div class="hero-animate" style="--delay: 0.1s">
+                <div class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-brand-gold/30 bg-brand-gold/[0.08] backdrop-blur-sm mb-8">
                     <div class="w-2 h-2 rounded-full bg-brand-gold pulse-gold"></div>
-                    <span class="text-xs font-semibold tracking-widest uppercase text-gold">Transform Your Body, Master Your Life</span>
+                    <span class="text-[0.7rem] sm:text-xs font-semibold tracking-[0.15em] sm:tracking-[0.2em] uppercase text-gold">Transform Your Body, Master Your Life</span>
                 </div>
+            </div>
 
-                <h1 class="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.9] tracking-tight mb-8 hero-text animate-fade-in-up" style="animation-delay:0.1s">
-                    WHERE <span class="text-gradient">FITNESS</span> MEETS DISCIPLINE
-                </h1>
+            <!-- Decorative Gold Line -->
+            <div class="flex justify-center mb-8 hero-animate" style="--delay: 0.3s">
+                <div class="hero-line" style="--delay: 0.4s"></div>
+            </div>
 
-                <p class="text-base sm:text-lg md:text-xl text-muted-custom leading-relaxed max-w-xl mb-10 animate-fade-in-up" style="animation-delay:0.2s">
+            <!-- Title — each word animated individually -->
+            <h1 class="font-display font-semibold tracking-tight mb-8 hero-title">
+                <span class="hero-title-line">
+                    <span class="hero-word" style="--i:0">WHERE</span>
+                    <span class="hero-word text-gradient" style="--i:1">FITNESS</span>
+                </span>
+                <br class="hidden sm:inline">
+                <span class="hero-title-line">
+                    <span class="hero-word" style="--i:2">MEETS</span>
+                    <span class="hero-word" style="--i:3">DISCIPLINE</span>
+                </span>
+            </h1>
+
+            <!-- Second decorative line -->
+            <div class="flex justify-center mb-8 hero-animate" style="--delay: 1.2s">
+                <div class="hero-line" style="--delay: 1.3s"></div>
+            </div>
+
+            <!-- Description -->
+            <div class="hero-animate" style="--delay: 1.1s">
+                <p class="text-sm sm:text-base md:text-lg lg:text-xl text-muted-custom leading-relaxed max-w-2xl mx-auto mb-10">
                     Professional workout programs, meal plans, body transformation guidance, and lifestyle coaching designed for real results.
                 </p>
+            </div>
 
-                <div class="flex flex-wrap gap-3 animate-fade-in-up" style="animation-delay:0.3s">
-                    <a href="training.html" class="btn-gold px-6 sm:px-7 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase flex items-center gap-2 transition-all">
+            <!-- CTA Buttons -->
+            <div class="hero-animate" style="--delay: 1.5s">
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="training.html" class="btn-gold px-7 sm:px-8 py-3.5 sm:py-4 rounded-lg text-sm font-semibold tracking-wide uppercase flex items-center gap-2.5">
                         <i data-lucide="dumbbell" class="w-4 h-4"></i> Start Training
                     </a>
-                    <a href="mealplans.html" class="btn-outline px-6 sm:px-7 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase flex items-center gap-2 transition-all">
+                    <a href="mealplans.html" class="btn-outline px-7 sm:px-8 py-3.5 sm:py-4 rounded-lg text-sm font-semibold tracking-wide uppercase flex items-center gap-2.5">
                         <i data-lucide="utensils" class="w-4 h-4"></i> Meal Plans
                     </a>
                 </div>
             </div>
+
+            <!-- Stats row -->
+            <div class="hero-animate mt-14 sm:mt-16" style="--delay: 1.8s">
+                <div class="flex flex-wrap justify-center gap-8 sm:gap-12 md:gap-16">
+                    <div class="text-center">
+                        <div class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-gold">500+</div>
+                        <div class="text-[0.65rem] sm:text-xs tracking-[0.15em] uppercase text-muted-custom mt-1">Transformations</div>
+                    </div>
+                    <div class="w-px h-12 bg-white/10 hidden sm:block"></div>
+                    <div class="text-center">
+                        <div class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-gold">12</div>
+                        <div class="text-[0.65rem] sm:text-xs tracking-[0.15em] uppercase text-muted-custom mt-1">Week Programs</div>
+                    </div>
+                    <div class="w-px h-12 bg-white/10 hidden sm:block"></div>
+                    <div class="text-center">
+                        <div class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-gold">24/7</div>
+                        <div class="text-[0.65rem] sm:text-xs tracking-[0.15em] uppercase text-muted-custom mt-1">Coach Access</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hero-animate" style="--delay: 2.2s">
+            <a href="#quick-access" class="scroll-indicator flex flex-col items-center gap-2 text-muted-custom hover:text-gold transition-colors">
+                <span class="text-[0.6rem] tracking-[0.25em] uppercase">Scroll</span>
+                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </a>
         </div>
     </section>
 
+    <!-- ============================================ -->
     <!-- QUICK ACCESS SECTION -->
-    <section class="py-16 sm:py-20 border-t section-padding">
+    <!-- ============================================ -->
+    <section id="quick-access" class="py-16 sm:py-20 border-t section-padding">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="text-center mb-10 reveal-on-scroll">
                 <span class="text-xs font-semibold tracking-widest uppercase text-gold">Quick Access</span>
                 <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mt-3">Start Your Journey</h2>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                <a href="training.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll transition-all">
+                <a href="training.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="dumbbell" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Start Training</h3>
                 </a>
-                <a href="mealplans.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll transition-all" style="transition-delay: 0.1s;">
+                <a href="mealplans.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll" style="transition-delay: 0.08s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="utensils" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Buy Meal Plan</h3>
                 </a>
-                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll transition-all" style="transition-delay: 0.2s;">
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll" style="transition-delay: 0.16s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="pill" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Supplements</h3>
                 </a>
-                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll transition-all" style="transition-delay: 0.3s;">
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group reveal-on-scroll" style="transition-delay: 0.24s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="shirt" class="w-6 h-6 text-gold"></i>
                     </div>
                     <h3 class="font-semibold text-sm tracking-wide">Gym Attire</h3>
                 </a>
-                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group col-span-2 sm:col-span-1 reveal-on-scroll transition-all" style="transition-delay: 0.4s;">
+                <a href="shop.html" class="glass-card card-hover rounded-2xl p-5 text-center group col-span-2 sm:col-span-1 reveal-on-scroll" style="transition-delay: 0.32s;">
                     <div class="w-12 h-12 rounded-xl bg-brand-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-gold/20 transition-colors">
                         <i data-lucide="weights" class="w-6 h-6 text-gold"></i>
                     </div>
@@ -605,7 +680,7 @@
                     </ul>
                     <a href="membership.html" class="btn-gold inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold uppercase">Join Program <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
                 </div>
-                <div class="glass-card rounded-2xl p-6 reveal-on-scroll" style="animation-delay: 0.2s;">
+                <div class="glass-card rounded-2xl p-6 reveal-on-scroll" style="transition-delay: 0.15s;">
                     <div class="bg-gradient-to-br from-brand-gold/20 to-transparent rounded-xl p-4">
                         <div class="flex justify-between items-center border-b border-border-color pb-3 mb-4">
                             <span class="font-display text-gold text-sm">COMBO MASTER PLAN</span>
@@ -729,7 +804,6 @@
         </div>
     </footer>
 
-    <!-- Inline JS (replacing external script.js) -->
     <script>
         // ===== THEME TOGGLE =====
         function initTheme() {
@@ -750,23 +824,11 @@
         function updateThemeIcons() {
             const isLight = document.body.classList.contains('light-theme');
             const iconNames = isLight ? 'sun' : 'moon';
-
-            // Desktop icon
             const desktopIcon = document.getElementById('theme-icon-desktop');
-            if (desktopIcon) {
-                desktopIcon.setAttribute('data-lucide', iconNames);
-            }
-
-            // Mobile icon
             const mobileIcon = document.getElementById('theme-icon-mobile');
-            if (mobileIcon) {
-                mobileIcon.setAttribute('data-lucide', iconNames);
-            }
-
-            // Re-render Lucide icons
-            if (window.lucide) {
-                lucide.createIcons();
-            }
+            if (desktopIcon) desktopIcon.setAttribute('data-lucide', iconNames);
+            if (mobileIcon) mobileIcon.setAttribute('data-lucide', iconNames);
+            if (window.lucide) lucide.createIcons();
         }
 
         // ===== MOBILE MENU =====
@@ -778,7 +840,6 @@
         function initMobileMenu() {
             const toggle = document.getElementById('mobile-toggle');
             const menu = document.getElementById('mobile-menu');
-
             if (toggle && menu) {
                 toggle.addEventListener('click', function () {
                     menu.classList.toggle('open');
@@ -793,29 +854,60 @@
             if (toast && msgEl) {
                 msgEl.textContent = message;
                 toast.classList.add('show');
-                setTimeout(function () {
-                    toast.classList.remove('show');
-                }, 3000);
+                setTimeout(function () { toast.classList.remove('show'); }, 3000);
             }
         }
 
         // ===== SCROLL REVEAL =====
         function initScrollReveal() {
             const elements = document.querySelectorAll('.reveal-on-scroll');
-
             const observer = new IntersectionObserver(function (entries) {
                 entries.forEach(function (entry) {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('is-visible');
                     }
                 });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+            elements.forEach(function (el) { observer.observe(el); });
+        }
 
-            elements.forEach(function (el) {
-                observer.observe(el);
+        // ===== NAVBAR SCROLL EFFECT =====
+        function initNavScroll() {
+            const nav = document.getElementById('navbar');
+            if (!nav) return;
+            let ticking = false;
+            window.addEventListener('scroll', function () {
+                if (!ticking) {
+                    requestAnimationFrame(function () {
+                        if (window.scrollY > 60) {
+                            nav.classList.add('nav-scrolled');
+                        } else {
+                            nav.classList.remove('nav-scrolled');
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        }
+
+        // ===== HERO PARALLAX =====
+        function initHeroParallax() {
+            const heroImg = document.querySelector('.hero-bg-img');
+            if (!heroImg) return;
+            let ticking = false;
+            window.addEventListener('scroll', function () {
+                if (!ticking) {
+                    requestAnimationFrame(function () {
+                        const scrolled = window.scrollY;
+                        const heroHeight = document.getElementById('hero').offsetHeight;
+                        if (scrolled < heroHeight) {
+                            heroImg.style.transform = 'scale(1.05) translateY(' + (scrolled * 0.25) + 'px)';
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
             });
         }
 
@@ -824,18 +916,15 @@
             initTheme();
             initMobileMenu();
             initScrollReveal();
+            initNavScroll();
+            initHeroParallax();
 
-            // Theme toggle buttons
             const desktopToggle = document.getElementById('theme-toggle-desktop');
             const mobileToggle = document.getElementById('theme-toggle-mobile');
-
             if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
             if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
 
-            // Initialize Lucide icons
-            if (window.lucide) {
-                lucide.createIcons();
-            }
+            if (window.lucide) lucide.createIcons();
         });
     </script>
 </body>

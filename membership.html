@@ -5,16 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Membership — ComboMaster Fitness</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
             theme: {
@@ -37,7 +31,6 @@
     </script>
 
     <style>
-        /* ===== BASE & VARIABLES ===== */
         :root {
             --bg-base: #050505;
             --bg-secondary: #0F0F0F;
@@ -81,17 +74,8 @@
             --input-bg: #ffffff;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            overflow-x: hidden;
-            max-width: 100vw;
-            scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { overflow-x: hidden; max-width: 100vw; scroll-behavior: smooth; }
 
         body {
             font-size: 1.125rem;
@@ -101,12 +85,8 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* ===== TYPOGRAPHY ===== */
-        .font-display {
-            font-family: 'Oswald', sans-serif;
-        }
+        .font-display { font-family: 'Oswald', sans-serif; }
 
-        /* ===== NAVIGATION ===== */
         nav {
             z-index: 50;
             background-color: var(--nav-bg);
@@ -114,7 +94,6 @@
             transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
         }
 
-        /* ===== UTILITY CLASSES ===== */
         .glass-card {
             background: var(--bg-card);
             backdrop-filter: blur(12px);
@@ -123,9 +102,7 @@
             transition: all 0.3s ease;
         }
 
-        .text-muted-custom {
-            color: var(--text-muted);
-        }
+        .text-muted-custom { color: var(--text-muted); }
 
         .text-gradient {
             background: linear-gradient(to right, var(--gold), #f5dfa0, var(--gold));
@@ -134,13 +111,8 @@
             background-clip: text;
         }
 
-        .text-gold {
-            color: var(--gold);
-        }
-
-        .border-gold {
-            border-color: var(--gold);
-        }
+        .text-gold { color: var(--gold); }
+        .border-gold { border-color: var(--gold); }
 
         .hero-overlay {
             background: linear-gradient(to right, var(--hero-overlay-start), var(--hero-overlay-mid), transparent);
@@ -152,7 +124,6 @@
             transition: background 0.3s ease;
         }
 
-        /* ===== BUTTONS ===== */
         .btn-gold {
             background: var(--gold);
             color: #050505;
@@ -168,9 +139,7 @@
             transform: translateY(-1px);
         }
 
-        body.light-theme .btn-gold {
-            color: #ffffff;
-        }
+        body.light-theme .btn-gold { color: #ffffff; }
 
         .btn-outline {
             border: 1px solid rgba(var(--gold-rgb), 0.5);
@@ -187,7 +156,6 @@
             transform: translateY(-1px);
         }
 
-        /* ===== CARDS & INTERACTIVE ELEMENTS ===== */
         .card-hover {
             transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -197,17 +165,6 @@
             transform: translateY(-4px);
         }
 
-        .shop-tab.active {
-            background: var(--gold);
-            color: #050505;
-        }
-
-        .shop-tab:not(.active) {
-            background: var(--tab-inactive);
-            color: var(--tab-text);
-        }
-
-        /* ===== MOBILE MENU ===== */
         .mobile-menu {
             max-height: 0;
             overflow: hidden;
@@ -215,11 +172,8 @@
             background-color: var(--bg-base);
         }
 
-        .mobile-menu.open {
-            max-height: 800px;
-        }
+        .mobile-menu.open { max-height: 800px; }
 
-        /* ===== TOAST NOTIFICATION ===== */
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -233,41 +187,22 @@
             border: 1px solid var(--border-color);
         }
 
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
+        .toast.show { transform: translateY(0); opacity: 1; }
 
-        /* ===== ANIMATIONS ===== */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .animate-fade-in-up {
-            animation: fadeInUp 0.8s ease forwards;
-        }
+        .animate-fade-in-up { animation: fadeInUp 0.8s ease forwards; }
 
         @keyframes pulse-gold {
-            0%, 100% {
-                box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.4);
-            }
-            50% {
-                box-shadow: 0 0 20px 5px rgba(var(--gold-rgb), 0.15);
-            }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(var(--gold-rgb), 0.15); }
         }
 
-        .pulse-gold {
-            animation: pulse-gold 3s infinite;
-        }
+        .pulse-gold { animation: pulse-gold 3s infinite; }
 
-        /* ===== SCROLL REVEAL ===== */
         .reveal-on-scroll {
             opacity: 0;
             transform: translateY(20px);
@@ -279,45 +214,18 @@
             transform: translateY(0);
         }
 
-        /* ===== CUSTOM SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--card-bg-solid); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+        body.light-theme ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+        body.light-theme ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-base);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--card-bg-solid);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--gold);
-        }
-
-        body.light-theme ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-        }
-
-        body.light-theme ::-webkit-scrollbar-thumb:hover {
-            background: var(--gold);
-        }
-
-        /* ===== RESPONSIVE FIXES ===== */
         @media (max-width: 640px) {
-            .hero-text {
-                font-size: 2.5rem !important;
-            }
-
-            .section-padding {
-                padding-top: 3rem;
-                padding-bottom: 3rem;
-            }
+            .hero-text { font-size: 2.5rem !important; }
+            .section-padding { padding-top: 3rem; padding-bottom: 3rem; }
         }
 
-        /* ===== PAGE HERO BANNERS ===== */
         .page-hero {
             position: relative;
             padding-top: 8rem;
@@ -348,23 +256,13 @@
             z-index: 2;
         }
 
-        /* ===== CONTENT TABS ===== */
-        .tab-content {
-            animation: fadeInTab 0.4s ease;
-        }
-
         @keyframes fadeInTab {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== THEME TOGGLE BUTTON ===== */
+        .tab-content { animation: fadeInTab 0.4s ease; }
+
         .theme-toggle-btn {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -382,56 +280,21 @@
             transform: scale(1.05);
         }
 
-        /* ===== CRITICAL FIX: Ensure buttons are always clickable ===== */
-        button,
-        a,
-        [role="button"] {
-            pointer-events: auto !important;
-            cursor: pointer;
+        button, a, [role="button"] { pointer-events: auto !important; cursor: pointer; }
+        nav button, nav a { position: relative; z-index: 60; }
+        #mobile-toggle, #theme-toggle, #theme-toggle-mobile {
+            cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation;
         }
 
-        nav button,
-        nav a {
-            position: relative;
-            z-index: 60;
-        }
+        body.light-theme .glass-card { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); }
+        body.light-theme nav { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
+        body.light-theme .gold-glow { box-shadow: 0 0 30px rgba(var(--gold-rgb), 0.1); }
 
-        #mobile-toggle,
-        #theme-toggle,
-        #theme-toggle-mobile {
-            cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: manipulation;
-        }
-
-        /* ===== LIGHT MODE SPECIFIC STYLES ===== */
-        body.light-theme .glass-card {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-        }
-
-        body.light-theme nav {
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        body.light-theme .gold-glow {
-            box-shadow: 0 0 30px rgba(var(--gold-rgb), 0.1);
-        }
-
-        /* ===== UTILITY CLASSES FOR SPACING ===== */
-        .section-padding {
-            padding-top: 4rem;
-            padding-bottom: 4rem;
-        }
-
+        .section-padding { padding-top: 4rem; padding-bottom: 4rem; }
         @media (min-width: 768px) {
-            .section-padding {
-                padding-top: 5rem;
-                padding-bottom: 5rem;
-            }
+            .section-padding { padding-top: 5rem; padding-bottom: 5rem; }
         }
 
-        /* ===== IMAGE PLACEHOLDER STYLES ===== */
         .img-placeholder {
             background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-base) 100%);
             display: flex;
@@ -439,7 +302,6 @@
             justify-content: center;
         }
 
-        /* ===== PRICING CARD SPECIFICS ===== */
         .pricing-card {
             display: flex;
             flex-direction: column;
@@ -459,9 +321,7 @@
             flex-shrink: 0;
         }
 
-        .pricing-feature.disabled {
-            opacity: 0.4;
-        }
+        .pricing-feature.disabled { opacity: 0.4; }
 
         .popular-badge {
             position: absolute;
@@ -478,11 +338,8 @@
             z-index: 10;
         }
 
-        body.light-theme .popular-badge {
-            color: #ffffff;
-        }
+        body.light-theme .popular-badge { color: #ffffff; }
 
-        /* ===== DASHBOARD MOCKUP ===== */
         .dashboard-mockup {
             background: var(--bg-card);
             backdrop-filter: blur(12px);
@@ -504,9 +361,7 @@
             background: rgba(255,255,255,0.1);
         }
 
-        body.light-theme .dash-progress-track {
-            background: rgba(0,0,0,0.1);
-        }
+        body.light-theme .dash-progress-track { background: rgba(0,0,0,0.1); }
 
         .dash-progress-fill {
             height: 100%;
@@ -523,13 +378,56 @@
             padding: 0.75rem;
             border-radius: 0.75rem;
         }
+
+        .free-badge {
+            position: absolute;
+            top: -0.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #22c55e;
+            color: #050505;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 1rem;
+            border-radius: 9999px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        body.light-theme .free-badge { color: #ffffff; }
+
+        /* ===== WELCOME BANNER ===== */
+        .welcome-banner {
+            background: rgba(var(--gold-rgb), 0.08);
+            border: 1px solid rgba(var(--gold-rgb), 0.2);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .welcome-banner.visible {
+            display: flex;
+        }
+
+        body.light-theme .welcome-banner {
+            background: rgba(var(--gold-rgb), 0.06);
+        }
+
+        /* ===== PLAN SELECTED HIGHLIGHT ===== */
+        .pricing-card.plan-selected {
+            border-color: var(--gold) !important;
+            box-shadow: 0 0 30px rgba(var(--gold-rgb), 0.15);
+        }
     </style>
 </head>
 <body class="font-sans antialiased">
 
     <!-- Toast Notification -->
     <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
-        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500" id="toast-icon"></i>
         <span id="toast-message" class="text-sm font-medium"></span>
     </div>
 
@@ -537,16 +435,14 @@
     <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex items-center justify-between py-4">
-                <!-- Logo -->
                 <a href="index.html" class="flex items-center gap-3 group">
-                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-brand-gold to-amber-600 flex items-center justify-center text-white font-bold text-sm shadow-lg">CF</div>
+                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
                     <div class="hidden sm:block">
                         <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
                         <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
                     </div>
                 </a>
 
-                <!-- Desktop Navigation -->
                 <div class="hidden lg:flex items-center gap-6">
                     <a href="index.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Home</a>
                     <a href="about.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">About</a>
@@ -557,16 +453,15 @@
                     <a href="contact.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Contact</a>
                 </div>
 
-                <!-- Desktop CTA Buttons -->
                 <div class="hidden lg:flex items-center gap-3">
                     <button id="theme-toggle-desktop" class="theme-toggle-btn" aria-label="Toggle theme">
                         <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-desktop"></i>
                     </button>
-                    <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
-                    <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
+                    <!-- Dynamic: shows Login or Dashboard based on auth state -->
+                    <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide" id="nav-auth-btn">Login</a>
+                    <a href="signup.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase" id="nav-join-btn">Join Now</a>
                 </div>
 
-                <!-- Mobile Menu Buttons -->
                 <div class="flex items-center gap-2 lg:hidden">
                     <button id="theme-toggle-mobile" class="theme-toggle-btn p-2" aria-label="Toggle theme">
                         <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-mobile"></i>
@@ -577,7 +472,6 @@
                 </div>
             </div>
 
-            <!-- Mobile Menu -->
             <div id="mobile-menu" class="mobile-menu lg:hidden">
                 <div class="pb-6 space-y-1">
                     <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Home</a>
@@ -587,9 +481,9 @@
                     <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Shop</a>
                     <a href="transformations.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Transformations</a>
                     <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Contact</a>
-                    <div class="pt-3 flex gap-2 px-4">
+                    <div class="pt-3 flex gap-2 px-4" id="mobile-auth-buttons">
                         <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
-                        <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
+                        <a href="signup.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
                     </div>
                 </div>
             </div>
@@ -604,19 +498,54 @@
             <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-3">
                 JOIN THE <span class="text-gradient">COMBOMASTER</span> COMMUNITY
             </h1>
-            <p class="text-muted-custom max-w-2xl mx-auto mt-4">Choose the plan that matches your goals. Every membership includes access to our supportive community and expert coaching.</p>
+            <p class="text-muted-custom max-w-2xl mx-auto mt-4">Choose the plan that matches your goals. Start free, upgrade anytime.</p>
         </div>
     </section>
 
     <!-- Pricing Tiers -->
     <section class="py-12 sm:py-16 section-padding">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+            <!-- Welcome Banner (shown after signup) -->
+            <div id="welcome-banner" class="welcome-banner">
+                <i data-lucide="party-popper" class="w-5 h-5 text-gold flex-shrink-0"></i>
+                <div>
+                    <span class="text-sm font-semibold text-gold" id="welcome-name">Welcome!</span>
+                    <span class="text-sm text-muted-custom"> Your account is ready. Choose a plan below to get started.</span>
+                </div>
+                <button onclick="dismissWelcome()" class="ml-auto text-muted-custom hover:text-gold transition-colors flex-shrink-0">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
             
             <!-- Pricing Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-20">
                 
+                <!-- Free Plan -->
+                <div class="glass-card card-hover rounded-2xl p-7 pricing-card reveal-on-scroll relative" id="plan-free">
+                    <div class="free-badge">Free Forever</div>
+                    <div class="mb-6 pt-2">
+                        <h3 class="font-display text-xl font-semibold tracking-tight mb-1">Free</h3>
+                        <p class="text-sm text-muted-custom">Explore the community at no cost</p>
+                    </div>
+                    <div class="mb-6">
+                        <span class="font-display text-4xl font-semibold text-green-400">$0</span>
+                        <span class="text-muted-custom">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Workout previews</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Community forum access</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Weekly newsletter</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Profile creation</li>
+                        <li class="pricing-feature disabled"><i data-lucide="x" class="text-red-400/50"></i> Full workout programs</li>
+                        <li class="pricing-feature disabled"><i data-lucide="x" class="text-red-400/50"></i> Meal plans</li>
+                        <li class="pricing-feature disabled"><i data-lucide="x" class="text-red-400/50"></i> Coach support</li>
+                    </ul>
+                    <button onclick="choosePlan('free')" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase mt-auto">Get Started Free</button>
+                </div>
+
                 <!-- Starter Plan -->
-                <div class="glass-card card-hover rounded-2xl p-8 pricing-card reveal-on-scroll">
+                <div class="glass-card card-hover rounded-2xl p-7 pricing-card reveal-on-scroll" id="plan-starter">
                     <div class="mb-6">
                         <h3 class="font-display text-xl font-semibold tracking-tight mb-1">Starter</h3>
                         <p class="text-sm text-muted-custom">For those beginning their fitness journey</p>
@@ -626,17 +555,18 @@
                         <span class="text-muted-custom">/month</span>
                     </div>
                     <ul class="space-y-3 mb-8">
-                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Access to workout library</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Full workout library</li>
                         <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Basic meal plan templates</li>
                         <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Community forum access</li>
+                        <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Progress tracking</li>
                         <li class="pricing-feature disabled"><i data-lucide="x" class="text-red-400/50"></i> Personal coaching</li>
-                        <li class="pricing-feature disabled"><i data-lucide="x" class="text-red-400/50"></i> Progress tracking</li>
+                        <li class="pricing-feature disabled"><i data-lucide="x" class="text-red-400/50"></i> Fitness challenges</li>
                     </ul>
-                    <button onclick="showToast('Starter plan selected! Redirecting to checkout...')" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase mt-auto">Choose Starter</button>
+                    <button onclick="choosePlan('starter')" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase mt-auto">Choose Starter</button>
                 </div>
 
                 <!-- Pro Plan (Featured) -->
-                <div class="glass-card rounded-2xl p-8 pricing-card featured gold-glow reveal-on-scroll relative border-brand-gold/40 transform md:scale-105">
+                <div class="glass-card rounded-2xl p-7 pricing-card featured gold-glow reveal-on-scroll relative border-brand-gold/40 lg:scale-105" id="plan-pro">
                     <div class="popular-badge">Most Popular</div>
                     <div class="mb-6 pt-2">
                         <h3 class="font-display text-xl font-semibold tracking-tight mb-1">Pro</h3>
@@ -653,11 +583,11 @@
                         <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Coach messaging</li>
                         <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Fitness challenges</li>
                     </ul>
-                    <button onclick="showToast('Pro plan selected! Redirecting to checkout...')" class="btn-gold w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase mt-auto">Choose Pro</button>
+                    <button onclick="choosePlan('pro')" class="btn-gold w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase mt-auto">Choose Pro</button>
                 </div>
 
                 <!-- Elite Plan -->
-                <div class="glass-card card-hover rounded-2xl p-8 pricing-card reveal-on-scroll">
+                <div class="glass-card card-hover rounded-2xl p-7 pricing-card reveal-on-scroll" id="plan-elite">
                     <div class="mb-6">
                         <h3 class="font-display text-xl font-semibold tracking-tight mb-1">Elite</h3>
                         <p class="text-sm text-muted-custom">For athletes and competition prep</p>
@@ -673,7 +603,7 @@
                         <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Posing sessions</li>
                         <li class="pricing-feature"><i data-lucide="check" class="text-green-400"></i> Priority support 24/7</li>
                     </ul>
-                    <button onclick="showToast('Elite plan selected! Redirecting to checkout...')" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase mt-auto">Choose Elite</button>
+                    <button onclick="choosePlan('elite')" class="btn-outline w-full py-3 rounded-lg text-sm font-semibold tracking-wide uppercase mt-auto">Choose Elite</button>
                 </div>
             </div>
 
@@ -685,6 +615,7 @@
                         <thead>
                             <tr class="border-b border-[var(--border-color)]">
                                 <th class="text-left py-3 px-4 text-muted-custom font-medium">Feature</th>
+                                <th class="py-3 px-4 text-center text-green-400 font-semibold">Free</th>
                                 <th class="py-3 px-4 text-center text-muted-custom font-medium">Starter</th>
                                 <th class="py-3 px-4 text-center text-gold font-semibold">Pro</th>
                                 <th class="py-3 px-4 text-center text-muted-custom font-medium">Elite</th>
@@ -693,30 +624,42 @@
                         <tbody>
                             <tr class="border-b border-[var(--border-color)]">
                                 <td class="py-3 px-4">Workout Programs</td>
+                                <td class="py-3 px-4 text-center text-muted-custom text-xs">Previews only</td>
                                 <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
                                 <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
                                 <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
                             </tr>
                             <tr class="border-b border-[var(--border-color)]">
                                 <td class="py-3 px-4">Meal Plans</td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
                                 <td class="py-3 px-4 text-center text-muted-custom">Basic</td>
                                 <td class="py-3 px-4 text-center text-gold font-semibold">Custom</td>
                                 <td class="py-3 px-4 text-center text-gold font-semibold">Custom</td>
                             </tr>
                             <tr class="border-b border-[var(--border-color)]">
-                                <td class="py-3 px-4">Coach Support</td>
-                                <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
-                                <td class="py-3 px-4 text-center">Messaging</td>
-                                <td class="py-3 px-4 text-center text-gold font-semibold">Video Calls</td>
+                                <td class="py-3 px-4">Community Forum</td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
                             </tr>
                             <tr class="border-b border-[var(--border-color)]">
                                 <td class="py-3 px-4">Progress Tracking</td>
                                 <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
                                 <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
                                 <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
+                            </tr>
+                            <tr class="border-b border-[var(--border-color)]">
+                                <td class="py-3 px-4">Coach Support</td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
+                                <td class="py-3 px-4 text-center">Messaging</td>
+                                <td class="py-3 px-4 text-center text-gold font-semibold">Video Calls</td>
                             </tr>
                             <tr>
                                 <td class="py-3 px-4">Competition Prep</td>
+                                <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
                                 <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
                                 <td class="py-3 px-4 text-center"><i data-lucide="x" class="w-4 h-4 text-red-400/50 inline"></i></td>
                                 <td class="py-3 px-4 text-center"><i data-lucide="check" class="w-4 h-4 text-green-400 inline"></i></td>
@@ -733,7 +676,6 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 
-                <!-- Left Content -->
                 <div class="reveal-on-scroll">
                     <span class="text-xs font-semibold tracking-widest uppercase text-gold">Client Portal</span>
                     <h2 class="font-display text-2xl sm:text-3xl font-semibold tracking-tight mt-3 mb-4">Your Personal Fitness Dashboard</h2>
@@ -779,16 +721,15 @@
                     </div>
                 </div>
 
-                <!-- Right: Dashboard Mockup -->
                 <div class="reveal-on-scroll">
                     <div class="dashboard-mockup p-6">
                         <div class="flex items-center justify-between mb-6">
                             <div>
                                 <p class="text-xs text-muted-custom">Welcome back,</p>
-                                <p class="font-semibold">John D.</p>
+                                <p class="font-semibold" id="dashboard-name">Peter C.</p>
                             </div>
                             <div class="w-10 h-10 rounded-full bg-brand-gold/20 overflow-hidden border-2 border-brand-gold/30 flex items-center justify-center">
-                                <span class="text-gold font-bold text-xs">JD</span>
+                                <span class="text-gold font-bold text-xs" id="dashboard-initials">PC</span>
                             </div>
                         </div>
                         <div class="grid grid-cols-3 gap-3 mb-6">
@@ -843,20 +784,24 @@
             
             <div class="space-y-4">
                 <div class="glass-card rounded-xl p-6 reveal-on-scroll">
-                    <h3 class="font-semibold mb-2">Can I switch plans later?</h3>
-                    <p class="text-sm text-muted-custom">Yes! You can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.</p>
+                    <h3 class="font-semibold mb-2">What do I get with the Free plan?</h3>
+                    <p class="text-sm text-muted-custom">The Free plan gives you access to workout previews, our community forum, the weekly newsletter, and a personal profile. It's a great way to explore what ComboMaster offers before committing to a paid plan.</p>
                 </div>
                 <div class="glass-card rounded-xl p-6 reveal-on-scroll" style="transition-delay: 0.1s;">
-                    <h3 class="font-semibold mb-2">Is there a free trial?</h3>
-                    <p class="text-sm text-muted-custom">We offer a 7-day free trial on all plans. Cancel anytime before the trial ends and you won't be charged.</p>
+                    <h3 class="font-semibold mb-2">Can I switch plans later?</h3>
+                    <p class="text-sm text-muted-custom">Yes! You can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle. You can also start Free and upgrade whenever you're ready.</p>
                 </div>
                 <div class="glass-card rounded-xl p-6 reveal-on-scroll" style="transition-delay: 0.2s;">
-                    <h3 class="font-semibold mb-2">How do I cancel my membership?</h3>
-                    <p class="text-sm text-muted-custom">You can cancel anytime from your dashboard. Your access will continue until the end of your current billing period.</p>
+                    <h3 class="font-semibold mb-2">Is there a free trial on paid plans?</h3>
+                    <p class="text-sm text-muted-custom">Yes! All paid plans come with a 7-day free trial. Cancel anytime before the trial ends and you won't be charged. You'll revert to the Free plan automatically.</p>
                 </div>
                 <div class="glass-card rounded-xl p-6 reveal-on-scroll" style="transition-delay: 0.3s;">
+                    <h3 class="font-semibold mb-2">How do I cancel my membership?</h3>
+                    <p class="text-sm text-muted-custom">You can cancel anytime from your dashboard. Your access will continue until the end of your current billing period, then you'll be moved to the Free plan.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6 reveal-on-scroll" style="transition-delay: 0.4s;">
                     <h3 class="font-semibold mb-2">What payment methods do you accept?</h3>
-                    <p class="text-sm text-muted-custom">We accept all major credit cards, PayPal, and Apple Pay. All payments are processed securely.</p>
+                    <p class="text-sm text-muted-custom">We accept all major credit cards, PayPal, and Apple Pay. All payments are processed securely. The Free plan requires no payment method at all.</p>
                 </div>
             </div>
         </div>
@@ -903,47 +848,165 @@
         </div>
     </footer>
 
-    <!-- Inline JS -->
     <script>
+        // ===== CHECK AUTH STATE =====
+        function isLoggedIn() {
+            return !!localStorage.getItem('userName');
+        }
+
+        function getUserName() {
+            return localStorage.getItem('userName') || '';
+        }
+
+        // ===== UPDATE NAV FOR LOGGED-IN USERS =====
+        function updateNavAuth() {
+            var authBtn = document.getElementById('nav-auth-btn');
+            var joinBtn = document.getElementById('nav-join-btn');
+            var mobileAuth = document.getElementById('mobile-auth-buttons');
+
+            if (isLoggedIn()) {
+                if (authBtn) {
+                    authBtn.textContent = 'Dashboard';
+                    authBtn.href = '#';
+                    authBtn.onclick = function(e) {
+                        e.preventDefault();
+                        showToast('Dashboard coming soon!', 'success');
+                    };
+                }
+                if (joinBtn) {
+                    joinBtn.style.display = 'none';
+                }
+                if (mobileAuth) {
+                    mobileAuth.innerHTML = '<a href="#" onclick="event.preventDefault(); showToast(\'Dashboard coming soon!\', \'success\')" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Dashboard</a>';
+                }
+            }
+        }
+
+        // ===== UPDATE DASHBOARD MOCKUP =====
+        function updateDashboardMockup() {
+            var name = getUserName();
+            if (name) {
+                var dashName = document.getElementById('dashboard-name');
+                var dashInitials = document.getElementById('dashboard-initials');
+                if (dashName) dashName.textContent = name;
+
+                // Generate initials
+                var parts = name.split(' ');
+                var initials = parts.map(function(p) { return p.charAt(0).toUpperCase(); }).join('').substring(0, 2);
+                if (dashInitials) dashInitials.textContent = initials || 'CM';
+            }
+        }
+
+        // ===== WELCOME BANNER =====
+        function initWelcomeBanner() {
+            var params = new URLSearchParams(window.location.search);
+            var justSignedUp = params.get('signup') === 'success';
+            var name = getUserName();
+
+            if (justSignedUp && name) {
+                var banner = document.getElementById('welcome-banner');
+                var welcomeName = document.getElementById('welcome-name');
+                if (banner && welcomeName) {
+                    welcomeName.textContent = 'Welcome, ' + name + '!';
+                    banner.classList.add('visible');
+                }
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+        function dismissWelcome() {
+            var banner = document.getElementById('welcome-banner');
+            if (banner) banner.classList.remove('visible');
+        }
+
+        // ===== CHOOSE PLAN =====
+        function choosePlan(plan) {
+            var planNames = {
+                free: 'Free',
+                starter: 'Starter ($29/mo)',
+                pro: 'Pro ($79/mo)',
+                elite: 'Elite ($149/mo)'
+            };
+
+            // Save selected plan
+            localStorage.setItem('selectedPlan', plan);
+
+            if (plan === 'free') {
+                if (isLoggedIn()) {
+                    showToast('You\'re on the Free plan! Explore your dashboard.', 'success');
+                    // Highlight the free card
+                    highlightPlan('plan-free');
+                } else {
+                    window.location.href = 'signup.html?plan=free';
+                }
+            } else {
+                if (isLoggedIn()) {
+                    // User is logged in — show checkout toast
+                    showToast(planNames[plan] + ' plan selected! Checkout coming soon.', 'success');
+                    highlightPlan('plan-' + plan);
+                } else {
+                    // Not logged in — redirect to signup with plan info
+                    showToast('Create an account to get the ' + planNames[plan] + ' plan.', 'success');
+                    setTimeout(function() {
+                        window.location.href = 'signup.html?plan=' + plan;
+                    }, 800);
+                }
+            }
+        }
+
+        function highlightPlan(planId) {
+            // Remove highlight from all
+            document.querySelectorAll('.pricing-card').forEach(function(card) {
+                card.classList.remove('plan-selected');
+            });
+            // Add highlight to selected
+            var selected = document.getElementById(planId);
+            if (selected) selected.classList.add('plan-selected');
+        }
+
+        // ===== CHECK FOR PRE-SELECTED PLAN =====
+        function initPreselectedPlan() {
+            var params = new URLSearchParams(window.location.search);
+            var plan = params.get('plan');
+            if (plan && document.getElementById('plan-' + plan)) {
+                highlightPlan('plan-' + plan);
+            }
+        }
+
         // ===== THEME TOGGLE =====
         function initTheme() {
-            const saved = localStorage.getItem('theme');
-            if (saved === 'light') {
-                document.body.classList.add('light-theme');
-            }
+            var saved = localStorage.getItem('theme');
+            if (saved === 'light') document.body.classList.add('light-theme');
             updateThemeIcons();
         }
 
         function toggleTheme() {
             document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
+            var isLight = document.body.classList.contains('light-theme');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
             updateThemeIcons();
         }
 
         function updateThemeIcons() {
-            const isLight = document.body.classList.contains('light-theme');
-            const iconName = isLight ? 'sun' : 'moon';
-
-            const desktopIcon = document.getElementById('theme-icon-desktop');
+            var isLight = document.body.classList.contains('light-theme');
+            var iconName = isLight ? 'sun' : 'moon';
+            var desktopIcon = document.getElementById('theme-icon-desktop');
             if (desktopIcon) desktopIcon.setAttribute('data-lucide', iconName);
-
-            const mobileIcon = document.getElementById('theme-icon-mobile');
+            var mobileIcon = document.getElementById('theme-icon-mobile');
             if (mobileIcon) mobileIcon.setAttribute('data-lucide', iconName);
-
             if (window.lucide) lucide.createIcons();
         }
 
         // ===== MOBILE MENU =====
         function closeMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
+            var menu = document.getElementById('mobile-menu');
             if (menu) menu.classList.remove('open');
         }
 
         function initMobileMenu() {
-            const toggle = document.getElementById('mobile-toggle');
-            const menu = document.getElementById('mobile-menu');
-
+            var toggle = document.getElementById('mobile-toggle');
+            var menu = document.getElementById('mobile-menu');
             if (toggle && menu) {
                 toggle.addEventListener('click', function () {
                     menu.classList.toggle('open');
@@ -952,36 +1015,37 @@
         }
 
         // ===== TOAST =====
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            const msgEl = document.getElementById('toast-message');
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            var msgEl = document.getElementById('toast-message');
+            var iconEl = document.getElementById('toast-icon');
             if (toast && msgEl) {
                 msgEl.textContent = message;
+                if (iconEl) {
+                    if (type === 'error') {
+                        iconEl.setAttribute('data-lucide', 'alert-circle');
+                        iconEl.className = 'w-5 h-5 text-red-500';
+                    } else {
+                        iconEl.setAttribute('data-lucide', 'check-circle');
+                        iconEl.className = 'w-5 h-5 text-green-500';
+                    }
+                    if (window.lucide) lucide.createIcons();
+                }
                 toast.classList.add('show');
-                setTimeout(function () {
-                    toast.classList.remove('show');
-                }, 3000);
+                clearTimeout(window._toastTimer);
+                window._toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 4000);
             }
         }
 
         // ===== SCROLL REVEAL =====
         function initScrollReveal() {
-            const elements = document.querySelectorAll('.reveal-on-scroll');
-
-            const observer = new IntersectionObserver(function (entries) {
+            var elements = document.querySelectorAll('.reveal-on-scroll');
+            var observer = new IntersectionObserver(function (entries) {
                 entries.forEach(function (entry) {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    }
+                    if (entry.isIntersecting) entry.target.classList.add('is-visible');
                 });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            });
-
-            elements.forEach(function (el) {
-                observer.observe(el);
-            });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+            elements.forEach(function (el) { observer.observe(el); });
         }
 
         // ===== INIT =====
@@ -989,16 +1053,17 @@
             initTheme();
             initMobileMenu();
             initScrollReveal();
+            initWelcomeBanner();
+            initPreselectedPlan();
+            updateNavAuth();
+            updateDashboardMockup();
 
-            const desktopToggle = document.getElementById('theme-toggle-desktop');
-            const mobileToggle = document.getElementById('theme-toggle-mobile');
-
+            var desktopToggle = document.getElementById('theme-toggle-desktop');
+            var mobileToggle = document.getElementById('theme-toggle-mobile');
             if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
             if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
 
-            if (window.lucide) {
-                lucide.createIcons();
-            }
+            if (window.lucide) lucide.createIcons();
         });
     </script>
 </body>

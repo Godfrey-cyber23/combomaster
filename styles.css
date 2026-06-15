@@ -21,7 +21,7 @@
     --input-bg: #0F0F0F;
 }
 
-/* Light theme overrides (applied via .light-theme class on body) */
+/* Light theme overrides */
 body.light-theme {
     --bg-base: #f8f9fc;
     --bg-secondary: #ffffff;
@@ -73,7 +73,15 @@ nav {
     z-index: 50;
     background-color: var(--nav-bg);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+/* Nav inner container centering */
+nav > div {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* ===== UTILITY CLASSES ===== */
@@ -123,6 +131,44 @@ body.light-theme .hero-overlay {
     transition: background 0.3s ease;
 }
 
+/* ===== CENTERING UTILITIES ===== */
+/* Section-level container: constrains width and centers horizontally */
+.section-container {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+    .section-container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+/* Centers text content within a section */
+.section-header-center {
+    text-align: center;
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Centers a grid/flex block within a section */
+.section-content-center {
+    display: flex;
+    justify-content: center;
+}
+
+/* Flex center utility */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* ===== BUTTONS ===== */
 .btn-gold {
     background: var(--gold);
@@ -131,6 +177,7 @@ body.light-theme .hero-overlay {
     cursor: pointer;
     border: none;
     font-weight: 600;
+    text-align: center;
 }
 
 .btn-gold:hover {
@@ -154,6 +201,7 @@ body.light-theme .btn-gold:hover {
     transition: all 150ms ease;
     cursor: pointer;
     font-weight: 600;
+    text-align: center;
 }
 
 .btn-outline:hover {
@@ -209,12 +257,23 @@ body.light-theme .btn-outline {
     transition: all 0.4s ease;
     background: var(--toast-bg);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border-color);
 }
 
 .toast.show {
     transform: translateY(0);
     opacity: 1;
+}
+
+/* Center toast on small screens */
+@media (max-width: 640px) {
+    .toast {
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+        text-align: center;
+    }
 }
 
 /* ===== ANIMATIONS ===== */
@@ -288,11 +347,17 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
 @media (max-width: 640px) {
     .hero-text {
         font-size: 2.5rem !important;
+        text-align: center;
     }
-    
+
     .section-padding {
         padding-top: 3rem;
         padding-bottom: 3rem;
+    }
+
+    /* Force center grid items on small screens */
+    .grid-center-mobile {
+        justify-items: center;
     }
 }
 
@@ -303,6 +368,7 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
     padding-bottom: 4rem;
     overflow: hidden;
     border-bottom: 1px solid var(--border-color);
+    text-align: center;
 }
 
 .page-hero::before {
@@ -325,6 +391,10 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
 .page-hero .hero-content {
     position: relative;
     z-index: 2;
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
 /* ===== CONTENT TABS ===== */
@@ -343,10 +413,20 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
     }
 }
 
+/* Tab button row centering */
+.tab-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
 /* ===== PRICING / COACHING CARDS ===== */
 .coaching-card {
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .coaching-card::before {
@@ -362,6 +442,14 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
 
 .coaching-card.featured::before {
     background: var(--gold);
+}
+
+/* Center coaching card header */
+.coaching-card-header {
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
 }
 
 /* ===== MEAL PLAN CARDS ===== */
@@ -393,7 +481,7 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto;
     }
-    
+
     .custom-meal-card .card-image {
         height: 100%;
     }
@@ -417,11 +505,14 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
     display: flex;
     flex-direction: column;
     padding: 1rem;
+    text-align: center;
 }
 
 .product-content .btn-outline,
 .product-content .btn-gold {
     margin-top: auto;
+    align-self: center;
+    width: 100%;
 }
 
 /* Product image containers */
@@ -489,6 +580,11 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
     transform: scale(1.03);
 }
 
+/* Center transformation card text content */
+.transformation-card .card-body {
+    text-align: center;
+}
+
 .ba-badge {
     position: absolute;
     bottom: 0.75rem;
@@ -512,11 +608,12 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
     color: white;
 }
 
-/* Testimonial Star Ratings */
+/* Testimonial Star Ratings — centered */
 .star-rating {
     display: flex;
     gap: 0.25rem;
     margin-bottom: 1rem;
+    justify-content: center;
 }
 
 .star-rating svg {
@@ -532,10 +629,35 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
     display: flex;
     flex-direction: column;
     height: 100%;
+    text-align: center;
 }
 
 .pricing-card.featured {
     border-color: rgba(212, 168, 83, 0.4);
+}
+
+/* Center pricing card header */
+.pricing-card-header {
+    text-align: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.pricing-card .pricing-features {
+    flex: 1;
+}
+
+/* Center the CTA at the bottom of pricing cards */
+.pricing-card .pricing-cta {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    text-align: center;
+}
+
+.pricing-card .pricing-cta .btn-gold,
+.pricing-card .pricing-cta .btn-outline {
+    width: 100%;
 }
 
 .popular-badge {
@@ -552,6 +674,7 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     z-index: 10;
+    white-space: nowrap;
 }
 
 body.light-theme .popular-badge {
@@ -584,6 +707,9 @@ body.light-theme .popular-badge {
     border-radius: 1rem;
     overflow: hidden;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .dash-stat {
@@ -641,6 +767,21 @@ body.light-theme .popular-badge {
 
 .contact-info-card:hover::before {
     background: var(--gold);
+}
+
+/* Contact grid centering on large screens */
+.contact-grid {
+    display: grid;
+    gap: 2rem;
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (min-width: 768px) {
+    .contact-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 /* Custom Form Inputs */
@@ -770,4 +911,171 @@ body.light-theme .gold-glow {
 
 .delay-400 {
     animation-delay: 0.4s;
+}
+
+/* ===== HERO SECTION CENTERING ===== */
+.hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.hero-content-wrapper {
+    position: relative;
+    z-index: 10;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .hero-content-wrapper {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+/* Centered hero text block */
+.hero-text-center {
+    text-align: center;
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Left-aligned hero text block (conversion style) */
+.hero-text-left {
+    text-align: left;
+    max-width: 40rem;
+}
+
+@media (max-width: 640px) {
+    .hero-text-left {
+        text-align: center;
+        max-width: 48rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* Hero CTA button group centering */
+.hero-cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.hero-text-left .hero-cta-group {
+    justify-content: flex-start;
+}
+
+@media (max-width: 640px) {
+    .hero-text-left .hero-cta-group {
+        justify-content: center;
+    }
+}
+
+/* Hero stats row centering */
+.hero-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.hero-text-left .hero-stats {
+    justify-content: flex-start;
+}
+
+@media (max-width: 640px) {
+    .hero-text-left .hero-stats {
+        justify-content: center;
+    }
+}
+
+/* ===== GRID CENTERING FOR CARD LAYOUTS ===== */
+/* Centers an uneven number of grid items on the last row */
+.grid-center-last-row {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: center;
+}
+
+.grid-center-last-row > * {
+    width: 100%;
+    max-width: 24rem;
+}
+
+/* 3-column centered grid */
+.grid-3-center {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    justify-items: center;
+}
+
+@media (min-width: 768px) {
+    .grid-3-center {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-3-center {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.grid-3-center > * {
+    width: 100%;
+}
+
+/* 2-column centered grid */
+.grid-2-center {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    justify-items: center;
+}
+
+@media (min-width: 768px) {
+    .grid-2-center {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.grid-2-center > * {
+    width: 100%;
+}
+
+/* ===== FINAL CTA SECTION CENTERING ===== */
+.cta-section {
+    text-align: center;
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-section .cta-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* ===== SOCIAL PROOF STRIP CENTERING ===== */
+.social-proof-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    text-align: center;
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transformations — ComboMaster Fitness</title>
+    <title>Transformations — ComboMaster Fitness | Real Results</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -40,10 +40,7 @@
             --gold-accent: #B8943F;
             --card-bg-solid: #1A1A1A;
             --nav-bg: rgba(5, 5, 5, 0.9);
-            --tab-inactive: rgba(255, 255, 255, 0.05);
-            --tab-text: #F5F5F0;
             --toast-bg: rgba(26, 26, 26, 0.9);
-            --input-bg: #0F0F0F;
         }
 
         body.light-theme {
@@ -57,17 +54,13 @@
             --gold-accent: #9a7209;
             --card-bg-solid: #ffffff;
             --nav-bg: rgba(255, 255, 255, 0.95);
-            --tab-inactive: rgba(0, 0, 0, 0.05);
-            --tab-text: #1e1e2a;
             --toast-bg: rgba(255, 255, 255, 0.95);
-            --input-bg: #ffffff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { overflow-x: hidden; max-width: 100vw; scroll-behavior: smooth; }
+        html, body { overflow-x: hidden; scroll-behavior: smooth; }
 
         body {
-            font-size: 1.125rem;
             background-color: var(--bg-base);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
@@ -75,103 +68,69 @@
         }
 
         .font-display { font-family: 'Oswald', sans-serif; }
+        .text-gold { color: var(--gold); }
+        .text-gradient {
+            background: linear-gradient(135deg, var(--gold), #f5dfa0, var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .text-muted-custom { color: var(--text-muted); }
 
-        /* ===== NAVIGATION ===== */
+        /* Navigation */
         nav {
             z-index: 50;
             background-color: var(--nav-bg);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             transition: all 0.4s ease;
         }
-
         nav.nav-scrolled {
             background-color: rgba(5, 5, 5, 0.98);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
-
         body.light-theme nav.nav-scrolled {
             background-color: rgba(255, 255, 255, 0.98);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
         }
 
-        /* ===== UTILITY ===== */
         .glass-card {
             background: var(--bg-card);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
         }
 
-        .text-muted-custom { color: var(--text-muted); }
-
-        .text-gradient {
-            background: linear-gradient(to right, var(--gold), #f5dfa0, var(--gold));
-            background-size: 200% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .text-gold { color: var(--gold); }
-        .border-gold { border-color: var(--gold); }
-
-        /* ===== BUTTONS ===== */
         .btn-gold {
             background: var(--gold);
             color: #050505;
+            font-weight: 600;
             transition: all 150ms ease;
             cursor: pointer;
-            border: none;
-            font-weight: 600;
         }
-
         .btn-gold:hover {
             background: var(--gold-accent);
-            box-shadow: 0 0 30px rgba(var(--gold-rgb), 0.5);
             transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(212, 168, 83, 0.4);
         }
-
-        body.light-theme .btn-gold { color: #ffffff; }
-
         .btn-outline {
-            border: 1px solid rgba(var(--gold-rgb), 0.5);
+            border: 1px solid rgba(212, 168, 83, 0.5);
             color: var(--gold);
             background: transparent;
+            font-weight: 600;
             transition: all 150ms ease;
             cursor: pointer;
-            font-weight: 600;
         }
-
         .btn-outline:hover {
-            background: rgba(var(--gold-rgb), 0.1);
+            background: rgba(212, 168, 83, 0.1);
             border-color: var(--gold);
             transform: translateY(-2px);
-            box-shadow: 0 0 20px rgba(var(--gold-rgb), 0.15);
         }
 
-        /* ===== CARDS ===== */
-        .card-hover {
-            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .card-hover:hover {
-            border-color: rgba(var(--gold-rgb), 0.5);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(var(--gold-rgb), 0.08);
-        }
-
-        /* ===== MOBILE MENU ===== */
-        .mobile-menu {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-            background-color: var(--bg-base);
-        }
+        /* Mobile Menu */
+        .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: var(--bg-base); }
         .mobile-menu.open { max-height: 800px; }
 
-        /* ===== TOAST ===== */
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -186,50 +145,33 @@
         }
         .toast.show { transform: translateY(0); opacity: 1; }
 
-        /* ===== HERO ANIMATIONS ===== */
+        /* Hero Animations */
         @keyframes heroFadeIn {
             from { opacity: 0; transform: translateY(30px); filter: blur(6px); }
             to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
-
         @keyframes wordSlideUp {
             from { opacity: 0; transform: translateY(100%); filter: blur(10px); }
             60% { opacity: 1; filter: blur(0); }
             80% { transform: translateY(-4%); }
             100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
-
         @keyframes lineExpand {
             from { width: 0; opacity: 0; }
             to { width: 80px; opacity: 1; }
         }
-
         @keyframes heroImageZoom {
             from { transform: scale(1.15); }
             to { transform: scale(1.05); }
         }
-
         @keyframes particleFloat {
             0% { opacity: 0; transform: translateY(0) translateX(0) scale(0); }
             15% { opacity: 0.7; transform: scale(1); }
             50% { opacity: 0.4; }
             100% { opacity: 0; transform: translateY(-200px) translateX(var(--drift, 20px)) scale(0); }
         }
-
-        @keyframes goldShimmer {
-            0% { background-position: 200% center; }
-            100% { background-position: -200% center; }
-        }
-
-        @keyframes scrollBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(8px); }
-        }
-
-        @keyframes pulse-gold {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.4); }
-            50% { box-shadow: 0 0 20px 5px rgba(var(--gold-rgb), 0.15); }
-        }
+        @keyframes scrollBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+        @keyframes pulse-gold { 0%,100% { box-shadow: 0 0 0 0 rgba(212,168,83,0.4); } 50% { box-shadow: 0 0 20px 5px rgba(212,168,83,0.15); } }
 
         .hero-animate {
             opacity: 0;
@@ -237,7 +179,6 @@
             filter: blur(6px);
             animation: heroFadeIn 0.9s var(--delay, 0s) cubic-bezier(0.16, 1, 0.3, 1) both;
         }
-
         .hero-word {
             display: inline-block;
             opacity: 0;
@@ -245,85 +186,47 @@
             filter: blur(10px);
             animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both;
         }
-
         .hero-word.text-gradient {
-            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both,
-                       goldShimmer 3s 2s ease-in-out 1 both;
+            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both;
         }
-
         .hero-line {
             width: 0;
             height: 1px;
             background: linear-gradient(to right, transparent, var(--gold), transparent);
             animation: lineExpand 0.8s var(--delay, 0s) cubic-bezier(0.16, 1, 0.3, 1) both;
         }
-
-        .hero-bg-img {
-            animation: heroImageZoom 25s ease-out forwards;
-        }
-
+        .hero-bg-img { animation: heroImageZoom 25s ease-out forwards; }
         .particle {
             position: absolute;
             width: var(--size, 3px);
             height: var(--size, 3px);
             background: var(--gold);
             border-radius: 50%;
-            box-shadow: 0 0 8px var(--gold), 0 0 20px rgba(var(--gold-rgb), 0.3);
+            box-shadow: 0 0 8px var(--gold);
             opacity: 0;
             animation: particleFloat var(--dur, 12s) var(--d, 0s) infinite ease-in-out;
         }
-
-        .scroll-indicator {
-            animation: scrollBounce 2s 2.5s infinite ease-in-out;
-        }
-
         .pulse-gold { animation: pulse-gold 3s infinite; }
+        .scroll-indicator { animation: scrollBounce 2s 2.5s infinite ease-in-out; }
+        .hero-title { font-size: clamp(2.2rem, 6.5vw, 6.5rem); line-height: 0.95; letter-spacing: -0.02em; }
 
-        /* ===== HERO RESPONSIVE TYPOGRAPHY ===== */
-        .hero-title {
-            font-size: clamp(2.2rem, 6.5vw, 6.5rem);
-            line-height: 0.95;
-            letter-spacing: -0.02em;
-        }
-
-        @media (min-width: 768px) {
-            .hero-title-line { white-space: nowrap; }
-        }
-
-        /* ===== SCROLL REVEAL ===== */
+        /* Scroll Reveal */
         .reveal-on-scroll {
             opacity: 0;
-            transform: translateY(30px) scale(0.97);
-            filter: blur(4px);
+            transform: translateY(30px);
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .reveal-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
 
-        .reveal-on-scroll.is-visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0);
-        }
-
-        /* ===== BEFORE/AFTER IMAGES ===== */
+        /* Before/After Cards */
         .ba-images {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0;
             position: relative;
         }
-
-        .ba-images img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .transformation-card:hover .ba-images img {
-            transform: scale(1.03);
-        }
-
+        .ba-images img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.5s ease; }
+        .transformation-card:hover .ba-images img { transform: scale(1.02); }
         .ba-divider {
             position: absolute;
             top: 0;
@@ -331,117 +234,66 @@
             left: 50%;
             width: 3px;
             background: linear-gradient(to bottom, transparent, var(--gold), transparent);
-            z-index: 5;
             transform: translateX(-50%);
+            z-index: 5;
         }
-
         .ba-badge {
             position: absolute;
             bottom: 0.75rem;
             left: 0.75rem;
-            font-size: 0.625rem;
+            font-size: 0.6rem;
             font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
             padding: 0.25rem 0.6rem;
             border-radius: 0.25rem;
             backdrop-filter: blur(4px);
             z-index: 6;
         }
+        .ba-badge.before { background: rgba(239, 68, 68, 0.3); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+        .ba-badge.after { background: rgba(34, 197, 94, 0.3); color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
 
-        .ba-badge.before {
-            background: rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+        /* Star Rating */
+        .star-rating { display: flex; gap: 0.25rem; margin-bottom: 1rem; }
+        .star-rating svg { width: 1rem; height: 1rem; color: var(--gold); fill: var(--gold); }
+
+        /* Achievement Cards */
+        .achievement-stat {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background: rgba(212, 168, 83, 0.05);
+            border: 1px solid rgba(212, 168, 83, 0.15);
         }
-
-        .ba-badge.after {
-            background: rgba(34, 197, 94, 0.3);
-            color: #86efac;
-            border: 1px solid rgba(34, 197, 94, 0.3);
+        .winners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
         }
-
-        /* ===== STAR RATING ===== */
-        .star-rating {
-            display: flex;
-            gap: 0.25rem;
-            margin-bottom: 1rem;
+        .winner-card {
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
         }
+        .winner-card:hover { border-color: var(--gold); transform: translateY(-2px); }
 
-        .star-rating svg {
-            width: 1rem;
-            height: 1rem;
-            color: var(--gold);
-            fill: var(--gold);
-        }
-
-        /* ===== TRANSFORMATION CARD ===== */
-        .transformation-card {
-            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .transformation-card:hover {
-            border-color: rgba(var(--gold-rgb), 0.5);
-            transform: translateY(-6px);
-            box-shadow: 0 12px 40px rgba(var(--gold-rgb), 0.1);
-        }
-
-        /* ===== CUSTOM SCROLLBAR ===== */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-base); }
-        ::-webkit-scrollbar-thumb { background: var(--card-bg-solid); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
-        body.light-theme ::-webkit-scrollbar-thumb { background: #cbd5e1; }
-        body.light-theme ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
-
-        @media (max-width: 640px) {
-            .section-padding { padding-top: 3rem; padding-bottom: 3rem; }
-        }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
 
         .theme-toggle-btn {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 9999px;
             padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
             cursor: pointer;
         }
-        .theme-toggle-btn:hover { border-color: var(--gold); transform: scale(1.05); }
-
-        button, a, [role="button"] { pointer-events: auto !important; cursor: pointer; }
-        nav button, nav a { position: relative; z-index: 60; }
-        #mobile-toggle, #theme-toggle-desktop, #theme-toggle-mobile {
-            cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation;
-        }
-
-        body.light-theme .glass-card { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); }
-        body.light-theme nav { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
-
-        .section-padding { padding-top: 4rem; padding-bottom: 4rem; }
-        @media (min-width: 768px) { .section-padding { padding-top: 5rem; padding-bottom: 5rem; } }
-
-        /* ===== REDUCED MOTION ===== */
-        @media (prefers-reduced-motion: reduce) {
-            .hero-animate, .hero-word, .hero-line, .particle,
-            .hero-bg-img, .scroll-indicator {
-                animation: none !important;
-                opacity: 1 !important;
-                transform: none !important;
-                filter: none !important;
-            }
-            .reveal-on-scroll {
-                opacity: 1 !important;
-                transform: none !important;
-                filter: none !important;
-                transition: none !important;
-            }
-        }
+        .theme-toggle-btn:hover { border-color: var(--gold); }
+        @media (max-width: 640px) { .section-padding { padding-top: 2rem; padding-bottom: 2rem; } }
     </style>
 </head>
-<body class="font-sans antialiased">
+<body>
 
     <!-- Toast -->
     <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
@@ -453,439 +305,169 @@
     <nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex items-center justify-between py-4">
-                <a href="index.html" class="flex items-center gap-3 group">
-                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-bold text-sm">CM</div>
                     <div class="hidden sm:block">
-                        <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
+                        <span class="font-display text-xl tracking-wide font-medium text-gold">COMBOMASTER</span>
                         <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
                     </div>
                 </a>
                 <div class="hidden lg:flex items-center gap-6">
-                    <a href="index.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Home</a>
-                    <a href="about.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">About</a>
-                    <a href="training.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Training</a>
-                    <a href="mealplans.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Meal Plans</a>
-                    <a href="shop.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Shop</a>
-                    <a href="transformations.html" class="text-sm tracking-wide text-gold font-semibold transition-colors">Results</a>
-                    <a href="contact.html" class="text-sm tracking-wide text-muted-custom hover:text-gold transition-colors">Contact</a>
+                    <a href="index.html" class="text-sm text-muted-custom hover:text-gold transition">Home</a>
+                    <a href="about.html" class="text-sm text-muted-custom hover:text-gold transition">About</a>
+                    <a href="services.html" class="text-sm text-muted-custom hover:text-gold transition">Services</a>
+                    <a href="transformations.html" class="text-sm text-gold font-semibold transition">Results</a>
+                    <a href="contact.html" class="text-sm text-muted-custom hover:text-gold transition">Contact</a>
                 </div>
                 <div class="hidden lg:flex items-center gap-3">
-                    <button id="theme-toggle-desktop" class="theme-toggle-btn" aria-label="Toggle light/dark mode">
-                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-desktop"></i>
-                    </button>
-                    <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
-                    <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase">Join Now</a>
+                    <button id="theme-toggle-desktop" class="theme-toggle-btn"><i data-lucide="moon" class="w-5 h-5 text-gold"></i></button>
+                    <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold">Login</a>
+                    <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold uppercase">Join Now</a>
                 </div>
                 <div class="flex items-center gap-2 lg:hidden">
-                    <button id="theme-toggle-mobile" class="theme-toggle-btn p-2" aria-label="Toggle theme">
-                        <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-mobile"></i>
-                    </button>
-                    <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-gold transition-colors" aria-label="Toggle menu">
-                        <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
-                    </button>
+                    <button id="theme-toggle-mobile" class="theme-toggle-btn p-2"><i data-lucide="moon" class="w-5 h-5 text-gold"></i></button>
+                    <button id="mobile-toggle" class="p-2 text-muted-custom"><i data-lucide="menu" class="w-6 h-6"></i></button>
                 </div>
             </div>
             <div id="mobile-menu" class="mobile-menu lg:hidden">
                 <div class="pb-6 space-y-1">
-                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Home</a>
-                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">About</a>
-                    <a href="training.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Training</a>
-                    <a href="mealplans.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Meal Plans</a>
-                    <a href="shop.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Shop</a>
-                    <a href="transformations.html" class="block py-3 px-4 text-gold font-semibold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Results</a>
-                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Contact</a>
+                    <a href="index.html" class="block py-3 px-4 text-muted-custom hover:text-gold">Home</a>
+                    <a href="about.html" class="block py-3 px-4 text-muted-custom hover:text-gold">About</a>
+                    <a href="services.html" class="block py-3 px-4 text-muted-custom hover:text-gold">Services</a>
+                    <a href="transformations.html" class="block py-3 px-4 text-gold font-semibold">Results</a>
+                    <a href="contact.html" class="block py-3 px-4 text-muted-custom hover:text-gold">Contact</a>
                     <div class="pt-3 flex gap-2 px-4">
-                        <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
-                        <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold">Join</a>
+                        <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm">Login</a>
+                        <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm">Join</a>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- ============================================ -->
     <!-- HERO SECTION -->
-    <!-- ============================================ -->
-    <section id="hero" class="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
-
-        <!-- Background Image -->
+    <section class="relative min-h-[70vh] flex items-center justify-center overflow-hidden pt-20">
         <div class="absolute inset-0">
-            <img
-                src="images/transformations-hero.jpg"
-                alt=""
-                class="hero-bg-img w-full h-full object-cover select-none"
-                draggable="false"
-                onerror="this.src='https://picsum.photos/seed/fittransform/1920/1080.jpg'"
-            >
+            <img src="https://images.pexels.com/photos/260447/pexels-photo-260447.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="Transformation" class="hero-bg-img w-full h-full object-cover" onerror="this.src='https://picsum.photos/seed/fittransform/1920/1080.jpg'">
         </div>
-
-        <!-- Overlays -->
-        <div class="absolute inset-0 bg-black/60"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/30 to-[#050505]/60"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-[#050505]/70 via-transparent to-[#050505]"></div>
-
-        <!-- Gold ambient glow -->
-        <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-amber-500/[0.04] blur-[150px] pointer-events-none"></div>
-
-        <!-- Gold floating particles -->
-        <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-            <span class="particle" style="left:10%; top:55%; --size:3px; --d:0s; --dur:14s; --drift:25px;"></span>
-            <span class="particle" style="left:22%; top:28%; --size:2px; --d:3s; --dur:12s; --drift:-15px;"></span>
-            <span class="particle" style="left:72%; top:18%; --size:4px; --d:1s; --dur:16s; --drift:20px;"></span>
-            <span class="particle" style="left:88%; top:45%; --size:2px; --d:5s; --dur:11s; --drift:-30px;"></span>
-            <span class="particle" style="left:48%; top:72%; --size:3px; --d:2s; --dur:13s; --drift:10px;"></span>
-            <span class="particle" style="left:63%; top:38%; --size:2px; --d:7s; --dur:15s; --drift:-20px;"></span>
-        </div>
-
-        <!-- Hero Content -->
-        <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center pt-24 pb-20 w-full">
-
-            <!-- Badge -->
-            <div class="hero-animate" style="--delay: 0.1s">
-                <div class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-brand-gold/30 bg-brand-gold/[0.08] backdrop-blur-sm mb-8">
-                    <div class="w-2 h-2 rounded-full bg-brand-gold pulse-gold"></div>
-                    <span class="text-[0.7rem] sm:text-xs font-semibold tracking-[0.15em] sm:tracking-[0.2em] uppercase text-gold">Transformations</span>
-                </div>
-            </div>
-
-            <!-- Decorative Gold Line -->
-            <div class="flex justify-center mb-8 hero-animate" style="--delay: 0.3s">
-                <div class="hero-line" style="--delay: 0.4s"></div>
-            </div>
-
-            <!-- Title — word-by-word animation -->
-            <h1 class="font-display font-semibold tracking-tight mb-8 hero-title">
-                <span class="hero-title-line">
-                    <span class="hero-word" style="--i:0">REAL</span>
-                    <span class="hero-word" style="--i:1">PEOPLE,</span>
-                </span>
-                <br class="hidden sm:inline">
-                <span class="hero-title-line">
-                    <span class="hero-word text-gradient" style="--i:2">REAL</span>
-                    <span class="hero-word text-gradient" style="--i:3">RESULTS</span>
-                </span>
+        <div class="absolute inset-0 bg-black/65"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/50"></div>
+        <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
+            <div class="hero-animate" style="--delay:0.1s"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/30 bg-gold/10 backdrop-blur-sm mb-6"><span class="text-xs font-bold tracking-wider text-gold">REAL PEOPLE. REAL RESULTS.</span></div></div>
+            <div class="flex justify-center mb-6 hero-animate" style="--delay:0.3s"><div class="hero-line" style="--delay:0.4s"></div></div>
+            <h1 class="font-display font-bold tracking-tight mb-6 hero-title">
+                <span class="hero-title-line"><span class="hero-word" style="--i:0">TRANSFORMATIONS</span></span>
+                <span class="hero-title-line"><span class="hero-word text-gradient" style="--i:1">THAT SPEAK</span> <span class="hero-word text-gradient" style="--i:2">FOR THEMSELVES</span></span>
             </h1>
-
-            <!-- Second decorative line -->
-            <div class="flex justify-center mb-8 hero-animate" style="--delay: 1.2s">
-                <div class="hero-line" style="--delay: 1.3s"></div>
-            </div>
-
-            <!-- Description -->
-            <div class="hero-animate" style="--delay: 1.1s">
-                <p class="text-sm sm:text-base md:text-lg lg:text-xl text-muted-custom leading-relaxed max-w-2xl mx-auto">
-                    These transformations represent dedication, discipline, and the ComboMaster system in action.
-                </p>
-            </div>
-
-            <!-- Scroll hint -->
-            <div class="hero-animate mt-14" style="--delay: 1.8s">
-                <a href="#gallery" class="scroll-indicator inline-flex flex-col items-center gap-2 text-muted-custom hover:text-gold transition-colors">
-                    <span class="text-[0.6rem] tracking-[0.25em] uppercase">View Results</span>
-                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                </a>
-            </div>
+            <div class="flex justify-center mb-6 hero-animate" style="--delay:1.2s"><div class="hero-line" style="--delay:1.3s"></div></div>
+            <div class="hero-animate" style="--delay:1.5s"><p class="text-muted-custom max-w-2xl mx-auto">From weight loss to stage wins — see how real clients transformed their bodies and lives with ComboMaster.</p></div>
+            <div class="hero-animate mt-10" style="--delay:1.8s"><a href="#gallery" class="scroll-indicator inline-flex flex-col items-center gap-2 text-muted-custom hover:text-gold"><span class="text-[0.6rem] tracking-wide uppercase">View Results</span><i data-lucide="chevron-down" class="w-4 h-4"></i></a></div>
         </div>
     </section>
 
-    <!-- ============================================ -->
-    <!-- TRANSFORMATION GALLERY -->
-    <!-- ============================================ -->
-    <section id="gallery" class="py-12 sm:py-16 section-padding">
+    <!-- ========== BEFORE & AFTER GALLERY ========== -->
+    <section id="gallery" class="py-16 section-padding">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-
-                <!-- Card 1 -->
+            <div class="text-center mb-12 reveal-on-scroll">
+                <span class="text-xs font-bold tracking-wider text-gold uppercase">Before → After</span>
+                <h2 class="font-display text-3xl sm:text-4xl font-bold mt-2">Real <span class="text-gradient">Transformations</span></h2>
+                <p class="text-muted-custom mt-3 max-w-2xl mx-auto">Unedited, real client results from our training programs.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Transformation 1 -->
                 <div class="glass-card rounded-2xl overflow-hidden transformation-card reveal-on-scroll">
-                    <div class="ba-images relative">
-                        <div class="relative overflow-hidden">
-                            <img src="images/trans-before1.jpg" alt="Before" onerror="this.src='https://picsum.photos/seed/before1fit/400/300.jpg'">
-                            <div class="ba-badge before">Before</div>
-                        </div>
-                        <div class="relative overflow-hidden">
-                            <img src="images/trans-after1.jpg" alt="After" onerror="this.src='https://picsum.photos/seed/after1fit/400/300.jpg'">
-                            <div class="ba-badge after">After</div>
-                        </div>
-                        <div class="ba-divider"></div>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="font-display text-lg font-semibold">James M.</h4>
-                        <p class="text-sm text-gold mb-2 font-semibold">Lost 22kg in 16 weeks</p>
-                        <p class="text-sm text-muted-custom">"ComboMaster gave me a system that actually works. The meal plans and training together changed my life completely."</p>
-                    </div>
+                    <div class="ba-images relative"><img src="https://picsum.photos/seed/before1/400/300" alt="Before"><img src="https://picsum.photos/seed/after1/400/300" alt="After"><div class="ba-divider"></div><div class="ba-badge before">BEFORE</div><div class="ba-badge after" style="left:auto; right:0.75rem;">AFTER</div></div>
+                    <div class="p-5"><h4 class="font-display text-lg font-bold">James Mitchell</h4><p class="text-sm text-gold font-semibold mb-1">-22 kg in 16 weeks</p><p class="text-sm text-muted-custom">"Completely changed my relationship with food and training."</p></div>
                 </div>
-
-                <!-- Card 2 -->
-                <div class="glass-card rounded-2xl overflow-hidden transformation-card reveal-on-scroll" style="transition-delay: 0.08s;">
-                    <div class="ba-images relative">
-                        <div class="relative overflow-hidden">
-                            <img src="images/trans-before2.jpg" alt="Before" onerror="this.src='https://picsum.photos/seed/before2fit/400/300.jpg'">
-                            <div class="ba-badge before">Before</div>
-                        </div>
-                        <div class="relative overflow-hidden">
-                            <img src="images/trans-after2.jpg" alt="After" onerror="this.src='https://picsum.photos/seed/after2fit/400/300.jpg'">
-                            <div class="ba-badge after">After</div>
-                        </div>
-                        <div class="ba-divider"></div>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="font-display text-lg font-semibold">Sarah K.</h4>
-                        <p class="text-sm text-gold mb-2 font-semibold">Gained 8kg muscle in 12 weeks</p>
-                        <p class="text-sm text-muted-custom">"As a woman, I was scared of getting bulky. Peter taught me how to train smart and fuel my body the right way."</p>
-                    </div>
+                <!-- Transformation 2 -->
+                <div class="glass-card rounded-2xl overflow-hidden transformation-card reveal-on-scroll" style="transition-delay:0.08s">
+                    <div class="ba-images relative"><img src="https://picsum.photos/seed/before2/400/300" alt="Before"><img src="https://picsum.photos/seed/after2/400/300" alt="After"><div class="ba-divider"></div><div class="ba-badge before">BEFORE</div><div class="ba-badge after" style="left:auto; right:0.75rem;">AFTER</div></div>
+                    <div class="p-5"><h4 class="font-display text-lg font-bold">Sarah Kim</h4><p class="text-sm text-gold font-semibold mb-1">+8kg muscle, -6% body fat</p><p class="text-sm text-muted-custom">"First competition prep was a success thanks to ComboMaster."</p></div>
                 </div>
-
-                <!-- Card 3 -->
-                <div class="glass-card rounded-2xl overflow-hidden transformation-card reveal-on-scroll" style="transition-delay: 0.16s;">
-                    <div class="ba-images relative">
-                        <div class="relative overflow-hidden">
-                            <img src="images/trans-before3.jpg" alt="Before" onerror="this.src='https://picsum.photos/seed/before3fit/400/300.jpg'">
-                            <div class="ba-badge before">Before</div>
-                        </div>
-                        <div class="relative overflow-hidden">
-                            <img src="images/trans-after3.jpg" alt="After" onerror="this.src='https://picsum.photos/seed/after3fit/400/300.jpg'">
-                            <div class="ba-badge after">After</div>
-                        </div>
-                        <div class="ba-divider"></div>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="font-display text-lg font-semibold">David C.</h4>
-                        <p class="text-sm text-gold mb-2 font-semibold">Competition ready in 20 weeks</p>
-                        <p class="text-sm text-muted-custom">"From never stepping in a gym to competing on stage. The competition prep program is world-class."</p>
-                    </div>
+                <!-- Transformation 3 -->
+                <div class="glass-card rounded-2xl overflow-hidden transformation-card reveal-on-scroll" style="transition-delay:0.16s">
+                    <div class="ba-images relative"><img src="https://picsum.photos/seed/before3/400/300" alt="Before"><img src="https://picsum.photos/seed/after3/400/300" alt="After"><div class="ba-divider"></div><div class="ba-badge before">BEFORE</div><div class="ba-badge after" style="left:auto; right:0.75rem;">AFTER</div></div>
+                    <div class="p-5"><h4 class="font-display text-lg font-bold">Grace Thompson</h4><p class="text-sm text-gold font-semibold mb-1">30kg weight loss in 6 months</p><p class="text-sm text-muted-custom">"Home workout program + meal prep changed everything."</p></div>
                 </div>
             </div>
-
-            <!-- ============================================ -->
-            <!-- TESTIMONIALS SECTION -->
-            <!-- ============================================ -->
-            <div class="text-center mb-10 reveal-on-scroll">
-                <span class="text-xs font-semibold tracking-widest uppercase text-gold">Testimonials</span>
-                <h2 class="font-display text-2xl sm:text-3xl font-semibold tracking-tight mt-3">
-                    WHAT OUR CLIENTS <span class="text-gradient">SAY</span>
-                </h2>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Testimonial 1 -->
-                <div class="glass-card rounded-2xl p-8 reveal-on-scroll">
-                    <div class="star-rating">
-                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
-                    </div>
-                    <p class="text-muted-custom italic mb-6 text-base">"I tried everything before ComboMaster. What makes this different is the combination — the training, the food, the mindset coaching. It all works together. I lost 30kg and gained a whole new life."</p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-brand-gold/20 overflow-hidden border-2 border-brand-gold/30 flex items-center justify-center">
-                            <span class="text-gold font-bold text-sm">GT</span>
-                        </div>
-                        <div>
-                            <div class="font-semibold">Grace T.</div>
-                            <div class="text-xs text-muted-custom">Lost 30kg • 6 months</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Testimonial 2 -->
-                <div class="glass-card rounded-2xl p-8 reveal-on-scroll" style="transition-delay: 0.08s;">
-                    <div class="star-rating">
-                        <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
-                    </div>
-                    <p class="text-muted-custom italic mb-6 text-base">"The home workout program fit perfectly into my busy schedule. No gym needed, real results. I'm stronger now at 40 than I was at 25. Thank you ComboMaster!"</p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-brand-gold/20 overflow-hidden border-2 border-brand-gold/30 flex items-center justify-center">
-                            <span class="text-gold font-bold text-sm">MB</span>
-                        </div>
-                        <div>
-                            <div class="font-semibold">Michael B.</div>
-                            <div class="text-xs text-muted-custom">Home Workout • 4 months</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </section>
 
-    <!-- ============================================ -->
-    <!-- CTA BANNER -->
-    <!-- ============================================ -->
-    <section class="py-16 relative overflow-hidden border-t border-[var(--border-color)]">
-        <div class="absolute inset-0">
-            <img src="images/cta-gym2.jpg" alt="" class="w-full h-full object-cover opacity-20" onerror="this.src='https://picsum.photos/seed/ctagym2fit/1920/600.jpg'">
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-r from-[var(--bg-base)] via-[var(--bg-base)]/90 to-[var(--bg-base)]/70"></div>
-        <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center reveal-on-scroll">
-            <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-4">
-                READY FOR YOUR <span class="text-gradient">TRANSFORMATION</span>?
-            </h2>
-            <p class="text-muted-custom mb-8 max-w-xl mx-auto">Join the ComboMaster system today. When you combine knowledge, discipline, and purpose — transformation is inevitable.</p>
-            <a href="membership.html" class="btn-gold px-8 py-3.5 rounded-lg text-sm font-semibold tracking-wide uppercase inline-flex items-center gap-2">
-                <i data-lucide="zap" class="w-4 h-4"></i> Start Your Journey
-            </a>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="py-12 border-t border-[var(--border-color)]">
+    <!-- ========== WEIGHT LOSS ACHIEVEMENTS ========== -->
+    <section class="py-12 border-t border-[var(--border-color)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-                <div class="col-span-2 md:col-span-1">
-                    <a href="index.html" class="flex items-center gap-2 mb-4">
-                        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-brand-gold to-amber-600"></div>
-                        <span class="font-display text-lg text-gold">COMBOMASTER</span>
-                    </a>
-                    <p class="text-sm text-muted-custom">Transform Your Body, Master Your Life.</p>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Links</h4>
-                    <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="about.html" class="hover:text-gold transition-colors">About</a></li>
-                        <li><a href="training.html" class="hover:text-gold transition-colors">Training</a></li>
-                        <li><a href="membership.html" class="hover:text-gold transition-colors">Membership</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Shop</h4>
-                    <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="shop.html" class="hover:text-gold transition-colors">Supplements</a></li>
-                        <li><a href="shop.html" class="hover:text-gold transition-colors">Attire</a></li>
-                        <li><a href="shop.html" class="hover:text-gold transition-colors">Equipment</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-sm uppercase mb-3 tracking-wider">Connect</h4>
-                    <ul class="space-y-2 text-sm text-muted-custom">
-                        <li><a href="contact.html" class="hover:text-gold transition-colors">Contact Us</a></li>
-                        <li><a href="login.html" class="hover:text-gold transition-colors">Client Login</a></li>
-                    </ul>
-                </div>
+            <div class="text-center mb-10 reveal-on-scroll">
+                <i data-lucide="flame" class="w-8 h-8 text-gold mx-auto mb-3"></i>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold">Weight Loss <span class="text-gradient">Achievements</span></h2>
+                <p class="text-muted-custom mt-2">Real numbers. Real clients. Sustainable results.</p>
             </div>
-            <div class="border-t border-[var(--border-color)] pt-6 text-center">
-                <p class="text-xs text-muted-custom">&copy; 2025 ComboMaster Fitness. All rights reserved.</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="achievement-stat reveal-on-scroll"><div class="font-display text-3xl font-bold text-gold">500+</div><div class="text-xs text-muted-custom uppercase tracking-wide">Total Clients</div><div class="text-xs text-muted-custom mt-1">Transformed since 2020</div></div>
+                <div class="achievement-stat reveal-on-scroll" style="transition-delay:0.05s"><div class="font-display text-3xl font-bold text-gold">1,280+</div><div class="text-xs text-muted-custom uppercase tracking-wide">Kg Lost</div><div class="text-xs text-muted-custom mt-1">Combined by members</div></div>
+                <div class="achievement-stat reveal-on-scroll" style="transition-delay:0.1s"><div class="font-display text-3xl font-bold text-gold">15.2 kg</div><div class="text-xs text-muted-custom uppercase tracking-wide">Average Loss</div><div class="text-xs text-muted-custom mt-1">Per client (12 weeks)</div></div>
+                <div class="achievement-stat reveal-on-scroll" style="transition-delay:0.15s"><div class="font-display text-3xl font-bold text-gold">94%</div><div class="text-xs text-muted-custom uppercase tracking-wide">Keep It Off</div><div class="text-xs text-muted-custom mt-1">6-month retention</div></div>
             </div>
         </div>
+    </section>
+
+    <!-- ========== TESTIMONIALS ========== -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10 reveal-on-scroll">
+                <i data-lucide="message-circle" class="w-8 h-8 text-gold mx-auto mb-3"></i>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold">Client <span class="text-gradient">Testimonials</span></h2>
+                <p class="text-muted-custom">What our community says about their journey.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-card p-6 rounded-2xl reveal-on-scroll"><div class="star-rating"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div><p class="italic text-muted-custom">"I struggled with yo-yo dieting for years. The ComboMaster system gave me structure without feeling deprived. Down 26kg and I've kept it off for over a year!"</p><div class="mt-4"><div class="font-semibold">— Michael B.</div><div class="text-xs text-muted-custom">Weight Loss Program Graduate</div></div></div>
+                <div class="glass-card p-6 rounded-2xl reveal-on-scroll" style="transition-delay:0.08s"><div class="star-rating"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div><p class="italic text-muted-custom">"The online coaching kept me accountable every single week. My coach adjusted my macros and workouts based on my progress. I gained 10kg of lean mass in 4 months."</p><div class="mt-4"><div class="font-semibold">— David Chen</div><div class="text-xs text-muted-custom">Muscle Gain Program</div></div></div>
+                <div class="glass-card p-6 rounded-2xl reveal-on-scroll"><div class="star-rating"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div><p class="italic text-muted-custom">"From never stepping in a gym to winning my first novice bodybuilding show. The competition prep plan is absolute gold."</p><div class="mt-4"><div class="font-semibold">— Marcus Lee</div><div class="text-xs text-muted-custom">Competition Prep Winner</div></div></div>
+                <div class="glass-card p-6 rounded-2xl reveal-on-scroll" style="transition-delay:0.08s"><div class="star-rating"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div><p class="italic text-muted-custom">"The home workout program fit perfectly into my busy schedule. No gym, no excuses — I lost 18kg and gained so much confidence."</p><div class="mt-4"><div class="font-semibold">— Jessica N.</div><div class="text-xs text-muted-custom">Home Workout Program</div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== COMPETITION WINNERS ========== -->
+    <section class="py-12 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10 reveal-on-scroll">
+                <i data-lucide="trophy" class="w-8 h-8 text-gold mx-auto mb-3"></i>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold">🏆 Competition <span class="text-gradient">Winners</span></h2>
+                <p class="text-muted-custom">ComboMaster athletes who stepped on stage and dominated.</p>
+            </div>
+            <div class="winners-grid">
+                <div class="winner-card reveal-on-scroll"><i data-lucide="crown" class="w-6 h-6 text-gold mx-auto mb-2"></i><p class="font-bold">David Chen</p><p class="text-xs text-muted-custom">1st Place - Men's Physique</p><p class="text-xs text-gold mt-1">Zambia Nationals 2024</p></div>
+                <div class="winner-card reveal-on-scroll" style="transition-delay:0.05s"><i data-lucide="crown" class="w-6 h-6 text-gold mx-auto mb-2"></i><p class="font-bold">Sarah Kim</p><p class="text-xs text-muted-custom">Overall Champion - Bikini</p><p class="text-xs text-gold mt-1">Southern Province Open</p></div>
+                <div class="winner-card reveal-on-scroll" style="transition-delay:0.1s"><i data-lucide="crown" class="w-6 h-6 text-gold mx-auto mb-2"></i><p class="font-bold">James Mitchell</p><p class="text-xs text-muted-custom">2nd Place - Transformation Category</p><p class="text-xs text-gold mt-1">National Fitness Expo</p></div>
+                <div class="winner-card reveal-on-scroll" style="transition-delay:0.15s"><i data-lucide="crown" class="w-6 h-6 text-gold mx-auto mb-2"></i><p class="font-bold">Grace Thompson</p><p class="text-xs text-muted-custom">Best Transformation - Female</p><p class="text-xs text-gold mt-1">Online Challenge Winner</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA ========== -->
+    <section class="py-16 relative overflow-hidden border-t border-[var(--border-color)]">
+        <div class="absolute inset-0 bg-gradient-to-r from-[var(--bg-base)] via-transparent to-[var(--bg-base)]"></div>
+        <div class="relative z-10 max-w-4xl mx-auto px-4 text-center reveal-on-scroll">
+            <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Ready to Write <span class="text-gradient">Your Story</span>?</h2>
+            <p class="text-muted-custom mb-8 max-w-xl mx-auto">Join hundreds of clients who have transformed their bodies and lives. Your journey starts today.</p>
+            <a href="membership.html" class="btn-gold inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-sm font-bold uppercase"><i data-lucide="zap" class="w-4 h-4"></i> Start Your Transformation</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-10 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 text-center"><p class="text-xs text-muted-custom">© 2025 ComboMaster Fitness — Real Results, Real People. All rights reserved.</p></div>
     </footer>
 
     <script>
-        // ===== THEME TOGGLE =====
-        function initTheme() {
-            var saved = localStorage.getItem('theme');
-            if (saved === 'light') document.body.classList.add('light-theme');
-            updateThemeIcons();
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            var isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            updateThemeIcons();
-        }
-
-        function updateThemeIcons() {
-            var isLight = document.body.classList.contains('light-theme');
-            var iconName = isLight ? 'sun' : 'moon';
-            var desktopIcon = document.getElementById('theme-icon-desktop');
-            if (desktopIcon) desktopIcon.setAttribute('data-lucide', iconName);
-            var mobileIcon = document.getElementById('theme-icon-mobile');
-            if (mobileIcon) mobileIcon.setAttribute('data-lucide', iconName);
-            if (window.lucide) lucide.createIcons();
-        }
-
-        // ===== MOBILE MENU =====
-        function closeMobileMenu() {
-            var menu = document.getElementById('mobile-menu');
-            if (menu) menu.classList.remove('open');
-        }
-
-        function initMobileMenu() {
-            var toggle = document.getElementById('mobile-toggle');
-            var menu = document.getElementById('mobile-menu');
-            if (toggle && menu) {
-                toggle.addEventListener('click', function () { menu.classList.toggle('open'); });
-            }
-        }
-
-        // ===== TOAST =====
-        function showToast(message) {
-            var toast = document.getElementById('toast');
-            var msgEl = document.getElementById('toast-message');
-            if (toast && msgEl) {
-                msgEl.textContent = message;
-                toast.classList.add('show');
-                setTimeout(function () { toast.classList.remove('show'); }, 3000);
-            }
-        }
-
-        // ===== SCROLL REVEAL =====
-        var scrollObserver = null;
-
-        function initScrollReveal() {
-            var elements = document.querySelectorAll('.reveal-on-scroll:not(.is-visible)');
-            if (scrollObserver) scrollObserver.disconnect();
-
-            scrollObserver = new IntersectionObserver(function (entries) {
-                entries.forEach(function (entry) {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        scrollObserver.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-            elements.forEach(function (el) { scrollObserver.observe(el); });
-        }
-
-        // ===== NAVBAR SCROLL =====
-        function initNavScroll() {
-            var nav = document.getElementById('navbar');
-            if (!nav) return;
-            var ticking = false;
-            window.addEventListener('scroll', function () {
-                if (!ticking) {
-                    requestAnimationFrame(function () {
-                        nav.classList.toggle('nav-scrolled', window.scrollY > 60);
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
-        }
-
-        // ===== HERO PARALLAX =====
-        function initHeroParallax() {
-            var heroImg = document.querySelector('.hero-bg-img');
-            if (!heroImg) return;
-            var ticking = false;
-            window.addEventListener('scroll', function () {
-                if (!ticking) {
-                    requestAnimationFrame(function () {
-                        var scrolled = window.scrollY;
-                        var heroEl = document.getElementById('hero');
-                        if (heroEl && scrolled < heroEl.offsetHeight) {
-                            heroImg.style.transform = 'scale(1.05) translateY(' + (scrolled * 0.25) + 'px)';
-                        }
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
-        }
-
-        // ===== INIT =====
-        document.addEventListener('DOMContentLoaded', function () {
-            initTheme();
-            initMobileMenu();
-            initScrollReveal();
-            initNavScroll();
-            initHeroParallax();
-
-            var desktopToggle = document.getElementById('theme-toggle-desktop');
-            var mobileToggle = document.getElementById('theme-toggle-mobile');
-            if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
-            if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
-
-            if (window.lucide) lucide.createIcons();
-        });
+        function initTheme(){ let saved=localStorage.getItem('theme'); if(saved==='light') document.body.classList.add('light-theme'); updateIcons(); }
+        function toggleTheme(){ document.body.classList.toggle('light-theme'); localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark'); updateIcons(); }
+        function updateIcons(){ let isLight=document.body.classList.contains('light-theme'); let icon=isLight?'sun':'moon'; document.querySelectorAll('#theme-icon-desktop, #theme-icon-mobile').forEach(el=>{if(el)el.setAttribute('data-lucide',icon);}); if(window.lucide)lucide.createIcons(); }
+        function showToast(msg){ let t=document.getElementById('toast'),m=document.getElementById('toast-message'); if(t&&m){ m.innerText=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); } }
+        function initMobile(){ let btn=document.getElementById('mobile-toggle'),menu=document.getElementById('mobile-menu'); if(btn&&menu) btn.addEventListener('click',()=>menu.classList.toggle('open')); }
+        function initScrollReveal(){ let observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('is-visible');});},{threshold:0.1}); document.querySelectorAll('.reveal-on-scroll').forEach(el=>observer.observe(el)); }
+        function initNavScroll(){ let nav=document.getElementById('navbar'); window.addEventListener('scroll',()=>{if(window.scrollY>60)nav.classList.add('nav-scrolled'); else nav.classList.remove('nav-scrolled');}); }
+        document.addEventListener('DOMContentLoaded',()=>{ initTheme(); initMobile(); initScrollReveal(); initNavScroll(); if(window.lucide)lucide.createIcons(); document.getElementById('theme-toggle-desktop')?.addEventListener('click',toggleTheme); document.getElementById('theme-toggle-mobile')?.addEventListener('click',toggleTheme); });
     </script>
 </body>
 </html>

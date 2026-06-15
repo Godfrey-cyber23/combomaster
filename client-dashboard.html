@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MyCompass | Client Dashboard - Workouts, Meals, Progress</title>
+    <!-- Tailwind + Fonts + Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-base: #0a0c12; --bg-secondary: #11151f; --bg-card: rgba(22, 28, 38, 0.7);
+            --text-main: #edf2f7; --text-muted: #8ba0bc; --border-color: rgba(255,255,255,0.06);
+            --gold-rgb: 250 204 21; --gold: rgb(250 204 21); --gold-accent: #eab308;
+            --card-solid: #1a1f2b; --toast-bg: #1e2432f2; --success: #10b981;
+        }
+        body.light-theme {
+            --bg-base: #f4f7fc; --bg-secondary: #ffffff; --bg-card: rgba(255,255,255,0.85);
+            --text-main: #0f172a; --text-muted: #475569; --border-color: rgba(0,0,0,0.06);
+            --gold-rgb: 217 119 6; --gold: #d97706; --card-solid: #ffffff;
+        }
+        body { background: var(--bg-base); color: var(--text-main); font-family: 'Inter', sans-serif; transition: all 0.2s; }
+        .font-display { font-family: 'Oswald', sans-serif; letter-spacing: 0.01em; }
+        .glass-card { background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 1.5rem; transition: all 0.2s; }
+        .stat-border { border-left: 3px solid var(--gold); }
+        .text-gold { color: var(--gold); }
+        .btn-gold { background: var(--gold); color: #0f172a; font-weight: 600; transition: 0.2s; cursor: pointer; border: none; }
+        .btn-gold:hover { background: #eab308; transform: translateY(-1px); box-shadow: 0 6px 14px rgba(250,204,21,0.3); }
+        .btn-outline { border: 1px solid rgba(250,204,21,0.5); background: transparent; color: var(--gold); font-weight: 500; transition: 0.2s; }
+        .btn-outline:hover { background: rgba(250,204,21,0.1); border-color: var(--gold); }
+        .form-input { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.6rem 1rem; color: var(--text-main); font-size: 0.875rem; outline: none; width: 100%; }
+        .form-input:focus { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(250,204,21,0.2); }
+        .badge-gold { background: rgba(250,204,21,0.15); color: var(--gold); border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.7rem; font-weight: 600; }
+        .progress-ring-bg { stroke: var(--border-color); }
+        .progress-ring-fill { stroke: var(--gold); transition: stroke-dashoffset 0.6s; }
+        .client-sidebar { width: 280px; position: fixed; left: 0; top: 0; bottom: 0; background: var(--bg-secondary); border-right: 1px solid var(--border-color); z-index: 40; overflow-y: auto; transition: transform 0.2s; }
+        .client-main { margin-left: 280px; transition: margin-left 0.2s; min-height: 100vh; }
+        @media (max-width: 1024px) {
+            .client-sidebar { transform: translateX(-100%); }
+            .client-sidebar.mobile-open { transform: translateX(0); }
+            .client-main { margin-left: 0; }
+        }
+        .sidebar-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1.25rem; margin: 0.25rem 0.75rem; border-radius: 0.75rem; color: var(--text-muted); transition: 0.2s; cursor: pointer; }
+        .sidebar-link:hover, .sidebar-link.active { background: rgba(250,204,21,0.1); color: var(--gold); }
+        .view-pane { display: none; }
+        .view-pane.active-view { display: block; }
+        .toast-fixed { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; background: var(--toast-bg); backdrop-filter: blur(12px); border-radius: 1rem; padding: 0.75rem 1.5rem; transition: all 0.3s; transform: translateY(100px); opacity: 0; border: 1px solid var(--border-color); }
+        .toast-fixed.show { transform: translateY(0); opacity: 1; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.2s; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-card { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 1.5rem; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; }
+        .meal-item, .workout-item { transition: 0.1s; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+        .achievement-card { background: linear-gradient(135deg, rgba(250,204,21,0.05), transparent); border: 1px solid rgba(250,204,21,0.2); }
+    </style>
+</head>
+<body>
+
+    <!-- Toast -->
+    <div id="clientToast" class="toast-fixed flex items-center gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i><span id="toastMsg"></span></div>
+
+    <!-- Modal -->
+    <div id="globalModal" class="modal-overlay" onclick="if(event.target===this)closeModal()"><div class="modal-card p-6"><div class="flex justify-between items-center mb-4"><h3 id="modalTitle" class="font-display text-xl font-bold text-gold"></h3><button onclick="closeModal()" class="text-muted text-2xl">&times;</button></div><div id="modalBody"></div></div></div>
+
+    <!-- SIDEBAR (Client) -->
+    <aside id="clientSidebar" class="client-sidebar flex flex-col">
+        <div class="h-16 flex items-center px-5 border-b border-[var(--border-color)]">
+            <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-yellow-500 to-amber-600 flex items-center justify-center text-black font-bold">CM</div><span class="font-display text-xl tracking-wide text-gold font-semibold">MY<span class="text-white">COMPASS</span></span></div>
+        </div>
+        <div class="py-6 flex-1">
+            <div class="px-5 mb-2 text-[0.6rem] font-bold uppercase tracking-wider text-muted">CLIENT PORTAL</div>
+            <a href="#" class="sidebar-link active" data-section="profile-overview"><i data-lucide="user-circle" class="w-5 h-5"></i><span>Profile & Overview</span></a>
+            <a href="#" class="sidebar-link" data-section="meal-plans"><i data-lucide="utensils" class="w-5 h-5"></i><span>Meal Plans</span></a>
+            <a href="#" class="sidebar-link" data-section="workout-plans"><i data-lucide="dumbbell" class="w-5 h-5"></i><span>Workout Plans</span></a>
+            <a href="#" class="sidebar-link" data-section="progress-tracking"><i data-lucide="trending-up" class="w-5 h-5"></i><span>Progress Tracking</span></a>
+            <a href="#" class="sidebar-link" data-section="payments"><i data-lucide="credit-card" class="w-5 h-5"></i><span>Payments</span></a>
+            <a href="#" class="sidebar-link" data-section="bookings"><i data-lucide="calendar" class="w-5 h-5"></i><span>Bookings</span></a>
+            <a href="#" class="sidebar-link" data-section="messages"><i data-lucide="message-square" class="w-5 h-5"></i><span>Messages</span></a>
+            <a href="#" class="sidebar-link" data-section="achievements"><i data-lucide="award" class="w-5 h-5"></i><span>Achievements</span></a>
+            <div class="border-t border-[var(--border-color)] my-4 mx-4"></div>
+            <a href="#" class="sidebar-link" data-section="settings"><i data-lucide="settings" class="w-5 h-5"></i><span>Settings</span></a>
+            <a href="#" onclick="event.preventDefault();logoutClient()" class="sidebar-link text-red-400"><i data-lucide="log-out" class="w-5 h-5"></i><span>Logout</span></a>
+        </div>
+        <div class="p-4 text-center text-[0.6rem] text-muted border-t border-[var(--border-color)]">Your fitness journey starts here</div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main id="clientMain" class="client-main bg-[var(--bg-base)]">
+        <header class="sticky top-0 z-30 bg-[var(--bg-base)]/80 backdrop-blur-xl border-b border-[var(--border-color)] h-16 flex items-center justify-between px-5 lg:px-7">
+            <div class="flex items-center gap-4"><button id="mobileMenuBtn" class="lg:hidden p-2 text-muted hover:text-gold"><i data-lucide="menu" class="w-5 h-5"></i></button><h2 id="sectionTitle" class="font-display text-xl font-semibold">Profile & Overview</h2></div>
+            <div class="flex gap-3 items-center"><button onclick="toggleClientTheme()" class="p-2 text-muted hover:text-gold"><i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i></button><div class="w-9 h-9 rounded-full bg-gold/20 flex items-center justify-center text-gold font-bold">JD</div></div>
+        </header>
+
+        <div class="p-5 lg:p-7 space-y-7">
+            <!-- 1) PROFILE & OVERVIEW DASHBOARD -->
+            <div id="profileOverviewView" class="view-pane active-view space-y-6">
+                <div class="flex flex-wrap justify-between items-start gap-4">
+                    <div><h1 class="font-display text-2xl font-bold">Welcome back, <span id="clientNameSpan" class="text-gold">James</span></h1><p id="currentDate" class="text-muted text-sm"></p></div>
+                    <button class="btn-gold px-5 py-2 rounded-xl text-sm flex gap-2" onclick="openCheckInModal()"><i data-lucide="calendar-check"></i> Daily Check-in</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div class="glass-card p-5 stat-border"><p class="text-xs text-muted uppercase">Current Weight</p><p class="font-display text-3xl font-bold text-gold" id="statWeight">82.5 <span class="text-base">kg</span></p></div>
+                    <div class="glass-card p-5 stat-border"><p class="text-xs text-muted uppercase">Body Fat %</p><p class="font-display text-3xl font-bold text-gold" id="statBodyfat">16.2<span class="text-base">%</span></p></div>
+                    <div class="glass-card p-5 stat-border"><p class="text-xs text-muted uppercase">Workout Streak</p><p class="font-display text-3xl font-bold text-gold" id="statStreak">12<span class="text-base"> days</span></p></div>
+                    <div class="glass-card p-5 stat-border"><p class="text-xs text-muted uppercase">Achievements Earned</p><p class="font-display text-3xl font-bold text-gold" id="statBadges">4</p></div>
+                </div>
+                <div class="glass-card p-5"><div class="flex justify-between items-center"><h3 class="font-display text-lg font-semibold">Recent Activity</h3><span class="text-xs text-muted">Last 7 days</span></div><div class="mt-3 h-32 w-full"><canvas id="activityChart"></canvas></div></div>
+            </div>
+
+            <!-- 2) MEAL PLANS -->
+            <div id="mealPlansView" class="view-pane space-y-5">
+                <div class="flex justify-between items-center"><h1 class="font-display text-2xl font-semibold">🍽️ My Meal Plan</h1><button class="btn-outline text-sm px-4 py-2 rounded-xl" onclick="openLogMealModal()">+ Log Custom Meal</button></div>
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div class="glass-card p-5"><h3 class="font-semibold flex gap-2"><i data-lucide="sunrise" class="w-5 h-5 text-gold"></i> Breakfast</h3><p class="text-sm mt-2">Protein Oats + Berries + Almond butter</p><div class="text-xs text-muted mt-1">450 cal | 30g P | 55g C | 15g F</div><button class="btn-outline text-xs mt-3 px-3 py-1 rounded-full" onclick="logQuickMeal('Breakfast','Protein Oats',450)">Log Meal</button></div>
+                    <div class="glass-card p-5"><h3 class="font-semibold flex gap-2"><i data-lucide="sun" class="w-5 h-5 text-gold"></i> Lunch</h3><p class="text-sm mt-2">Grilled Chicken Bowl (quinoa, avocado, greens)</p><div class="text-xs text-muted mt-1">580 cal | 48g P | 52g C | 22g F</div><button class="btn-outline text-xs mt-3 px-3 py-1 rounded-full" onclick="logQuickMeal('Lunch','Chicken Bowl',580)">Log Meal</button></div>
+                    <div class="glass-card p-5"><h3 class="font-semibold flex gap-2"><i data-lucide="moon" class="w-5 h-5 text-gold"></i> Dinner</h3><p class="text-sm mt-2">Salmon + Sweet potato + Asparagus</p><div class="text-xs text-muted mt-1">520 cal | 40g P | 45g C | 18g F</div><button class="btn-outline text-xs mt-3 px-3 py-1 rounded-full" onclick="logQuickMeal('Dinner','Salmon meal',520)">Log Meal</button></div>
+                    <div class="glass-card p-5"><h3 class="font-semibold flex gap-2"><i data-lucide="coffee" class="w-5 h-5 text-gold"></i> Snack</h3><p class="text-sm mt-2">Greek Yogurt + Whey + Berries</p><div class="text-xs text-muted mt-1">210 cal | 28g P | 12g C | 6g F</div><button class="btn-outline text-xs mt-3 px-3 py-1 rounded-full" onclick="logQuickMeal('Snack','Protein Yogurt',210)">Log Meal</button></div>
+                </div>
+                <div class="glass-card p-5"><h3 class="font-semibold mb-3">Today's Logged Meals</h3><div id="mealLogList" class="space-y-2"></div></div>
+            </div>
+
+            <!-- 3) WORKOUT PLANS -->
+            <div id="workoutPlansView" class="view-pane space-y-5">
+                <div class="flex justify-between"><h1 class="font-display text-2xl font-semibold">💪 Weekly Workout Plan</h1><button class="btn-gold text-sm px-4 py-2 rounded-xl" onclick="openLogWorkoutModal()">+ Log Workout</button></div>
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div class="glass-card p-5"><div class="flex justify-between"><h3 class="font-bold">Upper Body Push</h3><span class="badge-gold">Today</span></div><ul class="text-sm mt-3 space-y-2"><li>• Bench Press 4x8-10</li><li>• Overhead Press 3x10</li><li>• Incline DB Fly 3x12</li><li>• Triceps Dips 3x15</li></ul><button class="btn-outline w-full mt-4 py-2 rounded-lg text-sm" onclick="completeWorkout('Upper Body Push')">Complete Workout</button></div>
+                    <div class="glass-card p-5"><div class="flex justify-between"><h3 class="font-bold">Lower Body Strength</h3><span class="badge-gold">Tomorrow</span></div><ul class="text-sm mt-3 space-y-2"><li>• Squats 4x6-8</li><li>• Deadlifts 3x5</li><li>• Lunges 3x12</li><li>• Leg Press 3x10</li></ul><button class="btn-outline w-full mt-4 py-2 rounded-lg text-sm" disabled>Pending</button></div>
+                </div>
+                <div class="glass-card p-5"><h3 class="font-semibold mb-3">Workout History</h3><div id="workoutHistoryList" class="space-y-2 text-sm"></div></div>
+            </div>
+
+            <!-- 4) PROGRESS TRACKING -->
+            <div id="progressTrackingView" class="view-pane space-y-6">
+                <h1 class="font-display text-2xl font-semibold">📈 Body Metrics</h1>
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div class="glass-card p-5"><h3 class="font-semibold">Weight Trend (kg)</h3><canvas id="weightProgressChart" height="150"></canvas><button class="btn-outline w-full mt-4 py-2 rounded-xl text-sm" onclick="openLogWeightModal()">Log New Weight</button></div>
+                    <div class="glass-card p-5"><h3 class="font-semibold">Strength Score</h3><div class="mt-4"><div class="flex justify-between text-sm"><span>Bench Press PR</span><span class="text-gold">85kg</span></div><div class="w-full bg-gray-700 h-2 rounded-full mt-1"><div class="bg-gold h-2 rounded-full w-[75%]"></div></div><div class="flex justify-between text-sm mt-3"><span>Squat PR</span><span class="text-gold">120kg</span></div><div class="w-full bg-gray-700 h-2 rounded-full mt-1"><div class="bg-gold h-2 rounded-full w-[65%]"></div></div></div></div>
+                </div>
+            </div>
+
+            <!-- 5) PAYMENTS -->
+            <div id="paymentsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">💰 Billing & Payments</h1><div class="glass-card p-5 mt-4"><div class="flex justify-between border-b pb-3"><span>Subscription Plan</span><span class="text-gold font-bold">Pro Monthly</span></div><div class="flex justify-between py-3 border-b"><span>Next billing date</span><span>March 15, 2026</span></div><div class="flex justify-between py-3"><span>Amount</span><span class="font-bold">$79.00</span></div><button class="btn-gold w-full mt-3 py-2 rounded-xl" onclick="showToast('Payment method updated','success')">Update Payment Method</button><button class="btn-outline w-full mt-2 py-2 rounded-xl text-sm" onclick="showToast('Invoice sent to email','success')">Download Invoice</button></div></div>
+
+            <!-- 6) BOOKINGS -->
+            <div id="bookingsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">📅 Coach Sessions</h1><div class="glass-card p-5 mt-4 space-y-3"><div class="flex justify-between items-center"><div><p class="font-semibold">Nutrition Review</p><p class="text-xs text-muted">Feb 20, 2025 • 10:00 AM</p></div><span class="badge-gold">Confirmed</span></div><div class="flex justify-between items-center"><div><p class="font-semibold">1-on-1 Coaching Call</p><p class="text-xs text-muted">Feb 22, 2025 • 2:30 PM</p></div><span class="badge-gold">Upcoming</span></div><button onclick="openBookingRequestModal()" class="btn-outline w-full mt-4 py-2 rounded-xl">+ Request Booking</button></div></div>
+
+            <!-- 7) MESSAGES -->
+            <div id="messagesView" class="view-pane"><h1 class="font-display text-2xl font-semibold">💬 Coach Messages</h1><div class="glass-card p-5 mt-4"><div class="h-80 overflow-y-auto border-b pb-3" id="chatMessagesContainer"><div class="text-center text-muted text-sm">Loading conversation...</div></div><div class="flex gap-3 mt-4"><input type="text" id="messageInput" class="form-input flex-1" placeholder="Ask your coach..."><button onclick="sendClientMessage()" class="btn-gold px-4 py-2 rounded-xl">Send</button></div></div></div>
+
+            <!-- 8) ACHIEVEMENTS -->
+            <div id="achievementsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">🏆 Fitness Achievements</h1><div class="grid sm:grid-cols-2 gap-4 mt-5"><div class="achievement-card glass-card p-4 flex items-center gap-3"><i data-lucide="flame" class="w-8 h-8 text-gold"></i><div><p class="font-bold">7-Day Streak</p><p class="text-xs text-muted">Completed 7 workouts in a row</p></div><span class="ml-auto text-gold text-sm">✓</span></div><div class="achievement-card glass-card p-4 flex items-center gap-3"><i data-lucide="trophy" class="w-8 h-8 text-gold"></i><div><p class="font-bold">Iron Warrior</p><p class="text-xs text-muted">50 workouts completed</p></div><span class="ml-auto text-gold text-sm">48/50</span></div><div class="achievement-card glass-card p-4 flex items-center gap-3"><i data-lucide="apple" class="w-8 h-8 text-gold"></i><div><p class="font-bold">Nutrition Master</p><p class="text-xs text-muted">Log 30 perfect meal days</p></div><span class="ml-auto text-gold text-sm">12/30</span></div><div class="achievement-card glass-card p-4 flex items-center gap-3"><i data-lucide="dumbbell" class="w-8 h-8 text-gold"></i><div><p class="font-bold">Strength PR</p><p class="text-xs text-muted">Set a new personal record</p></div><span class="ml-auto text-gold text-sm">✓</span></div></div></div>
+
+            <!-- 9) SETTINGS -->
+            <div id="settingsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">⚙️ Account Settings</h1><div class="glass-card p-6 mt-5 space-y-4"><div><label class="text-sm block mb-1">Full Name</label><input type="text" id="settingsName" class="form-input"></div><div><label class="text-sm block mb-1">Email</label><input type="email" id="settingsEmail" class="form-input" disabled></div><div><label class="text-sm block mb-1">Height (cm)</label><input type="number" id="settingsHeight" class="form-input"></div><div><label class="text-sm block mb-1">Weight (kg)</label><input type="number" id="settingsWeight" class="form-input"></div><button class="btn-gold w-full py-2 rounded-xl" onclick="saveClientProfile()">Save Changes</button></div></div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // ---------- CLIENT STATE ----------
+        let activityChart, weightChart;
+        let workoutHistory = JSON.parse(localStorage.getItem('clientWorkouts') || '[]');
+        let mealLog = JSON.parse(localStorage.getItem('clientMealLog') || '[]');
+        let weightLog = JSON.parse(localStorage.getItem('clientWeightLog') || '[{date:"2025-02-01",weight:84.2},{date:"2025-02-08",weight:83.1},{date:"2025-02-15",weight:82.5}]');
+        let clientData = { name: 'James Mitchell', email: 'james@fitlife.com', height: 178, weight: 82.5, bodyfat:16.2, streak:12, badges:4 };
+
+        // Helper
+        function showToast(msg, type='success'){ let t=document.getElementById('clientToast'),m=document.getElementById('toastMsg'); m.innerText=msg; t.classList.add('show'); clearTimeout(window.toastTimer); window.toastTimer=setTimeout(()=>t.classList.remove('show'),3000); }
+        function closeModal(){ document.getElementById('globalModal').classList.remove('active'); }
+        function openModal(title, html){ document.getElementById('modalTitle').innerHTML=title; document.getElementById('modalBody').innerHTML=html; document.getElementById('globalModal').classList.add('active'); if(window.lucide)lucide.createIcons(); }
+
+        // Navigation
+        function initClientNav(){ document.querySelectorAll('.sidebar-link[data-section]').forEach(link=>{link.addEventListener('click',(e)=>{e.preventDefault(); let sec=link.dataset.section; document.querySelectorAll('.view-pane').forEach(p=>p.classList.remove('active-view')); document.getElementById(`${sec}View`).classList.add('active-view'); document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active')); link.classList.add('active'); let titles={ 'profile-overview':'Profile & Overview','meal-plans':'Meal Plans','workout-plans':'Workout Plans','progress-tracking':'Progress Tracking','payments':'Payments','bookings':'Bookings','messages':'Messages','achievements':'Achievements','settings':'Settings' }; document.getElementById('sectionTitle').innerText=titles[sec]||'Dashboard'; if(window.innerWidth<1024)document.getElementById('clientSidebar').classList.remove('mobile-open'); });}); }
+        
+        function updateDashboardUI(){ document.getElementById('clientNameSpan').innerText=clientData.name.split(' ')[0]; document.getElementById('statWeight').innerHTML=`${clientData.weight} <span class="text-base">kg</span>`; document.getElementById('statBodyfat').innerHTML=`${clientData.bodyfat}<span class="text-base">%</span>`; document.getElementById('statStreak').innerHTML=`${clientData.streak}<span class="text-base"> days</span>`; document.getElementById('statBadges').innerHTML=clientData.badges; document.getElementById('settingsName').value=clientData.name; document.getElementById('settingsEmail').value=clientData.email; document.getElementById('settingsHeight').value=clientData.height; document.getElementById('settingsWeight').value=clientData.weight; }
+        function saveClientProfile(){ let n=document.getElementById('settingsName').value; let h=document.getElementById('settingsHeight').value; let w=document.getElementById('settingsWeight').value; if(n)clientData.name=n; if(h)clientData.height=parseInt(h); if(w){clientData.weight=parseFloat(w); updateDashboardUI(); showToast('Profile updated','success');} updateDashboardUI(); }
+
+        // Meal logging
+        function logQuickMeal(mealType,desc,cals){ let today=new Date().toLocaleDateString(); mealLog.unshift({date:today,meal:mealType,description:desc,calories:cals}); localStorage.setItem('clientMealLog',JSON.stringify(mealLog)); renderMealLog(); showToast(`Logged ${mealType}: ${desc} (${cals} cal)`,'success'); }
+        function renderMealLog(){ let container=document.getElementById('mealLogList'); if(!container)return; container.innerHTML=mealLog.slice(0,5).map(m=>`<div class="flex justify-between bg-[var(--bg-secondary)] p-2 rounded-lg"><div><span class="text-xs font-bold">${m.meal}</span><p class="text-sm">${m.description}</p></div><span class="text-gold text-sm">${m.calories} cal</span></div>`).join(''); if(mealLog.length===0) container.innerHTML='<div class="text-muted text-center text-sm">No meals logged today.</div>'; }
+        function openLogMealModal(){ openModal('Log Custom Meal',`<form onsubmit="event.preventDefault();customLogMeal();"><div><label class="text-xs">Meal Name</label><input id="customMealName" class="form-input mb-3" required></div><div><label class="text-xs">Calories</label><input id="customMealCal" type="number" class="form-input mb-4" required></div><button type="submit" class="btn-gold w-full py-2 rounded-xl">Log Meal</button></form>`); }
+        function customLogMeal(){ let name=document.getElementById('customMealName').value; let cal=document.getElementById('customMealCal').value; if(name&&cal){ logQuickMeal('Custom',name,parseInt(cal)); closeModal();} }
+
+        // Workout handling
+        function completeWorkout(workoutName){ workoutHistory.unshift({date:new Date().toLocaleDateString(),workout:workoutName,completed:true}); localStorage.setItem('clientWorkouts',JSON.stringify(workoutHistory)); renderWorkoutHistory(); clientData.streak+=1; updateDashboardUI(); showToast(`🔥 ${workoutName} completed! +1 day streak`,'success'); }
+        function renderWorkoutHistory(){ let container=document.getElementById('workoutHistoryList'); if(container) container.innerHTML=workoutHistory.slice(0,5).map(w=>`<div class="flex justify-between border-b border-[var(--border-color)] py-2"><span>${w.date}</span><span class="text-gold">${w.workout}</span><span class="text-green-400">✓</span></div>`).join(''); }
+        function openLogWorkoutModal(){ openModal('Log Custom Workout',`<form onsubmit="event.preventDefault();customLogWorkout();"><div><label>Workout Name</label><input id="customWorkoutName" class="form-input mb-3" required></div><div><label>Duration (min)</label><input id="customWorkoutDur" type="number" class="form-input mb-4" required></div><button type="submit" class="btn-gold w-full py-2">Log Workout</button></form>`); }
+        function customLogWorkout(){ let name=document.getElementById('customWorkoutName').value; if(name){ workoutHistory.unshift({date:new Date().toLocaleDateString(),workout:name,completed:true}); localStorage.setItem('clientWorkouts',JSON.stringify(workoutHistory)); renderWorkoutHistory(); clientData.streak+=1; updateDashboardUI(); showToast(`Custom workout "${name}" logged!`,'success'); closeModal();} }
+        
+        // weight & progress chart
+        function openLogWeightModal(){ openModal('Log Weight',`<form onsubmit="event.preventDefault();addWeightEntry();"><div><label>Weight (kg)</label><input id="newWeightValue" type="number" step="0.1" class="form-input mb-4" required></div><button type="submit" class="btn-gold w-full">Save Weight</button></form>`); }
+        function addWeightEntry(){ let w=parseFloat(document.getElementById('newWeightValue').value); if(w){ weightLog.push({date:new Date().toISOString().slice(0,10),weight:w}); localStorage.setItem('clientWeightLog',JSON.stringify(weightLog)); clientData.weight=w; updateDashboardUI(); initProgressCharts(); showToast(`Weight updated to ${w}kg`,'success'); closeModal();} }
+        function initProgressCharts(){ let ctx=document.getElementById('weightProgressChart')?.getContext('2d'); if(ctx&&weightChart)weightChart.destroy(); if(ctx){ let labels=weightLog.slice(-6).map(e=>e.date.slice(5)); let data=weightLog.slice(-6).map(e=>e.weight); weightChart=new Chart(ctx,{type:'line',data:{labels:labels,datasets:[{label:'Weight (kg)',data:data,borderColor:'#facc15',backgroundColor:'rgba(250,204,21,0.1)',fill:true,tension:0.2}]}});} }
+        function initActivityChart(){ let ctx=document.getElementById('activityChart')?.getContext('2d'); if(ctx&&activityChart)activityChart.destroy(); if(ctx){ activityChart=new Chart(ctx,{type:'bar',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{label:'Workouts Completed',data:[1,1,0,1,1,0,0],backgroundColor:'#facc15',borderRadius:8}]}});} }
+
+        // Messages (coach simulation)
+        let messageHistory = [{sender:'coach',text:'Hey James! How’s the upper body feeling?',time:'10:00 AM'},{sender:'client',text:'Feeling strong! Bench press PR today 💪',time:'10:15 AM'}];
+        function renderMessages(){ let container=document.getElementById('chatMessagesContainer'); if(!container)return; container.innerHTML=messageHistory.map(m=>`<div class="mb-3 ${m.sender==='coach'?'text-left':'text-right'}"><div class="inline-block p-2 rounded-xl ${m.sender==='coach'?'bg-[var(--bg-secondary)] text-muted':'bg-gold/20 text-gold'} text-sm">${m.text}</div><div class="text-[0.6rem] text-muted mt-1">${m.time}</div></div>`).join(''); container.scrollTop=container.scrollHeight; }
+        function sendClientMessage(){ let input=document.getElementById('messageInput'); let txt=input.value.trim(); if(!txt)return; messageHistory.push({sender:'client',text:txt,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}); localStorage.setItem('clientMessages',JSON.stringify(messageHistory)); renderMessages(); input.value=''; setTimeout(()=>{messageHistory.push({sender:'coach',text:'Great work! Keep pushing 🔥',time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}); renderMessages();},1200); }
+        function loadMessages(){ let saved=localStorage.getItem('clientMessages'); if(saved)messageHistory=JSON.parse(saved); renderMessages(); }
+        
+        // bookings, checkin modal
+        function openCheckInModal(){ openModal('Daily Check-in',`<form onsubmit="event.preventDefault();showToast('Check-in submitted! Coach notified','success');closeModal();"><div><label>How are you feeling today?</label><select class="form-input my-2"><option>Energetic 🔥</option><option>Good 😊</option><option>Tired 😴</option></select></div><div><label>Notes for coach</label><textarea class="form-input mt-2" rows="2"></textarea></div><button type="submit" class="btn-gold w-full mt-4 py-2 rounded-xl">Submit Check-in</button></form>`); }
+        function openBookingRequestModal(){ openModal('Request Booking',`<form onsubmit="event.preventDefault();showToast('Booking request sent to coach','success');closeModal();"><div><label>Preferred Date</label><input type="date" class="form-input my-2"></div><div><label>Time slot</label><select class="form-input"><option>9:00-10:00 AM</option><option>2:00-3:00 PM</option></select></div><div><label>Topic</label><input class="form-input" placeholder="e.g., Form check"></div><button type="submit" class="btn-gold w-full mt-4 py-2 rounded-xl">Send Request</button></form>`); }
+
+        // Theme & logout
+        function toggleClientTheme(){ document.body.classList.toggle('light-theme'); let icon=document.getElementById('themeIcon'); icon.setAttribute('data-lucide',document.body.classList.contains('light-theme')?'sun':'moon'); if(window.lucide)lucide.createIcons(); localStorage.setItem('clientTheme',document.body.classList.contains('light-theme')?'light':'dark'); }
+        function loadTheme(){ if(localStorage.getItem('clientTheme')==='light'){document.body.classList.add('light-theme');document.getElementById('themeIcon')?.setAttribute('data-lucide','sun');} else{document.getElementById('themeIcon')?.setAttribute('data-lucide','moon');} if(window.lucide)lucide.createIcons(); }
+        function logoutClient(){ localStorage.clear(); window.location.reload(); }
+        
+        function setDate(){ let d=new Date(); document.getElementById('currentDate').innerText=d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
+
+        // FULL INIT
+        document.addEventListener('DOMContentLoaded',()=>{
+            loadTheme(); initClientNav(); updateDashboardUI(); renderMealLog(); renderWorkoutHistory(); initProgressCharts(); initActivityChart(); loadMessages(); setDate(); if(window.lucide)lucide.createIcons();
+            document.getElementById('mobileMenuBtn')?.addEventListener('click',()=>{document.getElementById('clientSidebar').classList.toggle('mobile-open');});
+            window.addEventListener('click',(e)=>{let s=document.getElementById('clientSidebar'); if(window.innerWidth<1024 && s && !s.contains(e.target) && e.target!==document.getElementById('mobileMenuBtn')) s.classList.remove('mobile-open');});
+        });
+    </script>
+</body>
+</html>

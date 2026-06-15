@@ -7,6 +7,11 @@
     <title>Login — ComboMaster Fitness</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap"
         rel="stylesheet">
@@ -87,7 +92,6 @@
             font-family: 'Oswald', sans-serif;
         }
 
-        /* ===== NAVIGATION ===== */
         nav {
             z-index: 50;
             background-color: var(--nav-bg);
@@ -106,7 +110,6 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
         }
 
-        /* ===== UTILITY ===== */
         .glass-card {
             background: var(--bg-card);
             backdrop-filter: blur(12px);
@@ -131,7 +134,6 @@
             color: var(--gold);
         }
 
-        /* ===== BUTTONS ===== */
         .btn-gold {
             background: var(--gold);
             color: #050505;
@@ -166,7 +168,41 @@
             transform: translateY(-2px);
         }
 
-        /* ===== TOAST ===== */
+        .social-icons-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .social-icon-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 200ms ease;
+            cursor: pointer;
+        }
+
+        .social-icon-btn:hover {
+            border-color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 168, 83, 0.15);
+        }
+
+        body.light-theme .social-icon-btn {
+            background: #ffffff;
+            border-color: #e2e8f0;
+        }
+
+        body.light-theme .social-icon-btn:hover {
+            border-color: var(--gold);
+        }
+
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -185,7 +221,6 @@
             opacity: 1;
         }
 
-        /* ===== HERO ANIMATIONS ===== */
         @keyframes heroFadeIn {
             from {
                 opacity: 0;
@@ -318,8 +353,7 @@
         }
 
         .hero-word.text-gradient {
-            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both,
-                goldShimmer 3s 2s ease-in-out 1 both;
+            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both, goldShimmer 3s 2s ease-in-out 1 both;
         }
 
         .hero-line {
@@ -355,7 +389,6 @@
             animation: cardReveal 1s 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
-        /* ===== HERO TITLE — FIXED CENTERING ===== */
         .hero-title {
             font-size: clamp(2rem, 5vw, 4.5rem);
             line-height: 0.95;
@@ -367,11 +400,24 @@
         .hero-title-line {
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 0 0.35em;
+            flex-wrap: nowrap;
+            gap: 0.35em;
         }
 
-        /* ===== COMPACT FORM INPUTS ===== */
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: clamp(1.8rem, 7vw, 3.5rem);
+            }
+
+            .hero-title-line {
+                gap: 0.2em;
+            }
+
+            .hero-word {
+                font-size: 0.9em;
+            }
+        }
+
         .form-input {
             background-color: var(--input-bg);
             border: 1px solid var(--border-color);
@@ -396,7 +442,6 @@
             box-shadow: 0 0 0 2px rgba(var(--gold-rgb), 0.08);
         }
 
-        /* ===== FIELD ERROR STATE ===== */
         .form-input.input-error {
             border-color: #ef4444;
             box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
@@ -413,7 +458,6 @@
             display: block;
         }
 
-        /* ===== THEME TOGGLE ===== */
         .theme-toggle-btn {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -444,14 +488,6 @@
             z-index: 60;
         }
 
-        #theme-toggle-desktop,
-        #theme-toggle-mobile {
-            cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: manipulation;
-        }
-
         body.light-theme .glass-card {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
         }
@@ -460,7 +496,6 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
-        /* ===== CUSTOM SCROLLBAR ===== */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -486,7 +521,6 @@
             background: var(--gold);
         }
 
-        /* ===== CHECKBOX ===== */
         .custom-checkbox {
             appearance: none;
             -webkit-appearance: none;
@@ -526,7 +560,30 @@
             box-shadow: 0 0 0 2px rgba(var(--gold-rgb), 0.15);
         }
 
-        /* ===== REDUCED MOTION ===== */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            margin: 1rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .divider::before {
+            margin-right: 0.75rem;
+        }
+
+        .divider::after {
+            margin-left: 0.75rem;
+        }
+
         @media (prefers-reduced-motion: reduce) {
 
             .hero-animate,
@@ -557,7 +614,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex items-center justify-between py-4">
                 <a href="index.html" class="flex items-center gap-3 group">
-                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
+                    <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto"
+                        onerror="this.src='https://placehold.co/40x40'">
                     <div class="hidden sm:block">
                         <span
                             class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
@@ -588,27 +646,21 @@
     </nav>
 
     <!-- ============================================ -->
-    <!-- FULL-SCREEN LOGIN SECTION -->
+    <!-- FULL-SCREEN LOGIN SECTION WITH SOCIAL ICONS  -->
     <!-- ============================================ -->
     <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
-
-        <!-- Background Image -->
         <div class="absolute inset-0">
             <img src="images/gym-interior.jpg" alt="" class="hero-bg-img w-full h-full object-cover select-none"
-                draggable="false" onerror="this.src='images/IMG-20260524-WA0037.jpg'">
+                draggable="false"
+                onerror="this.src='https://images.pexels.com/photos/416249/pexels-photo-416249.jpeg?auto=compress&cs=tinysrgb&w=1920'">
         </div>
-
-        <!-- Overlays -->
         <div class="absolute inset-0 bg-black/70"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-[#050505]/70"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-[#050505]/80 via-transparent to-[#050505]"></div>
-
-        <!-- Gold ambient glow -->
         <div
             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-amber-500/[0.03] blur-[150px] pointer-events-none">
         </div>
 
-        <!-- Gold floating particles -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
             <span class="particle" style="left:12%; top:50%; --size:3px; --d:0s; --dur:14s; --drift:20px;"></span>
             <span class="particle" style="left:28%; top:25%; --size:2px; --d:3s; --dur:12s; --drift:-12px;"></span>
@@ -620,35 +672,29 @@
 
         <!-- Login Content -->
         <div class="relative z-10 w-full max-w-sm mx-auto px-4 pt-20 pb-8">
-
-            <!-- Header -->
             <div class="text-center mb-6">
                 <div class="hero-animate" style="--delay: 0.1s">
                     <a href="index.html" class="inline-block">
-                        <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-14 w-auto mx-auto mb-4">
+                        <img src="images/gym_logo.jpg" alt="ComboMaster Fitness" class="h-14 w-auto mx-auto mb-4"
+                            onerror="this.src='https://placehold.co/56x56'">
                     </a>
                 </div>
-
                 <div class="flex justify-center mb-5 hero-animate" style="--delay: 0.3s">
                     <div class="hero-line" style="--delay: 0.4s"></div>
                 </div>
-
                 <h1 class="font-display font-semibold tracking-tight mb-3 hero-title">
                     <span class="hero-title-line">
                         <span class="hero-word" style="--i:0">CLIENT</span>
                         <span class="hero-word text-gradient" style="--i:1">LOGIN</span>
                     </span>
                 </h1>
-
                 <div class="hero-animate" style="--delay: 1.1s">
                     <p class="text-xs sm:text-sm text-muted-custom">Access your dashboard, programs, and meal plans.</p>
                 </div>
             </div>
 
-            <!-- Login Card -->
             <div class="glass-card rounded-2xl p-5 sm:p-6 card-reveal">
                 <form id="loginForm" class="space-y-3.5" novalidate>
-                    <!-- Email -->
                     <div>
                         <label for="email" class="text-xs font-medium text-muted-custom mb-1 block">Email
                             Address</label>
@@ -657,12 +703,10 @@
                                 <i data-lucide="mail" class="w-3.5 h-3.5 text-muted-custom"></i>
                             </div>
                             <input type="email" id="email" name="email" required class="form-input pl-8"
-                                placeholder="you@example.com" autocomplete="email">
+                                placeholder="combo@example.com" autocomplete="email">
                         </div>
                         <div class="field-error" id="email-error"></div>
                     </div>
-
-                    <!-- Password -->
                     <div>
                         <div class="flex items-center justify-between mb-1">
                             <label for="password" class="text-xs font-medium text-muted-custom">Password</label>
@@ -683,15 +727,11 @@
                         </div>
                         <div class="field-error" id="password-error"></div>
                     </div>
-
-                    <!-- Remember Me -->
                     <div class="flex items-center gap-2">
                         <input type="checkbox" id="remember" name="remember" class="custom-checkbox">
                         <label for="remember" class="text-xs text-muted-custom cursor-pointer select-none">Remember
                             me</label>
                     </div>
-
-                    <!-- Submit -->
                     <button type="submit"
                         class="btn-gold w-full py-2.5 rounded-lg text-xs font-semibold tracking-wide uppercase flex items-center justify-center gap-2 mt-1"
                         id="loginButton">
@@ -708,14 +748,45 @@
                     </button>
                 </form>
 
-                <!-- Register Link -->
+                <div class="divider">OR</div>
+
+                <!-- Social Login — Firebase Popup Triggers -->
+                <div class="social-icons-row">
+                    <!-- Google Firebase Auth -->
+                    <button onclick="socialLogin('google')" class="social-icon-btn" aria-label="Sign in with Google">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
+                                fill="#4285F4" />
+                            <path
+                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                fill="#34A853" />
+                            <path
+                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                fill="#FBBC05" />
+                            <path
+                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                fill="#EA4335" />
+                        </svg>
+                    </button>
+
+                    <!-- Facebook Firebase Auth -->
+                    <button onclick="socialLogin('facebook')" class="social-icon-btn"
+                        aria-label="Sign in with Facebook">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
+                    </button>
+                </div>
+                <p class="text-center text-[0.6rem] text-muted-custom mt-2">Continue with Google or Facebook</p>
+
                 <div class="mt-4 text-center text-xs text-muted-custom">
-                    Not a member yet?
-                    <a href="signup.html" class="text-gold font-semibold hover:underline">Join Now</a>
+                    Not a member yet? <a href="signup.html" class="text-gold font-semibold hover:underline">Join Now</a>
                 </div>
             </div>
 
-            <!-- Mobile Back Link -->
             <div class="mt-5 text-center lg:hidden hero-animate" style="--delay: 2s">
                 <a href="index.html"
                     class="text-xs text-muted-custom hover:text-gold transition-colors inline-flex items-center gap-1">
@@ -726,242 +797,129 @@
     </section>
 
     <script>
-        // ===== THEME TOGGLE =====
-        function initTheme() {
-            var saved = localStorage.getItem('theme');
-            if (saved === 'light') document.body.classList.add('light-theme');
-            updateThemeIcons();
-        }
+        // ===== 1. FIREBASE INITIALIZATION =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMpS29DXKbXMg9ELTYAJq4b65tCGjkoKo",
+            authDomain: "combomaster-fitness.firebaseapp.com",
+            projectId: "combomaster-fitness",
+            storageBucket: "combomaster-fitness.firebasestorage.app",
+            messagingSenderId: "575264235598",
+            appId: "1:575264235598:web:ebe3aeabdde91b2698231f",
+            measurementId: "G-NPKK313FD1"
+        };
 
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            var isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            updateThemeIcons();
-        }
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
 
-        function updateThemeIcons() {
-            var isLight = document.body.classList.contains('light-theme');
-            var iconName = isLight ? 'sun' : 'moon';
-            var desktopIcon = document.getElementById('theme-icon-desktop');
-            if (desktopIcon) desktopIcon.setAttribute('data-lucide', iconName);
-            var mobileIcon = document.getElementById('theme-icon-mobile');
-            if (mobileIcon) mobileIcon.setAttribute('data-lucide', iconName);
-            if (window.lucide) lucide.createIcons();
-        }
+        // ===== 2. THEME & UI LOGIC =====
+        function initTheme() { var saved = localStorage.getItem('theme'); if (saved === 'light') document.body.classList.add('light-theme'); updateThemeIcons(); }
+        function toggleTheme() { document.body.classList.toggle('light-theme'); var isLight = document.body.classList.contains('light-theme'); localStorage.setItem('theme', isLight ? 'light' : 'dark'); updateThemeIcons(); }
+        function updateThemeIcons() { var isLight = document.body.classList.contains('light-theme'); var iconName = isLight ? 'sun' : 'moon'; var desktopIcon = document.getElementById('theme-icon-desktop'); if (desktopIcon) desktopIcon.setAttribute('data-lucide', iconName); var mobileIcon = document.getElementById('theme-icon-mobile'); if (mobileIcon) mobileIcon.setAttribute('data-lucide', iconName); if (window.lucide) lucide.createIcons(); }
+        function showToast(message, type) { var toast = document.getElementById('toast'); var msgEl = document.getElementById('toast-message'); var iconEl = document.getElementById('toast-icon'); if (toast && msgEl) { msgEl.textContent = message; if (iconEl) { if (type === 'error') { iconEl.setAttribute('data-lucide', 'alert-circle'); iconEl.className = 'w-5 h-5 text-red-500'; } else { iconEl.setAttribute('data-lucide', 'check-circle'); iconEl.className = 'w-5 h-5 text-green-500'; } if (window.lucide) lucide.createIcons(); } toast.classList.add('show'); clearTimeout(window._toastTimer); window._toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 4000); } }
 
-        // ===== TOAST =====
-        function showToast(message, type) {
-            var toast = document.getElementById('toast');
-            var msgEl = document.getElementById('toast-message');
-            var iconEl = document.getElementById('toast-icon');
-            if (toast && msgEl) {
-                msgEl.textContent = message;
-                if (iconEl) {
-                    if (type === 'error') {
-                        iconEl.setAttribute('data-lucide', 'alert-circle');
-                        iconEl.className = 'w-5 h-5 text-red-500';
-                    } else {
-                        iconEl.setAttribute('data-lucide', 'check-circle');
-                        iconEl.className = 'w-5 h-5 text-green-500';
-                    }
-                    if (window.lucide) lucide.createIcons();
-                }
-                toast.classList.add('show');
-                clearTimeout(window._toastTimer);
-                window._toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 4000);
+        function clearFieldErrors() { var errors = document.querySelectorAll('.field-error'); errors.forEach(function (el) { el.textContent = ''; el.classList.remove('visible'); }); var inputs = document.querySelectorAll('.form-input'); inputs.forEach(function (el) { el.classList.remove('input-error'); }); }
+        function showFieldError(fieldId, message) { var errorEl = document.getElementById(fieldId + '-error'); var inputEl = document.getElementById(fieldId); if (errorEl) { errorEl.textContent = message; errorEl.classList.add('visible'); } if (inputEl) { inputEl.classList.add('input-error'); } }
+        function initNavScroll() { var nav = document.getElementById('navbar'); if (!nav) return; var ticking = false; window.addEventListener('scroll', function () { if (!ticking) { requestAnimationFrame(function () { nav.classList.toggle('nav-scrolled', window.scrollY > 60); ticking = false; }); ticking = true; } }); }
+        function initPasswordToggle() { var toggleBtn = document.getElementById('togglePassword'); var passwordInput = document.getElementById('password'); var passwordIcon = document.getElementById('passwordIcon'); if (toggleBtn && passwordInput && passwordIcon) { toggleBtn.addEventListener('click', function () { var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password'; passwordInput.setAttribute('type', type); passwordIcon.setAttribute('data-lucide', type === 'password' ? 'eye' : 'eye-off'); if (window.lucide) lucide.createIcons(); }); } }
+        function initClearErrorsOnType() { var inputs = document.querySelectorAll('.form-input'); inputs.forEach(function (input) { input.addEventListener('input', function () { input.classList.remove('input-error'); var fieldId = input.getAttribute('id'); var errorEl = document.getElementById(fieldId + '-error'); if (errorEl) { errorEl.textContent = ''; errorEl.classList.remove('visible'); } }); }); }
+
+        // ===== 3. SOCIAL LOGIN — FIREBASE POPUPS =====
+        function socialLogin(provider) {
+            var providerObj;
+            if (provider === 'google') {
+                providerObj = new firebase.auth.GoogleAuthProvider();
+            } else if (provider === 'facebook') {
+                providerObj = new firebase.auth.FacebookAuthProvider();
             }
-        }
 
-        // ===== CLEAR FIELD ERRORS =====
-        function clearFieldErrors() {
-            var errors = document.querySelectorAll('.field-error');
-            errors.forEach(function (el) {
-                el.textContent = '';
-                el.classList.remove('visible');
-            });
-            var inputs = document.querySelectorAll('.form-input');
-            inputs.forEach(function (el) {
-                el.classList.remove('input-error');
-            });
-        }
+            showToast(`Connecting to ${provider}...`, 'success');
 
-        function showFieldError(fieldId, message) {
-            var errorEl = document.getElementById(fieldId + '-error');
-            var inputEl = document.getElementById(fieldId);
-            if (errorEl) {
-                errorEl.textContent = message;
-                errorEl.classList.add('visible');
-            }
-            if (inputEl) {
-                inputEl.classList.add('input-error');
-            }
-        }
-
-        // ===== NAVBAR SCROLL =====
-        function initNavScroll() {
-            var nav = document.getElementById('navbar');
-            if (!nav) return;
-            var ticking = false;
-            window.addEventListener('scroll', function () {
-                if (!ticking) {
-                    requestAnimationFrame(function () {
-                        nav.classList.toggle('nav-scrolled', window.scrollY > 60);
-                        ticking = false;
+            auth.signInWithPopup(providerObj)
+                .then(function (result) {
+                    // Get the Firebase ID Token to send to PHP
+                    result.user.getIdToken().then(function (idToken) {
+                        verifyTokenWithBackend(idToken, provider);
                     });
-                    ticking = true;
-                }
-            });
+                })
+                .catch(function (error) {
+                    if (error.code === 'auth/account-exists-with-different-credential') {
+                        showToast('An account already exists with this email using a different login method.', 'error');
+                    } else if (error.code === 'auth/popup-closed-by-user') {
+                        // User closed the popup, no need for aggressive error message
+                        console.log('Popup closed by user');
+                    } else {
+                        showToast('Authentication failed: ' + error.message, 'error');
+                    }
+                });
         }
 
-        // ===== PASSWORD TOGGLE =====
-        function initPasswordToggle() {
-            var toggleBtn = document.getElementById('togglePassword');
-            var passwordInput = document.getElementById('password');
-            var passwordIcon = document.getElementById('passwordIcon');
-
-            if (toggleBtn && passwordInput && passwordIcon) {
-                toggleBtn.addEventListener('click', function () {
-                    var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                    passwordInput.setAttribute('type', type);
-                    passwordIcon.setAttribute('data-lucide', type === 'password' ? 'eye' : 'eye-off');
-                    if (window.lucide) lucide.createIcons();
+        // Send the secure Firebase token to your PHP backend
+        async function verifyTokenWithBackend(idToken, provider) {
+            try {
+                var response = await fetch('api/firebase_login.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: idToken, provider: provider })
                 });
+
+                var data = await response.json();
+
+                if (response.ok && data.success) {
+                    showToast(data.message || 'Login successful!', 'success');
+
+                    // Save user data to localStorage
+                    if (data.id) localStorage.setItem('userId', data.id);
+                    if (data.name) localStorage.setItem('userName', data.name);
+                    if (data.email) localStorage.setItem('userEmail', data.email);
+                    if (data.role) localStorage.setItem('userRole', data.role);
+
+                    // REDIRECTION LOGIC
+                    setTimeout(function () {
+                        if (data.role === 'admin') {
+                            // Redirect admins to the admin dashboard
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            // Redirect regular clients to the client dashboard/membership area
+                            window.location.href = 'client-dashboard.html';
+                        }
+                    }, 1500);
+
+                } else {
+                    showToast(data.message || 'Server verification failed.', 'error');
+                }
+            } catch (error) {
+                console.error('Backend error:', error);
+                showToast('Cannot connect to server. Please try again later.', 'error');
             }
         }
 
-        // ===== CLEAR ERRORS ON INPUT =====
-        function initClearErrorsOnType() {
-            var inputs = document.querySelectorAll('.form-input');
-            inputs.forEach(function (input) {
-                input.addEventListener('input', function () {
-                    input.classList.remove('input-error');
-                    var fieldId = input.getAttribute('id');
-                    var errorEl = document.getElementById(fieldId + '-error');
-                    if (errorEl) {
-                        errorEl.textContent = '';
-                        errorEl.classList.remove('visible');
-                    }
-                });
-            });
-        }
-
-        // ===== LOGIN FORM — CONNECTED TO PHP BACKEND =====
+        // ===== 4. STANDARD EMAIL/PASSWORD LOGIN =====
         function initLoginForm() {
-            var loginForm = document.getElementById('loginForm');
-            var loginButton = document.getElementById('loginButton');
-            var loginButtonText = document.getElementById('loginButtonText');
-            var loginSpinner = document.getElementById('loginSpinner');
-
+            var loginForm = document.getElementById('loginForm'); var loginButton = document.getElementById('loginButton'); var loginButtonText = document.getElementById('loginButtonText'); var loginSpinner = document.getElementById('loginSpinner');
             if (loginForm) {
                 loginForm.addEventListener('submit', async function (e) {
-                    e.preventDefault();
-                    clearFieldErrors();
-
-                    var email = document.getElementById('email').value.trim();
-                    var password = document.getElementById('password').value;
-
-                    // ===== Client-side validation =====
-                    var hasError = false;
-
-                    if (!email) {
-                        showFieldError('email', 'Email address is required.');
-                        hasError = true;
-                    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                        showFieldError('email', 'Please enter a valid email address.');
-                        hasError = true;
-                    }
-
-                    if (!password) {
-                        showFieldError('password', 'Password is required.');
-                        hasError = true;
-                    } else if (password.length < 6) {
-                        showFieldError('password', 'Password must be at least 6 characters.');
-                        hasError = true;
-                    }
-
-                    if (hasError) {
-                        showToast('Please fix the errors above.', 'error');
-                        return false;
-                    }
-
-                    // ===== Show loading state =====
-                    loginButton.disabled = true;
-                    loginButtonText.textContent = 'Signing in...';
-                    loginSpinner.classList.remove('hidden');
-
+                    e.preventDefault(); clearFieldErrors(); var email = document.getElementById('email').value.trim(); var password = document.getElementById('password').value; var hasError = false;
+                    if (!email) { showFieldError('email', 'Email address is required.'); hasError = true; } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('email', 'Please enter a valid email address.'); hasError = true; }
+                    if (!password) { showFieldError('password', 'Password is required.'); hasError = true; } else if (password.length < 6) { showFieldError('password', 'Password must be at least 6 characters.'); hasError = true; }
+                    if (hasError) { showToast('Please fix the errors above.', 'error'); return false; }
+                    loginButton.disabled = true; loginButtonText.textContent = 'Signing in...'; loginSpinner.classList.remove('hidden');
                     try {
-                        // ===== Send data to PHP backend =====
-                        var response = await fetch('api/login.php', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                email: email,
-                                password: password
-                            })
-                        });
-
+                        var response = await fetch('api/login.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: password }) });
                         var data = await response.json();
-
-                        if (response.ok) {
-                            showToast(data.message || 'Login successful!', 'success');
-
-                            // Store user info
-                            if (data.id) localStorage.setItem('userId', data.id);
-                            if (data.name) localStorage.setItem('userName', data.name);
-                            if (data.email) localStorage.setItem('userEmail', data.email);
-
-                            // Redirect to dashboard
-                            setTimeout(function () {
-                                window.location.href = 'dashboard.html';
-                            }, 1500);
-                        } else {
-                            // ===== Server returned an error =====
-                            var errorMsg = data.message || 'Invalid credentials. Please try again.';
-
-                            // Show specific field errors based on server response
-                            if (errorMsg.toLowerCase().includes('email')) {
-                                showFieldError('email', errorMsg);
-                            } else if (errorMsg.toLowerCase().includes('password') || errorMsg.toLowerCase().includes('invalid')) {
-                                showFieldError('password', errorMsg);
-                                showFieldError('email', ''); // Clear email error but highlight it
-                                var emailInput = document.getElementById('email');
-                                if (emailInput) emailInput.classList.add('input-error');
-                            }
-
-                            showToast(errorMsg, 'error');
-                            loginButton.disabled = false;
-                            loginButtonText.textContent = 'Sign In';
-                            loginSpinner.classList.add('hidden');
-                        }
-
-                    } catch (error) {
-                        // ===== Network / server error =====
-                        console.error('Login error:', error);
-                        showToast('Cannot connect to server. Please try again later.', 'error');
-                        loginButton.disabled = false;
-                        loginButtonText.textContent = 'Sign In';
-                        loginSpinner.classList.add('hidden');
-                    }
-
+                        if (response.ok) { showToast(data.message || 'Login successful!', 'success'); if (data.id) localStorage.setItem('userId', data.id); if (data.name) localStorage.setItem('userName', data.name); if (data.email) localStorage.setItem('userEmail', data.email); setTimeout(function () { window.location.href = 'admin-dashboard.html'; }, 1500); }
+                        else { var errorMsg = data.message || 'Invalid credentials. Please try again.'; if (errorMsg.toLowerCase().includes('email')) { showFieldError('email', errorMsg); } else if (errorMsg.toLowerCase().includes('password') || errorMsg.toLowerCase().includes('invalid')) { showFieldError('password', errorMsg); showFieldError('email', ''); var emailInput = document.getElementById('email'); if (emailInput) emailInput.classList.add('input-error'); } showToast(errorMsg, 'error'); loginButton.disabled = false; loginButtonText.textContent = 'Sign In'; loginSpinner.classList.add('hidden'); }
+                    } catch (error) { console.error('Login error:', error); showToast('Cannot connect to server. Please try again later.', 'error'); loginButton.disabled = false; loginButtonText.textContent = 'Sign In'; loginSpinner.classList.add('hidden'); }
                     return false;
                 });
             }
         }
 
-        // ===== INIT =====
+        // ===== 5. INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', function () {
-            initTheme();
-            initNavScroll();
-            initPasswordToggle();
-            initLoginForm();
-            initClearErrorsOnType();
-
-            var desktopToggle = document.getElementById('theme-toggle-desktop');
-            var mobileToggle = document.getElementById('theme-toggle-mobile');
-            if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
-            if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
-
+            initTheme(); initNavScroll(); initPasswordToggle(); initLoginForm(); initClearErrorsOnType();
+            var desktopToggle = document.getElementById('theme-toggle-desktop'); var mobileToggle = document.getElementById('theme-toggle-mobile');
+            if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme); if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
             if (window.lucide) lucide.createIcons();
         });
     </script>

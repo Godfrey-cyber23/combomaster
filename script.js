@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    window.switchTrainingTab = function(tab) { window.switchTab('training', tab); };
+    window.switchTrainingTab = function(tab) { window.switchTab('services', tab); };
     window.switchShopTab = function(tab) { window.switchTab('shop', tab); };
 
     // ===== Toast Notification =====

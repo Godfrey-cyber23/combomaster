@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ComboMaster | Admin Dashboard Suite</title>
+    <!-- Tailwind + Fonts + Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-base: #020617; --bg-secondary: #0f172a; --bg-card: rgba(30, 41, 59, 0.65);
+            --text-main: #f1f5f9; --text-muted: #94a3b8; --border-color: rgba(255,255,255,0.08);
+            --gold-rgb: 245 158 11; --gold: rgb(245 158 11); --gold-accent: #f59e0b;
+            --card-solid: #1e293b; --toast-bg: #0f172aee;
+        }
+        body.light-theme {
+            --bg-base: #f8fafc; --bg-secondary: #f1f5f9; --bg-card: rgba(255,255,255,0.85);
+            --text-main: #0f172a; --text-muted: #475569; --border-color: rgba(0,0,0,0.08);
+            --gold-rgb: 234 88 12; --gold: #ea580c; --card-solid: #ffffff; --toast-bg: #fffffff2;
+        }
+        body { background: var(--bg-base); color: var(--text-main); font-family: 'Inter', sans-serif; transition: background 0.25s, color 0.2s; }
+        .font-display { font-family: 'Oswald', sans-serif; letter-spacing: 0.01em; }
+        .glass-card { background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 1.5rem; transition: all 0.2s; }
+        .stat-card { border-left: 3px solid var(--gold); }
+        .text-gold { color: var(--gold); }
+        .btn-gold { background: var(--gold); color: #020617; font-weight: 600; transition: 0.2s; cursor: pointer; }
+        .btn-gold:hover { background: #d97706; box-shadow: 0 8px 20px rgba(245,158,11,0.3); transform: translateY(-1px); }
+        .btn-outline { border: 1px solid rgba(245,158,11,0.5); color: var(--gold); background: transparent; font-weight: 500; transition: 0.2s; }
+        .btn-outline:hover { background: rgba(245,158,11,0.1); border-color: var(--gold); }
+        .btn-danger { background: #dc2626; color: white; font-weight: 500; transition: 0.2s; }
+        .btn-danger:hover { background: #b91c1c; }
+        .form-input { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.6rem 1rem; color: var(--text-main); font-size: 0.875rem; outline: none; width: 100%; transition: 0.2s; }
+        .form-input:focus { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(245,158,11,0.2); }
+        .admin-sidebar { width: 280px; transition: all 0.2s ease; background: var(--bg-secondary); border-right: 1px solid var(--border-color); position: fixed; left: 0; top: 0; bottom: 0; z-index: 40; overflow-y: auto; }
+        .admin-main { margin-left: 280px; transition: margin-left 0.2s; min-height: 100vh; }
+        @media (max-width: 1024px) {
+            .admin-sidebar { transform: translateX(-100%); position: fixed; z-index: 50; }
+            .admin-sidebar.mobile-open { transform: translateX(0); }
+            .admin-main { margin-left: 0; }
+        }
+        .sidebar-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1.25rem; margin: 0.25rem 0.75rem; border-radius: 0.75rem; color: var(--text-muted); transition: 0.2s; cursor: pointer; font-size: 0.9rem; }
+        .sidebar-link:hover { background: rgba(245,158,11,0.08); color: var(--gold); }
+        .sidebar-link.active { background: rgba(245,158,11,0.15); color: var(--gold); }
+        .dash-table th { text-align: left; padding: 0.9rem 1rem; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
+        .dash-table td { padding: 0.9rem 1rem; font-size: 0.85rem; border-bottom: 1px solid var(--border-color); }
+        .badge { background: rgba(245,158,11,0.2); color: var(--gold); border-radius: 9999px; padding: 0.2rem 0.7rem; font-size: 0.7rem; font-weight: 600; }
+        .toast-fixed { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; background: var(--toast-bg); backdrop-filter: blur(12px); border-radius: 1rem; padding: 0.75rem 1.5rem; box-shadow: 0 20px 25px -12px rgba(0,0,0,0.2); transition: all 0.3s; transform: translateY(100px); opacity: 0; border: 1px solid var(--border-color); }
+        .toast-fixed.show { transform: translateY(0); opacity: 1; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.2s; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-card { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 1.5rem; width: 90%; max-width: 520px; max-height: 85vh; overflow-y: auto; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+        .view-pane { display: none; }
+        .view-pane.active-view { display: block; }
+        .progress-ring { stroke: var(--gold); transition: stroke-dashoffset 0.5s; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Toast container -->
+    <div id="globalToast" class="toast-fixed flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <span id="toastMsg" class="text-sm font-medium"></span>
+    </div>
+
+    <!-- Modal overlay -->
+    <div id="globalModal" class="modal-overlay" onclick="if(event.target===this) closeModal()">
+        <div class="modal-card p-6">
+            <div class="flex justify-between items-center mb-5"><h3 id="modalTitle" class="font-display text-xl font-bold text-gold"></h3><button onclick="closeModal()" class="text-muted hover:text-white">&times;</button></div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR (Admin) -->
+    <aside id="adminSidebar" class="admin-sidebar flex flex-col">
+        <div class="h-16 flex items-center px-6 border-b border-[var(--border-color)]">
+            <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold">CM</div><span class="font-display text-xl tracking-wide text-gold font-semibold">COMBO<span class="text-white">MASTER</span></span></div>
+        </div>
+        <nav class="flex-1 py-6">
+            <div class="px-5 mb-2 text-[0.65rem] font-bold uppercase tracking-wider text-muted">CORE</div>
+            <a href="#" class="sidebar-link active" data-section="dashboard"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Dashboard</span></a>
+            <a href="#" class="sidebar-link" data-section="clients"><i data-lucide="users" class="w-5 h-5"></i><span>Clients</span></a>
+            <a href="#" class="sidebar-link" data-section="sales"><i data-lucide="trending-up" class="w-5 h-5"></i><span>Sales</span></a>
+            <a href="#" class="sidebar-link" data-section="payments"><i data-lucide="credit-card" class="w-5 h-5"></i><span>Payments</span></a>
+            <a href="#" class="sidebar-link" data-section="coaching-programs"><i data-lucide="file-text" class="w-5 h-5"></i><span>Coaching Programs</span></a>
+            <a href="#" class="sidebar-link" data-section="orders"><i data-lucide="package" class="w-5 h-5"></i><span>Orders</span></a>
+            <a href="#" class="sidebar-link" data-section="bookings"><i data-lucide="calendar" class="w-5 h-5"></i><span>Bookings</span></a>
+            <a href="#" class="sidebar-link" data-section="messages"><i data-lucide="message-circle" class="w-5 h-5"></i><span>Messages</span></a>
+            <a href="#" class="sidebar-link" data-section="reports"><i data-lucide="bar-chart-3" class="w-5 h-5"></i><span>Business Reports</span></a>
+            <div class="border-t border-[var(--border-color)] my-4 mx-4"></div>
+            <a href="#" class="sidebar-link" data-section="settings"><i data-lucide="settings" class="w-5 h-5"></i><span>Settings</span></a>
+            <a href="#" onclick="event.preventDefault();logoutAdmin()" class="sidebar-link text-red-400 hover:!text-red-300"><i data-lucide="log-out" class="w-5 h-5"></i><span>Logout</span></a>
+        </nav>
+        <div class="p-4 border-t border-[var(--border-color)] text-[0.7rem] text-muted text-center">© ComboMaster Fitness</div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main id="adminMain" class="admin-main bg-[var(--bg-base)]">
+        <header class="sticky top-0 z-30 bg-[var(--bg-base)]/80 backdrop-blur-lg border-b border-[var(--border-color)] h-16 flex items-center justify-between px-6">
+            <div class="flex items-center gap-4"><button id="mobileMenuBtn" class="lg:hidden p-2 text-muted hover:text-gold"><i data-lucide="menu" class="w-5 h-5"></i></button><h2 id="sectionTitle" class="font-display text-xl font-semibold">Dashboard</h2></div>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleAdminTheme()" class="p-2 text-muted hover:text-gold"><i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i></button>
+                <div class="w-9 h-9 rounded-full bg-amber-500/20 flex items-center justify-center text-gold font-bold">AD</div>
+            </div>
+        </header>
+
+        <div class="p-5 lg:p-7 space-y-7">
+            <!-- ===================== DASHBOARD ===================== -->
+            <div id="dashboardView" class="view-pane active-view space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div class="glass-card p-5 stat-card"><p class="text-xs uppercase tracking-wider text-muted">Total Revenue</p><p class="font-display text-3xl font-bold text-gold mt-1">$43,280</p><p class="text-xs text-green-400 mt-1">↑ 12% vs last month</p></div>
+                    <div class="glass-card p-5 stat-card"><p class="text-xs uppercase tracking-wider text-muted">Active Clients</p><p class="font-display text-3xl font-bold text-gold mt-1">143</p><p class="text-xs text-muted">+8 new this week</p></div>
+                    <div class="glass-card p-5 stat-card"><p class="text-xs uppercase tracking-wider text-muted">Completed Orders</p><p class="font-display text-3xl font-bold text-gold mt-1">1,284</p><p class="text-xs text-muted">Past 30 days</p></div>
+                    <div class="glass-card p-5 stat-card"><p class="text-xs uppercase tracking-wider text-muted">Upcoming Bookings</p><p class="font-display text-3xl font-bold text-gold mt-1">23</p><p class="text-xs text-muted">Next 7 days</p></div>
+                </div>
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-5"><h3 class="font-display text-lg font-semibold flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 text-gold"></i> Revenue Trend (last 6 weeks)</h3><div class="h-40 w-full mt-4"><canvas id="revenueChart" class="w-full h-full"></canvas></div></div>
+                    <div class="glass-card p-5"><h3 class="font-display text-lg font-semibold flex items-center gap-2"><i data-lucide="briefcase" class="w-5 h-5 text-gold"></i> Recent Bookings</h3><div class="overflow-x-auto mt-3"><table class="w-full text-sm"><tbody><tr><td class="py-2">Emily Chen</td><td>1-on-1 Coaching</td><td>Today 14:00</td><td><span class="badge">Confirmed</span></td></tr><tr><td class="py-2">Marcus Lee</td><td>Nutrition Review</td><td>Tomorrow 10:30</td><td><span class="badge">Pending</span></td></tr><tr><td class="py-2">Sophia Ramirez</td><td>Group HIIT</td><td>Feb 18, 09:00</td><td><span class="badge">Confirmed</span></td></tr></tbody></table></div></div>
+                </div>
+                <div class="glass-card p-5"><div class="flex justify-between items-center"><h3 class="font-display text-lg font-semibold">Top Coaching Programs (enrollments)</h3><button class="btn-outline text-xs px-3 py-1 rounded-full" onclick="showToast('Full report exported','success')">Export</button></div><div class="mt-4 flex flex-wrap gap-5"><div><span class="text-gold font-bold text-2xl">48</span><p class="text-xs text-muted">Fat Loss Blueprint</p></div><div><span class="text-gold font-bold text-2xl">35</span><p class="text-xs text-muted">Muscle Gain System</p></div><div><span class="text-gold font-bold text-2xl">22</span><p class="text-xs text-muted">Competition Prep</p></div><div><span class="text-gold font-bold text-2xl">19</span><p class="text-xs text-muted">Strength Foundations</p></div></div></div>
+            </div>
+
+            <!-- ===================== CLIENTS ===================== -->
+            <div id="clientsView" class="view-pane space-y-5">
+                <div class="flex justify-between items-center flex-wrap gap-3"><h1 class="font-display text-2xl font-semibold">Client Management</h1><button class="btn-gold px-4 py-2 rounded-xl text-sm flex gap-2" onclick="openAddClientModal()"><i data-lucide="user-plus" class="w-4 h-4"></i> Add Client</button></div>
+                <div class="glass-card overflow-hidden rounded-2xl"><div class="overflow-x-auto"><table class="w-full dash-table"><thead><tr><th>Name</th><th>Email</th><th>Program</th><th>Status</th><th>Last Activity</th><th></th></tr></thead><tbody id="clientListTbody"><tr><td>James Mitchell</td><td>james@fit.com</td><td>Fat Loss</td><td><span class="badge">Active</span></td><td>2h ago</td><td><button class="text-gold text-xs" onclick="showToast('Client details','success')">View</button></td></tr><tr><td>Sarah Kim</td><td>sarah.k@example.com</td><td>Muscle Gain</td><td><span class="badge">Active</span></td><td>Yesterday</td><td><button class="text-gold text-xs" onclick="showToast('Client details','success')">View</button></td></tr><tr><td>David Chen</td><td>david.chen@comp.com</td><td>Competition Prep</td><td><span class="badge">High Priority</span></td><td>Today</td><td><button class="text-gold text-xs" onclick="showToast('Client details','success')">View</button></td></tr></tbody></table></div></div>
+            </div>
+
+            <!-- ===================== SALES & PAYMENTS ===================== -->
+            <div id="salesView" class="view-pane space-y-5"><h1 class="font-display text-2xl font-semibold">Sales Overview</h1><div class="glass-card p-5"><div class="grid sm:grid-cols-2 gap-5"><div><p class="text-sm text-muted">Monthly Recurring Revenue</p><p class="font-display text-3xl font-bold text-gold">$18,420</p></div><div><p class="text-sm text-muted">One-time product sales</p><p class="font-display text-3xl font-bold text-gold">$9,860</p></div></div><div class="mt-6 h-48"><canvas id="salesChartCanvas"></canvas></div></div></div>
+            <div id="paymentsView" class="view-pane space-y-5"><h1 class="font-display text-2xl font-semibold">Payment Transactions</h1><div class="glass-card overflow-hidden"><table class="w-full dash-table"><thead><tr><th>Transaction ID</th><th>Client</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody><tr><td>#TRX-2214</td><td>James Mitchell</td><td>$149</td><td><span class="text-green-400">Completed</span></td><td>2025-02-14</td></tr><tr><td>#TRX-2215</td><td>Sarah Kim</td><td>$249</td><td><span class="text-green-400">Completed</span></td><td>2025-02-13</td></tr><tr><td>#TRX-2216</td><td>Marcus Lee</td><td>$89</td><td><span class="text-yellow-400">Pending</span></td><td>2025-02-12</td></tr></tbody></table></div></div>
+
+            <!-- ===================== COACHING PROGRAMS ===================== -->
+            <div id="coachingProgramsView" class="view-pane"><h1 class="font-display text-2xl font-semibold mb-5">Coaching Programs</h1><div class="grid sm:grid-cols-2 gap-5"><div class="glass-card p-5"><div class="flex justify-between"><h3 class="font-bold">Fat Loss Blueprint</h3><span class="badge">48 active</span></div><p class="text-xs text-muted mt-1">12 weeks • nutrition + training</p><div class="mt-3 flex gap-2"><button class="btn-outline text-xs px-3 py-1 rounded-full" onclick="showToast('Program details','success')">Manage</button></div></div><div class="glass-card p-5"><div class="flex justify-between"><h3 class="font-bold">Muscle Gain System</h3><span class="badge">35 active</span></div><p class="text-xs text-muted mt-1">16-week hypertrophy focus</p><button class="btn-outline text-xs px-3 py-1 rounded-full mt-3" onclick="showToast('Program details','success')">Manage</button></div><div class="glass-card p-5"><div class="flex justify-between"><h3 class="font-bold">Competition Prep</h3><span class="badge">22 active</span></div><p class="text-xs text-muted mt-1">Peak week programming</p><button class="btn-outline text-xs px-3 py-1 rounded-full mt-3" onclick="showToast('Program details','success')">Manage</button></div></div></div>
+
+            <!-- ===================== ORDERS ===================== -->
+            <div id="ordersView" class="view-pane"><h1 class="font-display text-2xl font-semibold mb-4">Recent Orders</h1><div class="glass-card overflow-hidden"><table class="w-full dash-table"><thead><tr><th>Order #</th><th>Client</th><th>Item</th><th>Total</th><th>Status</th></tr></thead><tbody><tr><td>#CM-1001</td><td>Emily Chen</td><td>Resistance Bands + Program</td><td>$79</td><td>Shipped</td></tr><tr><td>#CM-1002</td><td>Grace Thompson</td><td>1-on-1 Coaching (Monthly)</td><td>$299</td><td>Active</td></tr><tr><td>#CM-1003</td><td>Alex Rivera</td><td>Nutrition E-book</td><td>$39</td><td>Delivered</td></tr></tbody></table></div></div>
+
+            <!-- ===================== BOOKINGS ===================== -->
+            <div id="bookingsView" class="view-pane"><h1 class="font-display text-2xl font-semibold mb-4">Sessions & Bookings</h1><div class="grid md:grid-cols-2 gap-5"><div class="glass-card p-5"><h3 class="font-semibold flex gap-2"><i data-lucide="calendar-check"></i> Upcoming (5)</h3><ul class="mt-3 space-y-2 text-sm"><li>• 02/18 10:00 - James M. (Check-in)</li><li>• 02/18 15:30 - Sarah K. (Nutrition Review)</li><li>• 02/19 09:00 - David C. (Strength Analysis)</li></ul></div><div class="glass-card p-5"><h3 class="font-semibold">Schedule a new session</h3><button onclick="openBookingModal()" class="btn-gold w-full mt-4 py-2 rounded-xl text-sm">+ Create Booking</button></div></div></div>
+
+            <!-- ===================== MESSAGES ===================== -->
+            <div id="messagesView" class="view-pane"><h1 class="font-display text-2xl font-semibold mb-4">Client Messages</h1><div class="glass-card rounded-2xl overflow-hidden"><div id="msgThreadList" class="divide-y divide-[var(--border-color)] max-h-[400px] overflow-y-auto"><div class="p-4 flex justify-between items-center hover:bg-[var(--bg-secondary)] cursor-pointer" onclick="showChatThread('James Mitchell')"><div><p class="font-semibold">James Mitchell</p><p class="text-xs text-muted">Need help with deadlift form</p></div><span class="text-[0.6rem] text-gold">10 min ago</span></div><div class="p-4 flex justify-between items-center hover:bg-[var(--bg-secondary)] cursor-pointer" onclick="showChatThread('Sarah Kim')"><div><p class="font-semibold">Sarah Kim</p><p class="text-xs text-muted">When to increase calories?</p></div><span class="text-[0.6rem] text-muted">1h ago</span></div></div><div id="chatDetailPanel" class="p-5 border-t border-[var(--border-color)] hidden"><div class="flex justify-between"><h4 id="chatClientName" class="font-bold"></h4><button onclick="document.getElementById('chatDetailPanel').classList.add('hidden');" class="text-muted text-xs">Back</button></div><div id="chatMessages" class="h-48 overflow-y-auto my-4 space-y-2"></div><div class="flex gap-2"><input id="chatReplyInput" type="text" class="form-input flex-1" placeholder="Reply..."><button onclick="sendAdminReply()" class="btn-gold px-4 py-2 rounded-xl text-sm">Send</button></div></div></div></div>
+
+            <!-- ===================== BUSINESS REPORTS ===================== -->
+            <div id="reportsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">Business Intelligence</h1><div class="grid md:grid-cols-2 gap-5 mt-5"><div class="glass-card p-5"><h3 class="font-semibold">Revenue Breakdown</h3><canvas id="revenueDonut" height="150" class="mt-3"></canvas><div class="flex justify-between text-sm mt-2"><span>Memberships: 58%</span><span>Merch: 22%</span><span>Add-ons: 20%</span></div></div><div class="glass-card p-5"><h3 class="font-semibold">Retention Rate (Q1)</h3><p class="font-display text-4xl text-gold mt-2">87%</p><div class="w-full bg-gray-700 h-2 rounded-full mt-3"><div class="bg-gold h-2 rounded-full" style="width:87%"></div></div><p class="text-xs text-muted mt-3">⬆ 4% vs previous quarter</p><button class="btn-outline w-full mt-4 py-2 rounded-xl text-sm" onclick="showToast('Full report generated','success')">Download Full Report</button></div></div><div class="glass-card p-5 mt-5"><h3 class="font-semibold">Monthly KPIs</h3><table class="w-full text-sm mt-3"><tr><td class="py-2">New Clients</td><td class="text-gold font-bold">+32</td><td>Goal: 40</td></tr><tr><td class="py-2">Churn Rate</td><td class="text-green-400">4.2%</td><td>Industry avg 6%</td></tr><tr><td class="py-2">Avg Revenue Per Client</td><td class="text-gold font-bold">$287</td><td>↑ $22</td></tr></table></div></div>
+
+            <!-- ===================== SETTINGS ===================== -->
+            <div id="settingsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">Admin Settings</h1><div class="glass-card p-6 mt-5 space-y-5"><div><label class="text-sm block mb-1">Business Name</label><input type="text" class="form-input" value="ComboMaster Fitness" id="businessName"></div><div><label class="text-sm block mb-1">Contact Email</label><input type="email" class="form-input" value="admin@combomaster.com"></div><button class="btn-gold px-6 py-2 rounded-xl" onclick="showToast('Settings saved!','success')">Save Changes</button></div></div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // ---------- GLOBALS ----------
+        let revenueChart, salesChart, donutChart;
+        let currentChatClient = '';
+        const fakeMessages = { 'James Mitchell': ['Admin: Morning James! How is training?','James: Deadlift form feels off, can you review?'], 'Sarah Kim': ['Admin: How are macros?','Sarah: I think i need a refeed day'] };
+
+        // Helper functions
+        function showToast(msg, type='success'){ let t=document.getElementById('globalToast'),m=document.getElementById('toastMsg'); m.innerText=msg; t.classList.add('show'); clearTimeout(window.toastTimer); window.toastTimer=setTimeout(()=>t.classList.remove('show'),3000); }
+        function closeModal(){ document.getElementById('globalModal').classList.remove('active'); }
+        function openModal(title, html){ document.getElementById('modalTitle').innerHTML=title; document.getElementById('modalBody').innerHTML=html; document.getElementById('globalModal').classList.add('active'); if(window.lucide)lucide.createIcons(); }
+        function openAddClientModal(){ openModal('Add New Client', `<form onsubmit="event.preventDefault(); addClientFromModal();return false;" class="space-y-4"><div><label class="text-xs block mb-1">Full name</label><input id="clientName" class="form-input" required></div><div><label class="text-xs block mb-1">Email</label><input id="clientEmail" class="form-input" required></div><div><label class="text-xs block mb-1">Program</label><select id="clientProgram" class="form-input"><option>Fat Loss Blueprint</option><option>Muscle Gain System</option></select></div><button type="submit" class="btn-gold w-full py-2 rounded-xl">Add Client</button></form>`); }
+        function addClientFromModal(){ let name=document.getElementById('clientName').value, email=document.getElementById('clientEmail').value, prog=document.getElementById('clientProgram').value; if(name){ let tbody=document.getElementById('clientListTbody'); let row=`<tr><td>${escapeHtml(name)}</td><td>${escapeHtml(email)}</td><td>${escapeHtml(prog)}</td><td><span class="badge">Active</span></td><td>Just now</td><td><button class="text-gold text-xs" onclick="showToast('Client details','success')">View</button></td></tr>`; tbody.insertAdjacentHTML('beforeend',row); closeModal(); showToast(`Client ${name} added!`);} }
+        function openBookingModal(){ openModal('New Booking', `<form onsubmit="event.preventDefault();showToast('Booking created!','success');closeModal();" class="space-y-4"><div><label class="text-xs">Client</label><input class="form-input" placeholder="Client name"></div><div><label class="text-xs">Date & Time</label><input type="datetime-local" class="form-input"></div><div><label class="text-xs">Service Type</label><select class="form-input"><option>1-on-1 Coaching</option><option>Nutrition Review</option><option>Check-in call</option></select></div><button type="submit" class="btn-gold w-full py-2 rounded-xl">Create Booking</button></form>`); }
+        function showChatThread(clientName){ currentChatClient=clientName; document.getElementById('chatClientName').innerText=clientName; let msgsDiv=document.getElementById('chatMessages'); msgsDiv.innerHTML=''; let msgs=fakeMessages[clientName]||['Admin: How can I help?']; msgs.forEach(m=>{let cls=m.startsWith('Admin')?'text-right text-gold':'text-left text-muted'; msgsDiv.innerHTML+=`<div class="${cls} text-sm bg-[var(--bg-secondary)] p-2 rounded-lg">${escapeHtml(m)}</div>`;}); document.getElementById('chatDetailPanel').classList.remove('hidden'); }
+        function sendAdminReply(){ let input=document.getElementById('chatReplyInput'); let txt=input.value.trim(); if(!txt||!currentChatClient)return; let container=document.getElementById('chatMessages'); container.innerHTML+=`<div class="text-right text-gold text-sm bg-[var(--bg-secondary)] p-2 rounded-lg">Admin: ${escapeHtml(txt)}</div>`; if(!fakeMessages[currentChatClient])fakeMessages[currentChatClient]=[]; fakeMessages[currentChatClient].push(`Admin: ${txt}`); input.value=''; showToast('Reply sent','success'); }
+        function escapeHtml(str){ let d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
+        function toggleAdminTheme(){ document.body.classList.toggle('light-theme'); let icon=document.getElementById('themeIcon'); if(document.body.classList.contains('light-theme')) icon.setAttribute('data-lucide','sun'); else icon.setAttribute('data-lucide','moon'); if(window.lucide)lucide.createIcons(); localStorage.setItem('adminTheme',document.body.classList.contains('light-theme')?'light':'dark'); }
+        function logoutAdmin(){ localStorage.removeItem('adminAuth'); window.location.reload(); }
+
+        // Navigation
+        function initNavigation(){ let links=document.querySelectorAll('.sidebar-link[data-section]'); links.forEach(link=>{link.addEventListener('click',(e)=>{e.preventDefault(); let section=link.getAttribute('data-section'); document.querySelectorAll('.view-pane').forEach(p=>p.classList.remove('active-view')); document.getElementById(`${section}View`).classList.add('active-view'); document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active')); link.classList.add('active'); let titles={dashboard:'Dashboard',clients:'Clients',sales:'Sales',payments:'Payments','coaching-programs':'Coaching Programs',orders:'Orders',bookings:'Bookings',messages:'Messages',reports:'Business Reports',settings:'Settings'}; document.getElementById('sectionTitle').innerText=titles[section]||'Admin'; if(window.innerWidth<1024)document.getElementById('adminSidebar').classList.remove('mobile-open'); });}); }
+        function setupMobileMenu(){ document.getElementById('mobileMenuBtn')?.addEventListener('click',()=>{document.getElementById('adminSidebar').classList.toggle('mobile-open');}); window.addEventListener('click',(e)=>{let sidebar=document.getElementById('adminSidebar'); if(window.innerWidth<1024 && !sidebar.contains(e.target) && e.target!==document.getElementById('mobileMenuBtn')) sidebar.classList.remove('mobile-open');}); }
+
+        // Charts init
+        function initCharts(){ let ctx1=document.getElementById('revenueChart')?.getContext('2d'); if(ctx1){ revenueChart=new Chart(ctx1,{type:'line',data:{labels:['W1','W2','W3','W4','W5','W6'],datasets:[{label:'Revenue ($)',data:[6200,7100,6800,8900,9400,10300],borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,0.05)',fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:true}});}
+            let ctxSales=document.getElementById('salesChartCanvas')?.getContext('2d'); if(ctxSales){ salesChart=new Chart(ctxSales,{type:'bar',data:{labels:['Jan','Feb','Mar','Apr'],datasets:[{label:'Product Sales',data:[3200,4100,5400,6800],backgroundColor:'#f59e0b'},{label:'Memberships',data:[11200,12400,13800,15400],backgroundColor:'#ea580c'}]}});}
+            let ctxDonut=document.getElementById('revenueDonut')?.getContext('2d'); if(ctxDonut){ donutChart=new Chart(ctxDonut,{type:'doughnut',data:{labels:['Memberships','Merch','Coaching add-ons'],datasets:[{data:[58,22,20],backgroundColor:['#f59e0b','#b45309','#f97316']}]}});}
+        }
+
+        // Theme loader
+        function loadTheme(){ if(localStorage.getItem('adminTheme')==='light'){document.body.classList.add('light-theme');document.getElementById('themeIcon')?.setAttribute('data-lucide','sun');} else{document.getElementById('themeIcon')?.setAttribute('data-lucide','moon');} if(window.lucide)lucide.createIcons(); }
+
+        document.addEventListener('DOMContentLoaded',()=>{ loadTheme(); initNavigation(); setupMobileMenu(); initCharts(); if(window.lucide)lucide.createIcons(); setTimeout(()=>{ showToast('Admin dashboard ready | Full business control','success'); },600); });
+    </script>
+</body>
+</html>

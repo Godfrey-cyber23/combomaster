@@ -15,6 +15,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/auth.css">
     <script>
         tailwind.config = {
             theme: {
@@ -648,7 +649,14 @@
     <!-- ============================================ -->
     <!-- FULL-SCREEN LOGIN SECTION WITH SOCIAL ICONS  -->
     <!-- ============================================ -->
-    <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section class="auth-section relative min-h-screen flex items-center justify-center overflow-hidden">
+        <div class="auth-image-panel" aria-hidden="true">
+            <img src="images/gym-interior.jpg" alt="" onerror="this.src='https://images.pexels.com/photos/416249/pexels-photo-416249.jpeg?auto=compress&cs=tinysrgb&w=1920'">
+            <div class="auth-image-copy">
+                <span class="text-xs uppercase tracking-[0.28em] text-gold">Your next level</span>
+                <p class="mt-2">Train with purpose, track your progress, and keep momentum visible.</p>
+            </div>
+        </div>
         <div class="absolute inset-0">
             <img src="images/gym-interior.jpg" alt="" class="hero-bg-img w-full h-full object-cover select-none"
                 draggable="false"
@@ -751,7 +759,7 @@
                 <div class="divider">OR</div>
 
                 <!-- Social Login — Firebase Popup Triggers -->
-                <div class="social-icons-row">
+                <div class="auth-provider-row" aria-label="Other sign-in options">
                     <!-- Google Firebase Auth -->
                     <button onclick="socialLogin('google')" class="social-icon-btn" aria-label="Sign in with Google">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -770,17 +778,20 @@
                         </svg>
                     </button>
 
-                    <!-- Facebook Firebase Auth -->
-                    <button onclick="socialLogin('facebook')" class="social-icon-btn"
-                        aria-label="Sign in with Facebook">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                        </svg>
+                    <button onclick="socialLogin('microsoft')" class="auth-provider" aria-label="Sign in with Microsoft">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#f25022" d="M1 1h10.5v10.5H1z"/><path fill="#7fba00" d="M12.5 1H23v10.5H12.5z"/><path fill="#00a4ef" d="M1 12.5h10.5V23H1z"/><path fill="#ffb900" d="M12.5 12.5H23V23H12.5z"/></svg>
+                        <span class="auth-provider-label">Microsoft</span>
+                    </button>
+                    <button onclick="socialLogin('apple')" class="auth-provider" aria-label="Sign in with Apple">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.32 2.99-2.53 4.09zM12.03 7.25C11.88 5.02 13.69 3.18 15.77 3c.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                        <span class="auth-provider-label">Apple</span>
+                    </button>
+                    <button onclick="socialLogin('phone')" class="auth-provider" aria-label="Sign in with phone">
+                        <i data-lucide="phone" class="w-4 h-4"></i>
+                        <span class="auth-provider-label">Phone</span>
                     </button>
                 </div>
-                <p class="text-center text-[0.6rem] text-muted-custom mt-2">Continue with Google or Facebook</p>
+                <p class="text-center text-[0.6rem] text-muted-custom mt-2">Google, Microsoft, Apple, or phone</p>
 
                 <div class="mt-4 text-center text-xs text-muted-custom">
                     Not a member yet? <a href="signup.html" class="text-gold font-semibold hover:underline">Join Now</a>
@@ -829,8 +840,16 @@
             var providerObj;
             if (provider === 'google') {
                 providerObj = new firebase.auth.GoogleAuthProvider();
-            } else if (provider === 'facebook') {
-                providerObj = new firebase.auth.FacebookAuthProvider();
+            } else if (provider === 'microsoft') {
+                providerObj = new firebase.auth.OAuthProvider('microsoft.com');
+            } else if (provider === 'apple') {
+                providerObj = new firebase.auth.OAuthProvider('apple.com');
+            } else if (provider === 'phone') {
+                showToast('Phone sign-in needs a phone verification step. Please use email or another provider.', 'success');
+                return;
+            } else {
+                showToast('This sign-in method is not available yet.', 'error');
+                return;
             }
 
             showToast(`Connecting to ${provider}...`, 'success');
@@ -869,14 +888,11 @@
                     showToast(data.message || 'Login successful!', 'success');
 
                     // Save user data to localStorage
-                    if (data.id) localStorage.setItem('userId', data.id);
-                    if (data.name) localStorage.setItem('userName', data.name);
-                    if (data.email) localStorage.setItem('userEmail', data.email);
-                    if (data.role) localStorage.setItem('userRole', data.role);
+                    var authenticatedUser = data.user || data;
 
                     // REDIRECTION LOGIC
                     setTimeout(function () {
-                        if (data.role === 'admin') {
+                        if (authenticatedUser.role === 'admin') {
                             // Redirect admins to the admin dashboard
                             window.location.href = 'admin-dashboard.html';
                         } else {
@@ -907,7 +923,7 @@
                     try {
                         var response = await fetch('api/login.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: password }) });
                         var data = await response.json();
-                        if (response.ok) { showToast(data.message || 'Login successful!', 'success'); if (data.id) localStorage.setItem('userId', data.id); if (data.name) localStorage.setItem('userName', data.name); if (data.email) localStorage.setItem('userEmail', data.email); setTimeout(function () { window.location.href = 'admin-dashboard.html'; }, 1500); }
+                        if (response.ok && data.user) { showToast(data.message || 'Login successful!', 'success'); setTimeout(function () { window.location.href = data.user.role === 'admin' ? 'admin-dashboard.html' : 'client-dashboard.html'; }, 1500); }
                         else { var errorMsg = data.message || 'Invalid credentials. Please try again.'; if (errorMsg.toLowerCase().includes('email')) { showFieldError('email', errorMsg); } else if (errorMsg.toLowerCase().includes('password') || errorMsg.toLowerCase().includes('invalid')) { showFieldError('password', errorMsg); showFieldError('email', ''); var emailInput = document.getElementById('email'); if (emailInput) emailInput.classList.add('input-error'); } showToast(errorMsg, 'error'); loginButton.disabled = false; loginButtonText.textContent = 'Sign In'; loginSpinner.classList.add('hidden'); }
                     } catch (error) { console.error('Login error:', error); showToast('Cannot connect to server. Please try again later.', 'error'); loginButton.disabled = false; loginButtonText.textContent = 'Sign In'; loginSpinner.classList.add('hidden'); }
                     return false;

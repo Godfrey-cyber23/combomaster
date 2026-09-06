@@ -160,13 +160,14 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="api/auth_guard.js" data-role="client"></script>
     <script>
         // ---------- CLIENT STATE ----------
         let activityChart, weightChart;
-        let workoutHistory = JSON.parse(localStorage.getItem('clientWorkouts') || '[]');
-        let mealLog = JSON.parse(localStorage.getItem('clientMealLog') || '[]');
-        let weightLog = JSON.parse(localStorage.getItem('clientWeightLog') || '[{date:"2025-02-01",weight:84.2},{date:"2025-02-08",weight:83.1},{date:"2025-02-15",weight:82.5}]');
-        let clientData = { name: 'James Mitchell', email: 'james@fitlife.com', height: 178, weight: 82.5, bodyfat:16.2, streak:12, badges:4 };
+        let workoutHistory = [];
+        let mealLog = [];
+        let weightLog = [];
+        let clientData = { name: 'Member', email: '', height: '', weight: '', bodyfat: '', streak: 0, badges: 0 };
 
         // Helper
         function showToast(msg, type='success'){ let t=document.getElementById('clientToast'),m=document.getElementById('toastMsg'); m.innerText=msg; t.classList.add('show'); clearTimeout(window.toastTimer); window.toastTimer=setTimeout(()=>t.classList.remove('show'),3000); }
@@ -176,32 +177,32 @@
         // Navigation
         function initClientNav(){ document.querySelectorAll('.sidebar-link[data-section]').forEach(link=>{link.addEventListener('click',(e)=>{e.preventDefault(); let sec=link.dataset.section; document.querySelectorAll('.view-pane').forEach(p=>p.classList.remove('active-view')); document.getElementById(`${sec}View`).classList.add('active-view'); document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active')); link.classList.add('active'); let titles={ 'profile-overview':'Profile & Overview','meal-plans':'Meal Plans','workout-plans':'Workout Plans','progress-tracking':'Progress Tracking','payments':'Payments','bookings':'Bookings','messages':'Messages','achievements':'Achievements','settings':'Settings' }; document.getElementById('sectionTitle').innerText=titles[sec]||'Dashboard'; if(window.innerWidth<1024)document.getElementById('clientSidebar').classList.remove('mobile-open'); });}); }
         
-        function updateDashboardUI(){ document.getElementById('clientNameSpan').innerText=clientData.name.split(' ')[0]; document.getElementById('statWeight').innerHTML=`${clientData.weight} <span class="text-base">kg</span>`; document.getElementById('statBodyfat').innerHTML=`${clientData.bodyfat}<span class="text-base">%</span>`; document.getElementById('statStreak').innerHTML=`${clientData.streak}<span class="text-base"> days</span>`; document.getElementById('statBadges').innerHTML=clientData.badges; document.getElementById('settingsName').value=clientData.name; document.getElementById('settingsEmail').value=clientData.email; document.getElementById('settingsHeight').value=clientData.height; document.getElementById('settingsWeight').value=clientData.weight; }
+        function updateDashboardUI(){ document.getElementById('clientNameSpan').innerText=(clientData.name || 'Member').split(' ')[0]; document.getElementById('statWeight').innerHTML=clientData.weight ? `${clientData.weight} <span class="text-base">kg</span>` : '-'; document.getElementById('statBodyfat').innerHTML=clientData.bodyfat ? `${clientData.bodyfat}<span class="text-base">%</span>` : '-'; document.getElementById('statStreak').innerHTML=`${clientData.streak}<span class="text-base"> days</span>`; document.getElementById('statBadges').innerHTML=clientData.badges; document.getElementById('settingsName').value=clientData.name; document.getElementById('settingsEmail').value=clientData.email; document.getElementById('settingsHeight').value=clientData.height; document.getElementById('settingsWeight').value=clientData.weight; }
         function saveClientProfile(){ let n=document.getElementById('settingsName').value; let h=document.getElementById('settingsHeight').value; let w=document.getElementById('settingsWeight').value; if(n)clientData.name=n; if(h)clientData.height=parseInt(h); if(w){clientData.weight=parseFloat(w); updateDashboardUI(); showToast('Profile updated','success');} updateDashboardUI(); }
 
         // Meal logging
-        function logQuickMeal(mealType,desc,cals){ let today=new Date().toLocaleDateString(); mealLog.unshift({date:today,meal:mealType,description:desc,calories:cals}); localStorage.setItem('clientMealLog',JSON.stringify(mealLog)); renderMealLog(); showToast(`Logged ${mealType}: ${desc} (${cals} cal)`,'success'); }
+        function logQuickMeal(){ showToast('Meal API is not available yet','error'); }
         function renderMealLog(){ let container=document.getElementById('mealLogList'); if(!container)return; container.innerHTML=mealLog.slice(0,5).map(m=>`<div class="flex justify-between bg-[var(--bg-secondary)] p-2 rounded-lg"><div><span class="text-xs font-bold">${m.meal}</span><p class="text-sm">${m.description}</p></div><span class="text-gold text-sm">${m.calories} cal</span></div>`).join(''); if(mealLog.length===0) container.innerHTML='<div class="text-muted text-center text-sm">No meals logged today.</div>'; }
         function openLogMealModal(){ openModal('Log Custom Meal',`<form onsubmit="event.preventDefault();customLogMeal();"><div><label class="text-xs">Meal Name</label><input id="customMealName" class="form-input mb-3" required></div><div><label class="text-xs">Calories</label><input id="customMealCal" type="number" class="form-input mb-4" required></div><button type="submit" class="btn-gold w-full py-2 rounded-xl">Log Meal</button></form>`); }
         function customLogMeal(){ let name=document.getElementById('customMealName').value; let cal=document.getElementById('customMealCal').value; if(name&&cal){ logQuickMeal('Custom',name,parseInt(cal)); closeModal();} }
 
         // Workout handling
-        function completeWorkout(workoutName){ workoutHistory.unshift({date:new Date().toLocaleDateString(),workout:workoutName,completed:true}); localStorage.setItem('clientWorkouts',JSON.stringify(workoutHistory)); renderWorkoutHistory(); clientData.streak+=1; updateDashboardUI(); showToast(`🔥 ${workoutName} completed! +1 day streak`,'success'); }
+        function completeWorkout(){ showToast('Workout API is not available yet','error'); }
         function renderWorkoutHistory(){ let container=document.getElementById('workoutHistoryList'); if(container) container.innerHTML=workoutHistory.slice(0,5).map(w=>`<div class="flex justify-between border-b border-[var(--border-color)] py-2"><span>${w.date}</span><span class="text-gold">${w.workout}</span><span class="text-green-400">✓</span></div>`).join(''); }
         function openLogWorkoutModal(){ openModal('Log Custom Workout',`<form onsubmit="event.preventDefault();customLogWorkout();"><div><label>Workout Name</label><input id="customWorkoutName" class="form-input mb-3" required></div><div><label>Duration (min)</label><input id="customWorkoutDur" type="number" class="form-input mb-4" required></div><button type="submit" class="btn-gold w-full py-2">Log Workout</button></form>`); }
         function customLogWorkout(){ let name=document.getElementById('customWorkoutName').value; if(name){ workoutHistory.unshift({date:new Date().toLocaleDateString(),workout:name,completed:true}); localStorage.setItem('clientWorkouts',JSON.stringify(workoutHistory)); renderWorkoutHistory(); clientData.streak+=1; updateDashboardUI(); showToast(`Custom workout "${name}" logged!`,'success'); closeModal();} }
         
         // weight & progress chart
         function openLogWeightModal(){ openModal('Log Weight',`<form onsubmit="event.preventDefault();addWeightEntry();"><div><label>Weight (kg)</label><input id="newWeightValue" type="number" step="0.1" class="form-input mb-4" required></div><button type="submit" class="btn-gold w-full">Save Weight</button></form>`); }
-        function addWeightEntry(){ let w=parseFloat(document.getElementById('newWeightValue').value); if(w){ weightLog.push({date:new Date().toISOString().slice(0,10),weight:w}); localStorage.setItem('clientWeightLog',JSON.stringify(weightLog)); clientData.weight=w; updateDashboardUI(); initProgressCharts(); showToast(`Weight updated to ${w}kg`,'success'); closeModal();} }
+        function addWeightEntry(){ showToast('Progress API is not available yet','error'); closeModal(); }
         function initProgressCharts(){ let ctx=document.getElementById('weightProgressChart')?.getContext('2d'); if(ctx&&weightChart)weightChart.destroy(); if(ctx){ let labels=weightLog.slice(-6).map(e=>e.date.slice(5)); let data=weightLog.slice(-6).map(e=>e.weight); weightChart=new Chart(ctx,{type:'line',data:{labels:labels,datasets:[{label:'Weight (kg)',data:data,borderColor:'#facc15',backgroundColor:'rgba(250,204,21,0.1)',fill:true,tension:0.2}]}});} }
         function initActivityChart(){ let ctx=document.getElementById('activityChart')?.getContext('2d'); if(ctx&&activityChart)activityChart.destroy(); if(ctx){ activityChart=new Chart(ctx,{type:'bar',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{label:'Workouts Completed',data:[1,1,0,1,1,0,0],backgroundColor:'#facc15',borderRadius:8}]}});} }
 
         // Messages (coach simulation)
-        let messageHistory = [{sender:'coach',text:'Hey James! How’s the upper body feeling?',time:'10:00 AM'},{sender:'client',text:'Feeling strong! Bench press PR today 💪',time:'10:15 AM'}];
+        let messageHistory = [];
         function renderMessages(){ let container=document.getElementById('chatMessagesContainer'); if(!container)return; container.innerHTML=messageHistory.map(m=>`<div class="mb-3 ${m.sender==='coach'?'text-left':'text-right'}"><div class="inline-block p-2 rounded-xl ${m.sender==='coach'?'bg-[var(--bg-secondary)] text-muted':'bg-gold/20 text-gold'} text-sm">${m.text}</div><div class="text-[0.6rem] text-muted mt-1">${m.time}</div></div>`).join(''); container.scrollTop=container.scrollHeight; }
-        function sendClientMessage(){ let input=document.getElementById('messageInput'); let txt=input.value.trim(); if(!txt)return; messageHistory.push({sender:'client',text:txt,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}); localStorage.setItem('clientMessages',JSON.stringify(messageHistory)); renderMessages(); input.value=''; setTimeout(()=>{messageHistory.push({sender:'coach',text:'Great work! Keep pushing 🔥',time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}); renderMessages();},1200); }
-        function loadMessages(){ let saved=localStorage.getItem('clientMessages'); if(saved)messageHistory=JSON.parse(saved); renderMessages(); }
+        function sendClientMessage(){ showToast('Messaging API is not available yet','error'); }
+        function loadMessages(){ renderMessages(); }
         
         // bookings, checkin modal
         function openCheckInModal(){ openModal('Daily Check-in',`<form onsubmit="event.preventDefault();showToast('Check-in submitted! Coach notified','success');closeModal();"><div><label>How are you feeling today?</label><select class="form-input my-2"><option>Energetic 🔥</option><option>Good 😊</option><option>Tired 😴</option></select></div><div><label>Notes for coach</label><textarea class="form-input mt-2" rows="2"></textarea></div><button type="submit" class="btn-gold w-full mt-4 py-2 rounded-xl">Submit Check-in</button></form>`); }
@@ -210,7 +211,7 @@
         // Theme & logout
         function toggleClientTheme(){ document.body.classList.toggle('light-theme'); let icon=document.getElementById('themeIcon'); icon.setAttribute('data-lucide',document.body.classList.contains('light-theme')?'sun':'moon'); if(window.lucide)lucide.createIcons(); localStorage.setItem('clientTheme',document.body.classList.contains('light-theme')?'light':'dark'); }
         function loadTheme(){ if(localStorage.getItem('clientTheme')==='light'){document.body.classList.add('light-theme');document.getElementById('themeIcon')?.setAttribute('data-lucide','sun');} else{document.getElementById('themeIcon')?.setAttribute('data-lucide','moon');} if(window.lucide)lucide.createIcons(); }
-        function logoutClient(){ localStorage.clear(); window.location.reload(); }
+        async function logoutClient(){ await fetch('api/logout.php',{method:'POST',credentials:'same-origin'}); window.location.replace('login.html'); }
         
         function setDate(){ let d=new Date(); document.getElementById('currentDate').innerText=d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
 

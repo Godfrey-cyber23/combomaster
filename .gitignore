@@ -1,4 +1,30 @@
-api/ 
-*.json 
-*.env
-.env 
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies and generated files
+node_modules/
+vendor/
+dist/
+build/
+coverage/
+
+# Frontend build output
+frontend/.cache/
+
+# Runtime data and logs
+storage/logs/*
+storage/uploads/*
+!storage/logs/.gitkeep
+!storage/uploads/.gitkeep
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/*.local.json
+
+# Local database dumps and credentials
+*.sql.gz
+*.pem
+*service-account*.json

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Payment status — ComboMaster Fitness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="min-h-screen bg-black text-white antialiased">
+    <main class="min-h-screen flex items-center justify-center px-4 py-12">
+        <section class="glass-card w-full max-w-lg rounded-2xl p-7 sm:p-10 text-center">
+            <p class="text-xs uppercase tracking-[0.25em] text-gold">ComboMaster Fitness</p>
+            <h1 class="mt-4 font-display text-3xl font-semibold">Payment status</h1>
+            <p id="payment-status" class="mt-4 text-muted-custom" role="status" aria-live="polite">Checking your payment with Flutterwave…</p>
+            <p id="payment-reference" class="mt-3 break-all text-xs text-muted-custom"></p>
+            <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                <a href="shop.html" class="btn-gold rounded-lg px-5 py-3 text-sm font-semibold">Return to shop</a>
+                <button id="payment-retry" type="button" class="btn-outline rounded-lg px-5 py-3 text-sm font-semibold" hidden>Check again</button>
+            </div>
+        </section>
+    </main>
+    <script>
+        (function () {
+            var status = document.getElementById('payment-status');
+            var referenceEl = document.getElementById('payment-reference');
+            var retry = document.getElementById('payment-retry');
+            var reference = new URLSearchParams(window.location.search).get('tx_ref') || '';
+            var referencePattern = /^[0-9a-f-]{36}$/i;
+
+            if (!referencePattern.test(reference)) {
+                status.textContent = 'We could not find your order reference. Please contact the store for help.';
+                return;
+            }
+            referenceEl.textContent = 'Order reference: ' + reference;
+
+            async function checkPayment() {
+                retry.hidden = true;
+                status.textContent = 'Checking your payment with Flutterwave…';
+                try {
+                    var response = await fetch('/api/payments/' + encodeURIComponent(reference), {
+                        credentials: 'same-origin'
+                    });
+                    var order = await response.json();
+                    if (!response.ok) throw new Error(order.error || 'Order status could not be checked.');
+                    if (order.status === 'successful') {
+                        status.textContent = 'Payment confirmed. Thank you for your order of ZMW ' +
+                            Number(order.amount).toLocaleString('en-ZM', { minimumFractionDigits: 2 });
+                        localStorage.removeItem('cm-shop-cart');
+                    } else if (order.status === 'failed') {
+                        status.textContent = 'Payment was not completed. Your cart is saved so you can try again.';
+                    } else {
+                        status.textContent = 'Your payment is still being confirmed. Please check again shortly.';
+                        retry.hidden = false;
+                    }
+                } catch (error) {
+                    status.textContent = error.message || 'Order status could not be checked.';
+                    retry.hidden = false;
+                }
+            }
+
+            retry.addEventListener('click', checkPayment);
+            checkPayment();
+        })();
+    </script>
+</body>
+</html>

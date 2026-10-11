@@ -35,7 +35,7 @@ test('the Node server serves auth and dashboard pages with the shared API client
     for (const page of [
       'login.html', 'signup.html', 'client-dashboard.html', 'admin-dashboard.html',
       'index.html', 'about.html', 'services.html', 'membership.html',
-      'mealplans.html', 'shop.html', 'transformations.html', 'contact.html'
+      'mealplans.html', 'shop.html', 'payment-result.html', 'transformations.html', 'contact.html'
     ]) {
       const response = await fetch(`${baseUrl}/${page}`);
       assert.equal(response.status, 200, `${page} should be served`);
@@ -48,6 +48,28 @@ test('the Node server serves auth and dashboard pages with the shared API client
       }
       assert.doesNotMatch(html, /api\/auth_guard\.js/, `${page} should not depend on the legacy PHP guard`);
     }
+  });
+});
+
+test('shop checkout is unavailable until Flutterwave is configured', {
+  skip: Boolean(config.flutterwaveSecretKey && config.flutterwaveWebhookSecretHash && config.publicAppUrl)
+}, async () => {
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/payments/checkout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    assert.equal(response.status, 503);
+    assert.match((await response.json()).error, /Flutterwave checkout is not configured/);
+  });
+});
+
+test('payment status rejects malformed order references without querying the database', async () => {
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/payments/not-an-order-reference`);
+    assert.equal(response.status, 404);
+    assert.deepEqual(await response.json(), { error: 'Order not found.' });
   });
 });
 

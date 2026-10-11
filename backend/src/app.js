@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth');
 const clientRoutes = require('./routes/client');
 const adminRoutes = require('./routes/admin');
 const contentRoutes = require('./routes/content');
+const paymentRoutes = require('./routes/payments');
 
 const app = express();
 const publicDirectory = path.resolve(__dirname, '../../frontend/public');
@@ -52,6 +53,7 @@ app.get('/api/health', async (_request, response) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/client', clientRoutes);
+app.use('/api/payments', paymentRoutes);
 app.use('/api', contentRoutes);
 app.use('/api/admin', adminRoutes);
 

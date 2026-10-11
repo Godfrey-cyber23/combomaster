@@ -72,10 +72,21 @@ site catalog the first time staff opens the corresponding page editor.
 
 Never expose an endpoint that lets a browser assign itself the `admin` role.
 The browser and API are served from the same origin at `http://localhost:3000`.
-The shop cart is stored in the visitor's browser. Its card and mobile-money
-choices are interface-only: the production dashboard currently uses no
-payment provider, so revenue and order processing must not be treated as live
-until a provider and verified webhook are configured.
+The shop cart is stored in the visitor's browser. Checkout uses Flutterwave
+Standard in ZMW for card or Zambian mobile money. Before enabling checkout,
+set `PUBLIC_APP_URL` to the public HTTPS origin, configure
+`FLUTTERWAVE_SECRET_KEY` and `FLUTTERWAVE_WEBHOOK_SECRET_HASH` in the private
+server `.env`, and apply database migrations. In the Flutterwave dashboard,
+enable card and Zambia mobile money, turn off dashboard payment options if
+using per-checkout payment choices, and set the webhook URL to
+`https://your-domain.example/api/payments/webhook` with the same secret hash.
+Zambian mobile money requires a Zambian merchant account or Flutterwave approval.
+Open the shop content manager once to initialize its published product catalog
+before accepting orders; checkout prices are always read from that server-side
+catalog, never from browser-submitted prices.
+Use Flutterwave test credentials and test the full callback/webhook flow before
+switching to live credentials. Paid orders are recorded only after the server
+verifies their transaction, amount, currency, and reference with Flutterwave.
 
 Uploaded images are stored under `storage/uploads` and served through the
 validated `/api/media/` endpoint. Keep that directory private from direct static

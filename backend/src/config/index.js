@@ -19,6 +19,9 @@ module.exports = {
     user: process.env.DB_USERNAME || 'combomaster_app',
     password: process.env.DB_PASSWORD || ''
   },
+  publicAppUrl: process.env.PUBLIC_APP_URL || '',
+  flutterwaveSecretKey: process.env.FLUTTERWAVE_SECRET_KEY || '',
+  flutterwaveWebhookSecretHash: process.env.FLUTTERWAVE_WEBHOOK_SECRET_HASH || '',
   uploadDirectory: path.resolve(__dirname, '../../../storage/uploads'),
   migrationDatabase: {
     user: process.env.DB_MIGRATION_USERNAME || process.env.DB_USERNAME || 'combomaster_migrator',

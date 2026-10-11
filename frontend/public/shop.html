@@ -1099,12 +1099,22 @@
                         </label>
                     </div>
                 </fieldset>
-                <p class="mt-4 rounded-lg border border-gold/30 bg-gold/10 p-3 text-xs leading-relaxed text-muted-custom">
-                    Online payments are not set up yet. No card or mobile money payment will be collected. Please contact ComboMaster to complete your order.
-                </p>
-                <button class="btn-gold mt-4 w-full rounded-lg py-3 text-sm font-bold opacity-60" type="button" disabled>
-                    Payments not available yet
-                </button>
+                <form id="checkout-form" class="mt-5 grid gap-3">
+                    <h3 class="text-sm font-semibold">Contact details</h3>
+                    <label class="grid gap-1 text-xs text-muted-custom" for="checkout-name">Full name
+                        <input id="checkout-name" name="name" required minlength="2" maxlength="100" autocomplete="name" class="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-inherit">
+                    </label>
+                    <label class="grid gap-1 text-xs text-muted-custom" for="checkout-email">Email address
+                        <input id="checkout-email" name="email" required type="email" maxlength="254" autocomplete="email" class="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-inherit">
+                    </label>
+                    <label class="grid gap-1 text-xs text-muted-custom" for="checkout-phone">Phone number <span class="text-muted-custom">(required for mobile money)</span>
+                        <input id="checkout-phone" name="phone" type="tel" maxlength="32" autocomplete="tel" class="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-inherit">
+                    </label>
+                    <p id="checkout-error" role="alert" class="text-sm text-red-400" hidden></p>
+                    <button id="checkout-submit" class="btn-gold w-full rounded-lg py-3 text-sm font-bold" type="submit">
+                        Continue to secure payment
+                    </button>
+                </form>
                 <button id="cart-clear" class="mt-3 w-full py-2 text-xs text-muted-custom hover:text-gold" type="button">Clear cart</button>
             </section>
         </aside>
@@ -1405,6 +1415,50 @@
             cartItems = [];
             saveCart();
             renderCart();
+        });
+        document.getElementById('checkout-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            if (!cartItems.length) return;
+            var submit = document.getElementById('checkout-submit');
+            var error = document.getElementById('checkout-error');
+            var paymentMethod = document.querySelector('input[name="cart-payment-method"]:checked');
+            var phone = document.getElementById('checkout-phone').value;
+            if (paymentMethod && paymentMethod.value === 'mobile' && !phone.trim()) {
+                error.textContent = 'Enter your phone number to pay with mobile money.';
+                error.hidden = false;
+                document.getElementById('checkout-phone').focus();
+                return;
+            }
+            submit.disabled = true;
+            submit.textContent = 'Connecting to Flutterwave…';
+            error.hidden = true;
+            try {
+                var response = await fetch('/api/payments/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        customer: {
+                            name: document.getElementById('checkout-name').value,
+                            email: document.getElementById('checkout-email').value,
+                            phone: phone
+                        },
+                        payment_method: paymentMethod ? paymentMethod.value : 'card',
+                        items: cartItems.map(function (item) {
+                            return { name: item.name, quantity: item.quantity };
+                        })
+                    })
+                });
+                var result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Unable to start payment.');
+                window.location.assign(result.checkout_url);
+            } catch (checkoutError) {
+                error.textContent = checkoutError.message || 'Unable to start payment. Please try again.';
+                error.hidden = false;
+            } finally {
+                submit.disabled = false;
+                submit.textContent = 'Continue to secure payment';
+            }
         });
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') closeCart();

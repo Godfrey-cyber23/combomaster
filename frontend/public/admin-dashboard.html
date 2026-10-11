@@ -156,7 +156,6 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="api/auth_guard.js" data-role="admin"></script>
     <script>
         // ---------- GLOBALS ----------
         let revenueChart, salesChart, donutChart;
@@ -189,7 +188,8 @@
         // Theme loader
         function loadTheme(){ if(localStorage.getItem('adminTheme')==='light'){document.body.classList.add('light-theme');document.getElementById('themeIcon')?.setAttribute('data-lucide','sun');} else{document.getElementById('themeIcon')?.setAttribute('data-lucide','moon');} if(window.lucide)lucide.createIcons(); }
 
-        document.addEventListener('DOMContentLoaded',()=>{ loadTheme(); initNavigation(); setupMobileMenu(); initCharts(); if(window.lucide)lucide.createIcons(); setTimeout(()=>{ showToast('Admin dashboard ready | Full business control','success'); },600); });
+        document.addEventListener('DOMContentLoaded',()=>{ loadTheme(); initNavigation(); setupMobileMenu(); initCharts(); if(window.lucide)lucide.createIcons(); });
     </script>
+    <script src="assets/js/api.js"></script>
 </body>
 </html>

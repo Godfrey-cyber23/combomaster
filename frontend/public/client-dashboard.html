@@ -160,7 +160,6 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="api/auth_guard.js" data-role="client"></script>
     <script>
         // ---------- CLIENT STATE ----------
         let activityChart, weightChart;
@@ -222,5 +221,6 @@
             window.addEventListener('click',(e)=>{let s=document.getElementById('clientSidebar'); if(window.innerWidth<1024 && s && !s.contains(e.target) && e.target!==document.getElementById('mobileMenuBtn')) s.classList.remove('mobile-open');});
         });
     </script>
+    <script src="assets/js/api.js"></script>
 </body>
 </html>

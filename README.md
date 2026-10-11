@@ -72,9 +72,10 @@ site catalog the first time staff opens the corresponding page editor.
 
 Never expose an endpoint that lets a browser assign itself the `admin` role.
 The browser and API are served from the same origin at `http://localhost:3000`.
-The production dashboard currently uses no payment provider; revenue and order
-processing must not be treated as live until a provider and verified webhook
-are configured.
+The shop cart is stored in the visitor's browser. Its card and mobile-money
+choices are interface-only: the production dashboard currently uses no
+payment provider, so revenue and order processing must not be treated as live
+until a provider and verified webhook are configured.
 
 Uploaded images are stored under `storage/uploads` and served through the
 validated `/api/media/` endpoint. Keep that directory private from direct static

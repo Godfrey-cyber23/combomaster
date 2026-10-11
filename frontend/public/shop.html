@@ -764,6 +764,142 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
+        .cart-trigger {
+            position: fixed;
+            right: 1rem;
+            bottom: 1.25rem;
+            z-index: 80;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(var(--gold-rgb), 0.45);
+            border-radius: 9999px;
+            background: var(--card-bg-solid);
+            color: var(--text-main);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .cart-trigger-count {
+            display: grid;
+            place-items: center;
+            min-width: 1.4rem;
+            height: 1.4rem;
+            padding: 0 0.3rem;
+            border-radius: 9999px;
+            background: var(--gold);
+            color: #050505;
+            font-size: 0.7rem;
+        }
+
+        .cart-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .cart-overlay[hidden] {
+            display: none;
+        }
+
+        .cart-backdrop {
+            position: absolute;
+            inset: 0;
+            border: 0;
+            background: rgba(0, 0, 0, 0.68);
+            cursor: default;
+        }
+
+        .cart-panel {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: min(100%, 30rem);
+            height: 100%;
+            padding: 1.25rem;
+            overflow-y: auto;
+            border-left: 1px solid var(--border-color);
+            background: var(--bg-base);
+            box-shadow: -12px 0 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+            gap: 0.85rem;
+            align-items: center;
+            padding: 0.9rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-item-image {
+            width: 4.5rem;
+            height: 4.5rem;
+            border-radius: 0.6rem;
+            background: var(--bg-secondary);
+            object-fit: cover;
+        }
+
+        .cart-quantity-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin-top: 0.5rem;
+        }
+
+        .cart-quantity-control button,
+        .cart-remove {
+            border: 1px solid var(--border-color);
+            border-radius: 0.4rem;
+            background: var(--bg-secondary);
+            color: var(--text-main);
+        }
+
+        .cart-quantity-control button {
+            width: 1.8rem;
+            height: 1.8rem;
+        }
+
+        .cart-remove {
+            padding: 0.4rem;
+            color: var(--text-muted);
+        }
+
+        .payment-choice {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7rem;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.7rem;
+            cursor: pointer;
+        }
+
+        .payment-choice:has(input:checked) {
+            border-color: var(--gold);
+            background: rgba(var(--gold-rgb), 0.08);
+        }
+
+        .payment-choice input {
+            margin-top: 0.2rem;
+            accent-color: var(--gold);
+        }
+
+        @media (max-width: 480px) {
+            .cart-panel {
+                padding: 1rem;
+            }
+
+            .cart-trigger {
+                right: 0.75rem;
+                bottom: 0.75rem;
+            }
+        }
+
         /* ===== REDUCED MOTION ===== */
         @media (prefers-reduced-motion: reduce) {
 
@@ -923,6 +1059,57 @@
         </div>
     </section>
 
+    <button id="cart-trigger" class="cart-trigger" type="button" aria-controls="cart-panel" aria-expanded="false">
+        <i data-lucide="shopping-bag" class="w-5 h-5 text-gold" aria-hidden="true"></i>
+        <span>Cart</span>
+        <span id="cart-trigger-count" class="cart-trigger-count" aria-label="0 items" aria-live="polite">0</span>
+    </button>
+
+    <div id="cart-overlay" class="cart-overlay" hidden>
+        <button class="cart-backdrop" type="button" data-cart-close aria-label="Close cart"></button>
+        <aside id="cart-panel" class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cart-title" tabindex="-1">
+            <header class="flex items-center justify-between gap-4 pb-4 border-b border-white/10">
+                <div>
+                    <h2 id="cart-title" class="font-display text-2xl font-semibold">Your Cart</h2>
+                    <p id="cart-item-count" class="text-xs text-muted-custom mt-1">0 items</p>
+                </div>
+                <button type="button" class="btn-outline px-3 py-2 rounded-lg text-sm" data-cart-close aria-label="Close cart">Close</button>
+            </header>
+
+            <div id="cart-items" class="flex-1"></div>
+            <div id="cart-empty" class="py-12 text-center text-sm text-muted-custom" hidden>
+                Your cart is empty. Add products from the shop to see them here.
+            </div>
+
+            <section id="cart-checkout" class="pt-5" hidden aria-labelledby="checkout-title">
+                <div class="flex items-center justify-between font-semibold">
+                    <h3 id="checkout-title">Order total</h3>
+                    <span id="cart-total" class="font-display text-xl text-gold"></span>
+                </div>
+                <fieldset class="mt-5">
+                    <legend class="mb-3 text-sm font-semibold">Choose a payment method</legend>
+                    <div class="grid gap-2">
+                        <label class="payment-choice">
+                            <input type="radio" name="cart-payment-method" value="card" checked>
+                            <span><strong class="block text-sm">Card</strong><span class="block text-xs text-muted-custom mt-1">Credit or debit card</span></span>
+                        </label>
+                        <label class="payment-choice">
+                            <input type="radio" name="cart-payment-method" value="mobile">
+                            <span><strong class="block text-sm">Mobile money</strong><span class="block text-xs text-muted-custom mt-1">Pay with your mobile money provider</span></span>
+                        </label>
+                    </div>
+                </fieldset>
+                <p class="mt-4 rounded-lg border border-gold/30 bg-gold/10 p-3 text-xs leading-relaxed text-muted-custom">
+                    Online payments are not set up yet. No card or mobile money payment will be collected. Please contact ComboMaster to complete your order.
+                </p>
+                <button class="btn-gold mt-4 w-full rounded-lg py-3 text-sm font-bold opacity-60" type="button" disabled>
+                    Payments not available yet
+                </button>
+                <button id="cart-clear" class="mt-3 w-full py-2 text-xs text-muted-custom hover:text-gold" type="button">Clear cart</button>
+            </section>
+        </aside>
+    </div>
+
     <!-- Footer -->
     <div id="site-footer"></div>
 
@@ -997,6 +1184,7 @@
                 return createProductCard(p, (i % 4) * 0.05);
             }).join('');
         });
+        if (cartReady) refreshCartProductDetails();
     }
 
     // ===== HTML-escape (names with quotes/apostrophes stay safe) =====
@@ -1008,15 +1196,170 @@
 
     // ===== CART — event delegation: works for ALL .btn-cart buttons,
     // even ones added to the DOM later =====
+    var cartStorageKey = 'cm-shop-cart';
+    var cartItems = [];
+    var cartReady = false;
+    var lastCartFocus = null;
+    var previousBodyOverflow = '';
+
+    function findProduct(name) {
+        var categories = Object.keys(PRODUCTS);
+        for (var i = 0; i < categories.length; i++) {
+            var product = PRODUCTS[categories[i]].find(function (item) { return item.name === name; });
+            if (product) return product;
+        }
+        return null;
+    }
+
+    function parsePrice(price) {
+        var match = String(price).replace(/,/g, '').match(/\d+(?:\.\d{1,2})?/);
+        if (!match) return null;
+        var amount = Number(match[0]);
+        return Number.isFinite(amount) && amount >= 0 ? amount : null;
+    }
+
+    function formatTotal(amount) {
+        return 'K' + amount.toLocaleString('en-ZM', {
+            minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    function saveCart() {
+        try {
+            localStorage.setItem(cartStorageKey, JSON.stringify(cartItems));
+        } catch (error) {
+            console.error('[shop] Could not save the cart:', error);
+            showToast('Cart changes could not be saved on this device.');
+        }
+    }
+
+    function loadCart() {
+        try {
+            var saved = localStorage.getItem(cartStorageKey);
+            if (!saved) return [];
+            var parsed = JSON.parse(saved);
+            if (!Array.isArray(parsed)) throw new Error('Saved cart is not a list');
+            return parsed.filter(function (item) {
+                return item && typeof item.name === 'string' &&
+                    typeof item.price === 'string' && Number.isInteger(item.quantity) &&
+                    item.quantity > 0 && item.quantity <= 99;
+            });
+        } catch (error) {
+            console.error('[shop] Could not restore the cart:', error);
+            showToast('Your saved cart could not be restored.');
+            return [];
+        }
+    }
+
+    function refreshCartProductDetails() {
+        cartItems = cartItems.map(function (item) {
+            var product = findProduct(item.name);
+            return product ? {
+                name: product.name,
+                unit: product.unit,
+                price: product.price,
+                img: product.img || '',
+                quantity: item.quantity
+            } : item;
+        });
+        renderCart();
+        saveCart();
+    }
+
+    function renderCart() {
+        var list = document.getElementById('cart-items');
+        var empty = document.getElementById('cart-empty');
+        var checkout = document.getElementById('cart-checkout');
+        var triggerCount = document.getElementById('cart-trigger-count');
+        var itemCount = cartItems.reduce(function (sum, item) { return sum + item.quantity; }, 0);
+
+        triggerCount.textContent = String(itemCount);
+        triggerCount.setAttribute('aria-label', itemCount + (itemCount === 1 ? ' item' : ' items'));
+        document.getElementById('cart-item-count').textContent = itemCount + (itemCount === 1 ? ' item' : ' items');
+        empty.hidden = cartItems.length > 0;
+        checkout.hidden = cartItems.length === 0;
+
+        list.innerHTML = cartItems.map(function (item) {
+            var image = item.img
+                ? '<img class="cart-item-image" src="' + esc(item.img) + '" alt="" loading="lazy">'
+                : '<div class="cart-item-image" aria-hidden="true"></div>';
+            var lineTotal = parsePrice(item.price);
+            return '<article class="cart-item">' + image +
+                '<div class="min-w-0"><h3 class="text-sm font-semibold">' + esc(item.name) + '</h3>' +
+                '<p class="mt-1 text-xs text-muted-custom">' + esc(item.unit || '') + '</p>' +
+                '<p class="mt-1 text-sm text-gold">' + esc(item.price) + (lineTotal === null ? '' : ' each') + '</p>' +
+                (lineTotal === null ? '' : '<p class="mt-1 text-xs text-muted-custom">Subtotal: ' + formatTotal(lineTotal * item.quantity) + '</p>') +
+                '<div class="cart-quantity-control" aria-label="Quantity">' +
+                '<button type="button" data-cart-action="decrease" data-cart-name="' + esc(item.name) + '" aria-label="Decrease quantity of ' + esc(item.name) + '">−</button>' +
+                '<span aria-live="polite">' + item.quantity + '</span>' +
+                '<button type="button" data-cart-action="increase" data-cart-name="' + esc(item.name) + '" aria-label="Increase quantity of ' + esc(item.name) + '">+</button>' +
+                '</div></div>' +
+                '<button class="cart-remove" type="button" data-cart-action="remove" data-cart-name="' + esc(item.name) + '" aria-label="Remove ' + esc(item.name) + ' from cart"><i data-lucide="trash-2" class="w-4 h-4" aria-hidden="true"></i></button>' +
+                '</article>';
+        }).join('');
+
+        var total = 0;
+        var allPricesAvailable = cartItems.every(function (item) {
+            var price = parsePrice(item.price);
+            if (price === null) return false;
+            total += price * item.quantity;
+            return true;
+        });
+        document.getElementById('cart-total').textContent = allPricesAvailable ? formatTotal(total) : 'Price unavailable';
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function openCart(focusTarget) {
+        var overlay = document.getElementById('cart-overlay');
+        lastCartFocus = focusTarget || document.activeElement;
+        previousBodyOverflow = document.body.style.overflow;
+        overlay.hidden = false;
+        document.body.style.overflow = 'hidden';
+        document.getElementById('cart-trigger').setAttribute('aria-expanded', 'true');
+        overlay.querySelector('[data-cart-close]:not(.cart-backdrop)').focus();
+    }
+
+    function closeCart() {
+        var overlay = document.getElementById('cart-overlay');
+        if (overlay.hidden) return;
+        overlay.hidden = true;
+        document.body.style.overflow = previousBodyOverflow;
+        document.getElementById('cart-trigger').setAttribute('aria-expanded', 'false');
+        if (lastCartFocus && document.contains(lastCartFocus)) lastCartFocus.focus();
+        else document.getElementById('cart-trigger').focus();
+    }
+
     function initCartButtons() {
         document.addEventListener('click', function (e) {
-            var btn = e.target.closest('.btn-cart');
+            var target = e.target instanceof Element ? e.target : null;
+            var btn = target && target.closest('.btn-cart');
             if (!btn) return;
             addToCart(btn.getAttribute('data-name'), btn);
         });
     }
 
     function addToCart(name, btn) {
+        var product = findProduct(name);
+        if (!product) {
+            showToast('This product is no longer available.');
+            return;
+        }
+        var existing = cartItems.find(function (item) { return item.name === product.name; });
+        if (existing) {
+            existing.quantity = Math.min(99, existing.quantity + 1);
+        } else {
+            cartItems.push({
+                name: product.name,
+                unit: product.unit,
+                price: product.price,
+                img: product.img || '',
+                quantity: 1
+            });
+        }
+        saveCart();
+        renderCart();
+        openCart(btn);
         showToast(name + ' added to cart!');
         if (btn && !btn.classList.contains('added')) {
             var originalHTML = btn.innerHTML;
@@ -1029,6 +1372,43 @@
                 if (window.lucide) lucide.createIcons();
             }, 1500);
         }
+    }
+
+    function initCartPanel() {
+        cartItems = loadCart();
+        cartReady = true;
+        refreshCartProductDetails();
+        document.getElementById('cart-trigger').addEventListener('click', function () {
+            openCart(this);
+        });
+        document.getElementById('cart-overlay').addEventListener('click', function (event) {
+            var target = event.target instanceof Element ? event.target : null;
+            var closeButton = target && target.closest('[data-cart-close]');
+            if (closeButton) closeCart();
+
+            var actionButton = target && target.closest('[data-cart-action]');
+            if (!actionButton) return;
+            var item = cartItems.find(function (entry) {
+                return entry.name === actionButton.getAttribute('data-cart-name');
+            });
+            if (!item) return;
+            var action = actionButton.getAttribute('data-cart-action');
+            if (action === 'increase') item.quantity = Math.min(99, item.quantity + 1);
+            if (action === 'decrease') item.quantity = Math.max(1, item.quantity - 1);
+            if (action === 'remove') {
+                cartItems = cartItems.filter(function (entry) { return entry !== item; });
+            }
+            saveCart();
+            renderCart();
+        });
+        document.getElementById('cart-clear').addEventListener('click', function () {
+            cartItems = [];
+            saveCart();
+            renderCart();
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') closeCart();
+        });
     }
 
     // ===== TOAST =====
@@ -1105,6 +1485,7 @@
     // ===== INIT =====
     document.addEventListener('DOMContentLoaded', function () {
         renderProducts();      // build all cards + cart buttons from data
+        initCartPanel();       // restore and display the persistent cart
         initCartButtons();     // wire up clicks via delegation
         initScrollReveal();    // AFTER render, so cards animate in
         initHeroParallax();

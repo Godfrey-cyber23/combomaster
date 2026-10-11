@@ -57,11 +57,29 @@ promote it directly in MySQL using its exact email:
 UPDATE users SET role = 'admin' WHERE email = 'admin@example.com';
 ```
 
+Promote a coach with the same controlled database access:
+
+```sql
+UPDATE users SET role = 'coach' WHERE email = 'coach@example.com';
+```
+
+Admins and coaches can use
+the **Edit this page** button on the home, about, services, membership, meal
+plans, shop, transformations, and contact pages to edit existing headings,
+paragraphs, and images, add/remove content blocks, and manage the meal-plan and
+shop catalogs. Product and meal-plan records are initialized from the current
+site catalog the first time staff opens the corresponding page editor.
+
 Never expose an endpoint that lets a browser assign itself the `admin` role.
 The browser and API are served from the same origin at `http://localhost:3000`.
 The production dashboard currently uses no payment provider; revenue and order
 processing must not be treated as live until a provider and verified webhook
 are configured.
+
+Uploaded images are stored under `storage/uploads` and served through the
+validated `/api/media/` endpoint. Keep that directory private from direct static
+serving and include it in your protected production backup/persistent storage
+configuration.
 
 ## Commands
 

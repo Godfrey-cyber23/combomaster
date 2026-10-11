@@ -19,6 +19,7 @@ module.exports = {
     user: process.env.DB_USERNAME || 'combomaster_app',
     password: process.env.DB_PASSWORD || ''
   },
+  uploadDirectory: path.resolve(__dirname, '../../../storage/uploads'),
   migrationDatabase: {
     user: process.env.DB_MIGRATION_USERNAME || process.env.DB_USERNAME || 'combomaster_migrator',
     password: process.env.DB_MIGRATION_PASSWORD || process.env.DB_PASSWORD || ''

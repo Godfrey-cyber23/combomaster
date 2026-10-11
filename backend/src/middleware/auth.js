@@ -44,4 +44,11 @@ function requireRole(role) {
   };
 }
 
-module.exports = { requireAuth, requireRole };
+function requireStaff(request, response, next) {
+  if (!['admin', 'coach'].includes(request.auth?.role)) {
+    return response.status(403).json({ error: 'Administrator or coach access is required' });
+  }
+  return next();
+}
+
+module.exports = { requireAuth, requireRole, requireStaff };

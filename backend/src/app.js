@@ -1,11 +1,13 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
 const path = require('node:path');
 const pool = require('./db');
 const config = require('./config');
 const authRoutes = require('./routes/auth');
 const clientRoutes = require('./routes/client');
 const adminRoutes = require('./routes/admin');
+const contentRoutes = require('./routes/content');
 
 const app = express();
 const publicDirectory = path.resolve(__dirname, '../../frontend/public');
@@ -50,6 +52,7 @@ app.get('/api/health', async (_request, response) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/client', clientRoutes);
+app.use('/api', contentRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.use(express.static(publicDirectory));
@@ -63,6 +66,12 @@ app.get('{*splat}', (_request, response) => {
 });
 
 app.use((error, _request, response, _next) => {
+  if (error instanceof multer.MulterError) {
+    const status = error.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
+    return response.status(status).json({
+      error: status === 413 ? 'Image must be 5 MB or smaller' : 'Image upload is invalid'
+    });
+  }
   console.error('[api] Request failed:', error.code || error.message);
   if (response.headersSent) return;
   if (error.type === 'entity.parse.failed') {

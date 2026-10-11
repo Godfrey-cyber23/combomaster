@@ -432,5 +432,6 @@
         function initNavScroll(){ let nav=document.getElementById('navbar'); window.addEventListener('scroll',()=>{if(window.scrollY>60)nav.classList.add('nav-scrolled'); else nav.classList.remove('nav-scrolled');}); }
         document.addEventListener('DOMContentLoaded',()=>{ initTheme(); initMobile(); initScrollReveal(); initNavScroll(); if(window.lucide)lucide.createIcons(); document.getElementById('theme-toggle-desktop')?.addEventListener('click',toggleTheme); document.getElementById('theme-toggle-mobile')?.addEventListener('click',toggleTheme); });
     </script>
+    <script src="assets/js/site-cms.js"></script>
 </body>
 </html>

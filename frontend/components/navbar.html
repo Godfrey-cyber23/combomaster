@@ -1,0 +1,73 @@
+
+<!-- ============ SHARED NAVBAR (injected by layout.js) ============ -->
+
+<!-- Urgency Bar -->
+<div class="urgency-bar relative z-50 py-2.5 px-4 text-center">
+  <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
+    <i data-lucide="flame" class="w-4 h-4 text-gold flex-shrink-0"></i>
+    <span class="text-xs sm:text-sm font-semibold text-gold">NEW MEMBER SPECIAL</span>
+    <span class="text-xs sm:text-sm text-muted-custom">— 40% off your first month. Limited spots remaining.</span>
+    <a href="membership.html" class="text-xs sm:text-sm font-bold text-gold underline underline-offset-2 hover:text-white transition-colors ml-1">Claim Now →</a>
+  </div>
+</div>
+
+<!-- Navigation -->
+<nav id="navbar" class="fixed left-0 right-0 z-50" style="top: 0;">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center justify-between py-4">
+
+      <a href="index.html" class="flex items-center gap-3 group">
+        <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788711230/gym_logo.jpg" alt="ComboMaster Fitness" class="h-10 w-auto">
+        <div class="hidden sm:block">
+          <span class="font-display text-xl tracking-wide font-medium text-gold group-hover:text-white transition-colors">COMBOMASTER</span>
+          <span class="block text-[0.6rem] tracking-[0.3em] uppercase text-muted-custom -mt-1">FITNESS</span>
+        </div>
+      </a>
+
+      <!-- Desktop links (active state is set automatically by layout.js) -->
+      <div class="hidden lg:flex items-center gap-6">
+        <a href="index.html" class="nav-link text-sm tracking-wide transition-colors text-muted-custom hover:text-brand-gold">Home</a>
+        <a href="mealplans.html" class="nav-link text-sm tracking-wide transition-colors text-muted-custom hover:text-brand-gold">Meal Plans</a>
+        <a href="services.html" class="nav-link text-sm tracking-wide transition-colors text-muted-custom hover:text-brand-gold">Services</a>
+        <a href="shop.html" class="nav-link text-sm tracking-wide transition-colors text-muted-custom hover:text-brand-gold">Shop</a>
+        <a href="transformations.html" class="nav-link text-sm tracking-wide transition-colors text-muted-custom hover:text-brand-gold">Results</a>
+        <a href="contact.html" class="nav-link text-sm tracking-wide transition-colors text-muted-custom hover:text-brand-gold">Contact</a>
+        <a href="about.html" class="nav-link text-sm tracking-wide transition-colors text-muted-custom hover:text-brand-gold">About</a>
+      </div>
+
+      <div class="hidden lg:flex items-center gap-3">
+        <button id="theme-toggle-desktop" class="theme-toggle-btn" aria-label="Toggle light/dark mode">
+          <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-desktop"></i>
+        </button>
+        <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
+        <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase cta-pulse">Join Now</a>
+      </div>
+
+      <div class="lg:hidden flex items-center gap-2">
+        <button id="theme-toggle-mobile" class="theme-toggle-btn p-2" aria-label="Toggle theme">
+          <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-mobile"></i>
+        </button>
+        <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-brand-gold transition-colors" aria-label="Toggle menu">
+          <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="mobile-menu lg:hidden">
+      <div class="pb-6 space-y-1">
+        <a href="index.html" class="mobile-nav-link block py-3 px-4 text-muted-custom hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Home</a>
+        <a href="about.html" class="mobile-nav-link block py-3 px-4 text-muted-custom hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">About</a>
+        <a href="services.html" class="mobile-nav-link block py-3 px-4 text-muted-custom hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Services</a>
+        <a href="mealplans.html" class="mobile-nav-link block py-3 px-4 text-muted-custom hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Meal Plans</a>
+        <a href="shop.html" class="mobile-nav-link block py-3 px-4 text-muted-custom hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Shop</a>
+        <a href="transformations.html" class="mobile-nav-link block py-3 px-4 text-muted-custom hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Transformations</a>
+        <a href="contact.html" class="mobile-nav-link block py-3 px-4 text-muted-custom hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Contact</a>
+        <div class="pt-3 flex gap-2 px-4">
+          <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
+          <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold cta-pulse">Join Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

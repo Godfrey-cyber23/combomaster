@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformations — ComboMaster Fitness | Real Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            gold: 'rgb(var(--gold-rgb) / <alpha-value>)',
+                            dark: 'var(--bg-base)',
+                            darker: 'var(--bg-secondary)',
+                            card: 'var(--card-bg-solid)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-secondary: #0F0F0F;
+            --bg-card: rgba(26, 26, 26, 0.6);
+            --text-main: #F5F5F0;
+            --text-muted: #a3a3a3;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --gold-rgb: 212 168 83;
+            --gold: rgb(var(--gold-rgb));
+            --gold-accent: #B8943F;
+            --card-bg-solid: #1A1A1A;
+            --nav-bg: rgba(5, 5, 5, 0.9);
+            --toast-bg: rgba(26, 26, 26, 0.9);
+        }
+
+        body.light-theme {
+            --bg-base: #f8f9fc;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.8);
+            --text-main: #1e1e2a;
+            --text-muted: #4b5563;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --gold-rgb: 184 134 11;
+            --gold-accent: #9a7209;
+            --card-bg-solid: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --toast-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { overflow-x: hidden; scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .font-display { font-family: 'Oswald', sans-serif; }
+        .text-gold { color: var(--gold); }
+        .text-gradient {
+            background: linear-gradient(135deg, var(--gold), #f5dfa0, var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .text-muted-custom { color: var(--text-muted); }
+
+        /* Navigation */
+        nav {
+            z-index: 50;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+        }
+        nav.nav-scrolled {
+            background-color: rgba(5, 5, 5, 0.98);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        body.light-theme nav.nav-scrolled {
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: #050505;
+            font-weight: 600;
+            transition: all 150ms ease;
+            cursor: pointer;
+        }
+        .btn-gold:hover {
+            background: var(--gold-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(212, 168, 83, 0.4);
+        }
+        .btn-outline {
+            border: 1px solid rgba(212, 168, 83, 0.5);
+            color: var(--gold);
+            background: transparent;
+            font-weight: 600;
+            transition: all 150ms ease;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            background: rgba(212, 168, 83, 0.1);
+            border-color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: var(--bg-base); }
+        .mobile-menu.open { max-height: 800px; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            background: var(--toast-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        /* Hero Animations */
+        @keyframes heroFadeIn {
+            from { opacity: 0; transform: translateY(30px); filter: blur(6px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        @keyframes wordSlideUp {
+            from { opacity: 0; transform: translateY(100%); filter: blur(10px); }
+            60% { opacity: 1; filter: blur(0); }
+            80% { transform: translateY(-4%); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        @keyframes lineExpand {
+            from { width: 0; opacity: 0; }
+            to { width: 80px; opacity: 1; }
+        }
+        @keyframes heroImageZoom {
+            from { transform: scale(1.15); }
+            to { transform: scale(1.05); }
+        }
+        @keyframes particleFloat {
+            0% { opacity: 0; transform: translateY(0) translateX(0) scale(0); }
+            15% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 0.4; }
+            100% { opacity: 0; transform: translateY(-200px) translateX(var(--drift, 20px)) scale(0); }
+        }
+        @keyframes scrollBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+        @keyframes pulse-gold { 0%,100% { box-shadow: 0 0 0 0 rgba(212,168,83,0.4); } 50% { box-shadow: 0 0 20px 5px rgba(212,168,83,0.15); } }
+
+        .hero-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            filter: blur(6px);
+            animation: heroFadeIn 0.9s var(--delay, 0s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .hero-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+            filter: blur(10px);
+            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .hero-word.text-gradient {
+            animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .hero-line {
+            width: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            animation: lineExpand 0.8s var(--delay, 0s) cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .hero-bg-img { animation: heroImageZoom 25s ease-out forwards; }
+        .particle {
+            position: absolute;
+            width: var(--size, 3px);
+            height: var(--size, 3px);
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--gold);
+            opacity: 0;
+            animation: particleFloat var(--dur, 12s) var(--d, 0s) infinite ease-in-out;
+        }
+        .pulse-gold { animation: pulse-gold 3s infinite; }
+        .scroll-indicator { animation: scrollBounce 2s 2.5s infinite ease-in-out; }
+        .hero-title { font-size: clamp(2.2rem, 6.5vw, 6.5rem); line-height: 0.95; letter-spacing: -0.02em; }
+
+        /* Scroll Reveal */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+
+        /* Before/After Cards */
+        .ba-images {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            position: relative;
+        }
+        .ba-images img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.5s ease; }
+        .transformation-card:hover .ba-images img { transform: scale(1.02); }
+        .ba-divider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 3px;
+            background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+            transform: translateX(-50%);
+            z-index: 5;
+        }
+        .ba-badge {
+            position: absolute;
+            bottom: 0.75rem;
+            left: 0.75rem;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.25rem;
+            backdrop-filter: blur(4px);
+            z-index: 6;
+        }
+        .ba-badge.before { background: rgba(239, 68, 68, 0.3); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+        .ba-badge.after { background: rgba(34, 197, 94, 0.3); color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
+
+        /* Star Rating */
+        .star-rating { display: flex; gap: 0.25rem; margin-bottom: 1rem; }
+        .star-rating svg { width: 1rem; height: 1rem; color: var(--gold); fill: var(--gold); }
+
+        /* Achievement Cards */
+        .achievement-stat {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background: rgba(212, 168, 83, 0.05);
+            border: 1px solid rgba(212, 168, 83, 0.15);
+        }
+        .winners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+        .winner-card {
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+        .winner-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+
+        .theme-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            padding: 8px;
+            cursor: pointer;
+        }
+        .theme-toggle-btn:hover { border-color: var(--gold); }
+        @media (max-width: 640px) { .section-padding { padding-top: 2rem; padding-bottom: 2rem; } }
+    </style>
+</head>
+<body>
+
+    <!-- Toast -->
+    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
+
+     <!-- Prevent theme flash before layout.js loads -->
+    <script>if (localStorage.getItem('cm-theme') === 'light') document.body.classList.add('light-theme');</script>
+
+    <!-- Shared navbar injected here -->
+    <div id="site-navbar"></div>
+    
+    <!-- HERO SECTION -->
+    <section class="relative min-h-[70vh] flex items-center justify-center overflow-hidden pt-20">
+        <div class="absolute inset-0">
+            <img src="https://images.pexels.com/photos/260447/pexels-photo-260447.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="Transformation" class="hero-bg-img w-full h-full object-cover" onerror="this.src='https://picsum.photos/seed/fittransform/1920/1080.jpg'">
+        </div>
+        <div class="absolute inset-0 bg-black/65"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/50"></div>
+        <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
+            <div class="hero-animate" style="--delay:0.1s"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/30 bg-gold/10 backdrop-blur-sm mb-6"><span class="text-xs font-bold tracking-wider text-gold">REAL PEOPLE. REAL RESULTS.</span></div></div>
+            <div class="flex justify-center mb-6 hero-animate" style="--delay:0.3s"><div class="hero-line" style="--delay:0.4s"></div></div>
+            <h1 class="font-display font-bold tracking-tight mb-6 hero-title">
+                <span class="hero-title-line"><span class="hero-word" style="--i:0">TRANSFORMATIONS</span></span>
+                <span class="hero-title-line"><span class="hero-word text-gradient" style="--i:1">THAT SPEAK</span> <span class="hero-word text-gradient" style="--i:2">FOR THEMSELVES</span></span>
+            </h1>
+            <div class="flex justify-center mb-6 hero-animate" style="--delay:1.2s"><div class="hero-line" style="--delay:1.3s"></div></div>
+            <div class="hero-animate" style="--delay:1.5s"><p class="text-muted-custom max-w-2xl mx-auto">From weight loss to stage wins — see how real clients transformed their bodies and lives with ComboMaster.</p></div>
+            <div class="hero-animate mt-10" style="--delay:1.8s"><a href="#gallery" class="scroll-indicator inline-flex flex-col items-center gap-2 text-muted-custom hover:text-gold"><span class="text-[0.6rem] tracking-wide uppercase">View Results</span><i data-lucide="chevron-down" class="w-4 h-4"></i></a></div>
+        </div>
+    </section>
+
+    <!-- ========== BEFORE & AFTER GALLERY ========== -->
+    <section id="gallery" class="py-16 section-padding">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 reveal-on-scroll">
+                <span class="text-xs font-bold tracking-wider text-gold uppercase">Before → After</span>
+                <h2 class="font-display text-3xl sm:text-4xl font-bold mt-2">Real <span class="text-gradient">Transformations</span></h2>
+                <p class="text-muted-custom mt-3 max-w-2xl mx-auto">Unedited, real client results from our training programs.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Transformation 1 -->
+                <div class="glass-card rounded-2xl overflow-hidden transformation-card reveal-on-scroll">
+                    <div class="ba-images relative"><img src="https://picsum.photos/seed/before1/400/300" alt="Before"><img src="https://picsum.photos/seed/after1/400/300" alt="After"><div class="ba-divider"></div><div class="ba-badge before">BEFORE</div><div class="ba-badge after" style="left:auto; right:0.75rem;">AFTER</div></div>
+                    <div class="p-5"><h4 class="font-display text-lg font-bold">James Mitchell</h4><p class="text-sm text-gold font-semibold mb-1">-22 kg in 16 weeks</p><p class="text-sm text-muted-custom">"Completely changed my relationship with food and training."</p></div>
+                </div>
+                <!-- Transformation 2 -->
+                <div class="glass-card rounded-2xl overflow-hidden transformation-card reveal-on-scroll" style="transition-delay:0.08s">
+                    <div class="ba-images relative"><img src="https://picsum.photos/seed/before2/400/300" alt="Before"><img src="https://picsum.photos/seed/after2/400/300" alt="After"><div class="ba-divider"></div><div class="ba-badge before">BEFORE</div><div class="ba-badge after" style="left:auto; right:0.75rem;">AFTER</div></div>
+                    <div class="p-5"><h4 class="font-display text-lg font-bold">Sarah Kim</h4><p class="text-sm text-gold font-semibold mb-1">+8kg muscle, -6% body fat</p><p class="text-sm text-muted-custom">"First competition prep was a success thanks to ComboMaster."</p></div>
+                </div>
+                <!-- Transformation 3 -->
+                <div class="glass-card rounded-2xl overflow-hidden transformation-card reveal-on-scroll" style="transition-delay:0.16s">
+                    <div class="ba-images relative"><img src="https://picsum.photos/seed/before3/400/300" alt="Before"><img src="https://picsum.photos/seed/after3/400/300" alt="After"><div class="ba-divider"></div><div class="ba-badge before">BEFORE</div><div class="ba-badge after" style="left:auto; right:0.75rem;">AFTER</div></div>
+                    <div class="p-5"><h4 class="font-display text-lg font-bold">Grace Thompson</h4><p class="text-sm text-gold font-semibold mb-1">30kg weight loss in 6 months</p><p class="text-sm text-muted-custom">"Home workout program + meal prep changed everything."</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== WEIGHT LOSS ACHIEVEMENTS ========== -->
+    <section class="py-12 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10 reveal-on-scroll">
+                <i data-lucide="flame" class="w-8 h-8 text-gold mx-auto mb-3"></i>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold">Weight Loss <span class="text-gradient">Achievements</span></h2>
+                <p class="text-muted-custom mt-2">Real numbers. Real clients. Sustainable results.</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="achievement-stat reveal-on-scroll"><div class="font-display text-3xl font-bold text-gold">500+</div><div class="text-xs text-muted-custom uppercase tracking-wide">Total Clients</div><div class="text-xs text-muted-custom mt-1">Transformed since 2020</div></div>
+                <div class="achievement-stat reveal-on-scroll" style="transition-delay:0.05s"><div class="font-display text-3xl font-bold text-gold">1,280+</div><div class="text-xs text-muted-custom uppercase tracking-wide">Kg Lost</div><div class="text-xs text-muted-custom mt-1">Combined by members</div></div>
+                <div class="achievement-stat reveal-on-scroll" style="transition-delay:0.1s"><div class="font-display text-3xl font-bold text-gold">15.2 kg</div><div class="text-xs text-muted-custom uppercase tracking-wide">Average Loss</div><div class="text-xs text-muted-custom mt-1">Per client (12 weeks)</div></div>
+                <div class="achievement-stat reveal-on-scroll" style="transition-delay:0.15s"><div class="font-display text-3xl font-bold text-gold">94%</div><div class="text-xs text-muted-custom uppercase tracking-wide">Keep It Off</div><div class="text-xs text-muted-custom mt-1">6-month retention</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== TESTIMONIALS ========== -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10 reveal-on-scroll">
+                <i data-lucide="message-circle" class="w-8 h-8 text-gold mx-auto mb-3"></i>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold">Client <span class="text-gradient">Testimonials</span></h2>
+                <p class="text-muted-custom">What our community says about their journey.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-card p-6 rounded-2xl reveal-on-scroll"><div class="star-rating"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div><p class="italic text-muted-custom">"I struggled with yo-yo dieting for years. The ComboMaster system gave me structure without feeling deprived. Down 26kg and I've kept it off for over a year!"</p><div class="mt-4"><div class="font-semibold">— Michael B.</div><div class="text-xs text-muted-custom">Weight Loss Program Graduate</div></div></div>
+                <div class="glass-card p-6 rounded-2xl reveal-on-scroll" style="transition-delay:0.08s"><div class="star-rating"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div><p class="italic text-muted-custom">"The online coaching kept me accountable every single week. My coach adjusted my macros and workouts based on my progress. I gained 10kg of lean mass in 4 months."</p><div class="mt-4"><div class="font-semibold">— David Chen</div><div class="text-xs text-muted-custom">Muscle Gain Program</div></div></div>
+                <div class="glass-card p-6 rounded-2xl reveal-on-scroll"><div class="star-rating"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div><p class="italic text-muted-custom">"From never stepping in a gym to winning my first novice bodybuilding show. The competition prep plan is absolute gold."</p><div class="mt-4"><div class="font-semibold">— Marcus Lee</div><div class="text-xs text-muted-custom">Competition Prep Winner</div></div></div>
+                <div class="glass-card p-6 rounded-2xl reveal-on-scroll" style="transition-delay:0.08s"><div class="star-rating"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div><p class="italic text-muted-custom">"The home workout program fit perfectly into my busy schedule. No gym, no excuses — I lost 18kg and gained so much confidence."</p><div class="mt-4"><div class="font-semibold">— Jessica N.</div><div class="text-xs text-muted-custom">Home Workout Program</div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== COMPETITION WINNERS ========== -->
+    <section class="py-12 border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10 reveal-on-scroll">
+                <i data-lucide="trophy" class="w-8 h-8 text-gold mx-auto mb-3"></i>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold">🏆 Competition <span class="text-gradient">Winners</span></h2>
+                <p class="text-muted-custom">ComboMaster athletes who stepped on stage and dominated.</p>
+            </div>
+            <div class="winners-grid">
+                <div class="winner-card reveal-on-scroll"><i data-lucide="crown" class="w-6 h-6 text-gold mx-auto mb-2"></i><p class="font-bold">David Chen</p><p class="text-xs text-muted-custom">1st Place - Men's Physique</p><p class="text-xs text-gold mt-1">Zambia Nationals 2024</p></div>
+                <div class="winner-card reveal-on-scroll" style="transition-delay:0.05s"><i data-lucide="crown" class="w-6 h-6 text-gold mx-auto mb-2"></i><p class="font-bold">Sarah Kim</p><p class="text-xs text-muted-custom">Overall Champion - Bikini</p><p class="text-xs text-gold mt-1">Southern Province Open</p></div>
+                <div class="winner-card reveal-on-scroll" style="transition-delay:0.1s"><i data-lucide="crown" class="w-6 h-6 text-gold mx-auto mb-2"></i><p class="font-bold">James Mitchell</p><p class="text-xs text-muted-custom">2nd Place - Transformation Category</p><p class="text-xs text-gold mt-1">National Fitness Expo</p></div>
+                <div class="winner-card reveal-on-scroll" style="transition-delay:0.15s"><i data-lucide="crown" class="w-6 h-6 text-gold mx-auto mb-2"></i><p class="font-bold">Grace Thompson</p><p class="text-xs text-muted-custom">Best Transformation - Female</p><p class="text-xs text-gold mt-1">Online Challenge Winner</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA ========== -->
+    <section class="py-16 relative overflow-hidden border-t border-[var(--border-color)]">
+        <div class="absolute inset-0 bg-gradient-to-r from-[var(--bg-base)] via-transparent to-[var(--bg-base)]"></div>
+        <div class="relative z-10 max-w-4xl mx-auto px-4 text-center reveal-on-scroll">
+            <h2 class="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Ready to Write <span class="text-gradient">Your Story</span>?</h2>
+            <p class="text-muted-custom mb-8 max-w-xl mx-auto">Join hundreds of clients who have transformed their bodies and lives. Your journey starts today.</p>
+            <a href="membership.html" class="btn-gold inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-sm font-bold uppercase"><i data-lucide="zap" class="w-4 h-4"></i> Start Your Transformation</a>
+        </div>
+    </section>
+
+<!-- Footer -->
+    <div id="site-footer"></div>
+
+    <script src="../components/layout.js"></script>
+
+
+    <script>
+        function initTheme(){ let saved=localStorage.getItem('theme'); if(saved==='light') document.body.classList.add('light-theme'); updateIcons(); }
+        function toggleTheme(){ document.body.classList.toggle('light-theme'); localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark'); updateIcons(); }
+        function updateIcons(){ let isLight=document.body.classList.contains('light-theme'); let icon=isLight?'sun':'moon'; document.querySelectorAll('#theme-icon-desktop, #theme-icon-mobile').forEach(el=>{if(el)el.setAttribute('data-lucide',icon);}); if(window.lucide)lucide.createIcons(); }
+        function showToast(msg){ let t=document.getElementById('toast'),m=document.getElementById('toast-message'); if(t&&m){ m.innerText=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); } }
+        function initMobile(){ let btn=document.getElementById('mobile-toggle'),menu=document.getElementById('mobile-menu'); if(btn&&menu) btn.addEventListener('click',()=>menu.classList.toggle('open')); }
+        function initScrollReveal(){ let observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('is-visible');});},{threshold:0.1}); document.querySelectorAll('.reveal-on-scroll').forEach(el=>observer.observe(el)); }
+        function initNavScroll(){ let nav=document.getElementById('navbar'); window.addEventListener('scroll',()=>{if(window.scrollY>60)nav.classList.add('nav-scrolled'); else nav.classList.remove('nav-scrolled');}); }
+        document.addEventListener('DOMContentLoaded',()=>{ initTheme(); initMobile(); initScrollReveal(); initNavScroll(); if(window.lucide)lucide.createIcons(); document.getElementById('theme-toggle-desktop')?.addEventListener('click',toggleTheme); document.getElementById('theme-toggle-mobile')?.addEventListener('click',toggleTheme); });
+    </script>
+</body>
+</html>

@@ -3,8 +3,8 @@
    ============================================================ */
 (function () {
   const COMPONENTS = [
-    { target: 'site-navbar', file: '../components/navbar.html' },
-    { target: 'site-footer', file: '../components/footer.html' },
+    { target: 'site-navbar', file: '../public/components/navbar.html' },
+    { target: 'site-footer', file: '../public/components/footer.html' },
   ];
 
   async function inject({ target, file }) {

@@ -21,6 +21,27 @@
     }
   }
 
+ /* ---- Live Chat (Tawk.to) ---- */
+function initLiveChat() {
+  var TAWK_SRC = 'https://embed.tawk.to/6acba13b90330834c24d263f/1k4lmrkc1';
+
+  // Show logged-in members' names in your Tawk dashboard
+  window.Tawk_API = window.Tawk_API || {};
+  var name = localStorage.getItem('userName');
+  if (name) {
+    window.Tawk_API.onLoad = function () {
+      window.Tawk_API.setAttributes({ name: name });
+    };
+  }
+
+  var s1 = document.createElement('script');
+  s1.async = true;
+  s1.src = TAWK_SRC;
+  s1.charset = 'UTF-8';
+  s1.setAttribute('crossorigin', '*');
+  document.body.appendChild(s1);
+}
+
   /* ---- Highlight the nav link matching the current page ---- */
   function highlightActiveLinks() {
     const page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
@@ -107,6 +128,7 @@
     initMobileMenu();
     initTheme();
     initScrollEffects();
+    initLiveChat();
     const year = document.getElementById('footer-year');
     if (year) year.textContent = new Date().getFullYear();
     if (window.lucide) lucide.createIcons();   // render icons inside injected HTML

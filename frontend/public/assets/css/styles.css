@@ -104,6 +104,34 @@ nav > div {
     background-clip: text;
 }
 
+@media (max-width: 639px) {
+    .footer-main-grid > * {
+        text-align: center;
+    }
+
+    .footer-main-grid > :first-child > a,
+    .footer-main-grid > :first-child > .flex,
+    .footer-main-grid > :last-child ul > li {
+        justify-content: center;
+    }
+
+    .footer-main-grid > :last-child ul > li:last-child > div {
+        text-align: center;
+    }
+
+    .footer-main-grid > :last-child > a {
+        display: flex;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .footer-bottom-bar > div {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
 .text-gold {
     color: var(--gold);
 }

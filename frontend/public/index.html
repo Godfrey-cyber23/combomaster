@@ -797,12 +797,6 @@
             justify-content: center;
         }
 
-        /* ===== CONVERSION: URGENCY BAR ===== */
-        .urgency-bar {
-            background: linear-gradient(90deg, rgba(var(--gold-rgb), 0.15), rgba(var(--gold-rgb), 0.05), rgba(var(--gold-rgb), 0.15));
-            border-bottom: 1px solid rgba(var(--gold-rgb), 0.2);
-        }
-
         /* ===== CONVERSION: SOCIAL PROOF BAR ===== */
         .social-proof-strip {
             background: var(--bg-secondary);
@@ -872,19 +866,6 @@
         <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
         <span id="toast-message" class="text-sm font-medium"></span>
     </div>
-
-    <!-- Urgency Bar — Limited Offer -->
-    <!-- <div class="urgency-bar relative z-50 py-2.5 px-4 text-center">
-        <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
-            <i data-lucide="flame" class="w-4 h-4 text-gold flex-shrink-0"></i>
-            <span class="text-xs sm:text-sm font-semibold text-gold">NEW MEMBER SPECIAL</span>
-            <span class="text-xs sm:text-sm text-muted-custom">— 40% off your first month. Limited spots
-                remaining.</span>
-            <a href="../public/membership.html"
-                class="text-xs sm:text-sm font-bold text-gold underline underline-offset-2 hover:text-white transition-colors ml-1">Claim
-                Now →</a>
-        </div>
-    </div> -->
 
     <!-- Prevent theme flash before layout.js loads -->
     <script>if (localStorage.getItem('cm-theme') === 'light') document.body.classList.add('light-theme');</script>
@@ -1510,45 +1491,6 @@
             });
         }
 
-        // ===== URGENCY BAR: Adjust nav position =====
-        function initUrgencyBar() {
-            const urgencyBar = document.querySelector('.urgency-bar');
-            const nav = document.getElementById('navbar');
-            if (!urgencyBar || !nav) return;
-
-            function updateNavPosition() {
-                if (window.scrollY < urgencyBar.offsetHeight) {
-                    nav.style.top = urgencyBar.offsetHeight - window.scrollY + 'px';
-                } else {
-                    nav.style.top = '0';
-                }
-            }
-
-            // On scroll, adjust nav below urgency bar
-            let ticking = false;
-            window.addEventListener('scroll', function () {
-                if (!ticking) {
-                    requestAnimationFrame(function () {
-                        updateNavPosition();
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
-
-            // Initial position
-            updateNavPosition();
-
-            // Hide urgency bar after 10 seconds of scrolling engagement
-            let hasScrolled = false;
-            window.addEventListener('scroll', function () {
-                if (!hasScrolled && window.scrollY > 300) {
-                    hasScrolled = true;
-                    // Keep visible — conversion tool
-                }
-            });
-        }
-
         // ===== INIT =====
         document.addEventListener('DOMContentLoaded', function () {
             initTheme();
@@ -1556,8 +1498,6 @@
             initScrollReveal();
             initNavScroll();
             initHeroParallax();
-            initUrgencyBar();
-
             const desktopToggle = document.getElementById('theme-toggle-desktop');
             const mobileToggle = document.getElementById('theme-toggle-mobile');
             if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);

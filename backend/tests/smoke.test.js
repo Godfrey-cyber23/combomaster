@@ -48,6 +48,10 @@ test('the Node server serves auth and dashboard pages with the shared API client
       }
       assert.doesNotMatch(html, /api\/auth_guard\.js/, `${page} should not depend on the legacy PHP guard`);
     }
+    const navbar = await (await fetch(`${baseUrl}/components/navbar.html`)).text();
+    assert.equal((navbar.match(/data-cart-trigger/g) || []).length, 2, 'desktop and mobile navigation should show the cart');
+    assert.match(navbar, /data-lucide="shopping-cart"/, 'navigation cart should use a trolley icon');
+    assert.doesNotMatch(navbar, /NEW MEMBER SPECIAL/, 'navigation should not show the promotional banner');
   });
 });
 

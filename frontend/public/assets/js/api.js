@@ -11,6 +11,10 @@
       body: options.body === undefined ? undefined : JSON.stringify(options.body)
     });
     if (response.status === 204) return null;
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.toLowerCase().includes('application/json')) {
+      throw new Error('The API returned a web page instead of JSON. Configure your website host to route /api requests to the ComboMaster backend.');
+    }
     let data;
     try {
       data = await response.json();

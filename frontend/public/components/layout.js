@@ -104,17 +104,41 @@ function initLiveChat() {
     });
   }
 
-  /* ---- Nav shadow + keep nav below the urgency bar until scrolled ---- */
+  /* ---- Cart count ---- */
+  function updateCartCount() {
+    let items = [];
+    try {
+      const saved = localStorage.getItem('cm-shop-cart');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) items = parsed;
+      }
+    } catch (error) {
+      console.error('[layout] Could not read the saved cart:', error);
+    }
+    const count = items.reduce((total, item) =>
+      total + (Number.isInteger(item?.quantity) && item.quantity > 0 ? item.quantity : 0), 0
+    );
+    [
+      ['cart-trigger', 'cart-trigger-count'],
+      ['cart-trigger-mobile', 'cart-trigger-count-mobile']
+    ].forEach(([triggerId, badgeId]) => {
+      const trigger = document.getElementById(triggerId);
+      const badge = document.getElementById(badgeId);
+      if (badge) badge.textContent = String(count);
+      if (trigger) trigger.setAttribute('aria-label', `Shopping cart, ${count} ${count === 1 ? 'item' : 'items'}`);
+    });
+  }
+
+  /* ---- Nav shadow and fixed top position ---- */
   function initScrollEffects() {
     const navbar = document.getElementById('navbar');
     if (!navbar) return;
-    const urgency = document.querySelector('.urgency-bar');
-    const urgencyH = urgency ? urgency.offsetHeight : 0;
 
     const update = () => {
       const y = window.scrollY;
       navbar.classList.toggle('nav-scrolled', y > 24);
-      if (urgency) navbar.style.top = `${Math.max(0, urgencyH - y)}px`;
+      navbar.style.top = '0';
     };
     update();
     window.addEventListener('scroll', update, { passive: true });
@@ -128,6 +152,10 @@ function initLiveChat() {
     initMobileMenu();
     initTheme();
     initScrollEffects();
+    updateCartCount();
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'cm-shop-cart') updateCartCount();
+    });
     initLiveChat();
     const year = document.getElementById('footer-year');
     if (year) year.textContent = new Date().getFullYear();

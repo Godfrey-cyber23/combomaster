@@ -1,16 +1,6 @@
 
 <!-- ============ SHARED NAVBAR (injected by layout.js) ============ -->
 
-<!-- Urgency Bar -->
-<div class="urgency-bar relative z-50 py-2.5 px-4 text-center">
-  <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
-    <i data-lucide="flame" class="w-4 h-4 text-gold flex-shrink-0"></i>
-    <span class="text-xs sm:text-sm font-semibold text-gold">NEW MEMBER SPECIAL</span>
-    <span class="text-xs sm:text-sm text-muted-custom">— 40% off your first month. Limited spots remaining.</span>
-    <a href="membership.html" class="text-xs sm:text-sm font-bold text-gold underline underline-offset-2 hover:text-white transition-colors ml-1">Claim Now →</a>
-  </div>
-</div>
-
 <!-- Navigation -->
 <nav id="navbar" class="fixed left-0 right-0 z-50" style="top: 0;">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -36,6 +26,11 @@
       </div>
 
       <div class="hidden lg:flex items-center gap-3">
+        <a id="cart-trigger" data-cart-trigger href="shop.html#cart" class="inline-flex items-center gap-2 rounded-lg border border-[color:var(--border-color)] px-3 py-2 text-sm font-semibold text-muted-custom transition-colors hover:border-brand-gold hover:text-brand-gold" aria-label="Shopping cart, 0 items">
+          <i data-lucide="shopping-cart" class="h-5 w-5" aria-hidden="true"></i>
+          <span>Cart</span>
+          <span id="cart-trigger-count" class="grid min-w-5 h-5 place-items-center rounded-full bg-brand-gold px-1 text-xs font-bold text-black" aria-live="polite">0</span>
+        </a>
         <button id="theme-toggle-desktop" class="theme-toggle-btn" aria-label="Toggle light/dark mode">
           <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-desktop"></i>
         </button>
@@ -44,6 +39,10 @@
       </div>
 
       <div class="lg:hidden flex items-center gap-2">
+        <a id="cart-trigger-mobile" data-cart-trigger href="shop.html#cart" class="relative inline-flex items-center justify-center rounded-lg border border-[color:var(--border-color)] p-2 text-gold transition-colors hover:border-brand-gold" aria-label="Shopping cart, 0 items">
+          <i data-lucide="shopping-cart" class="h-5 w-5" aria-hidden="true"></i>
+          <span id="cart-trigger-count-mobile" class="absolute -right-1 -top-1 grid min-w-4 h-4 place-items-center rounded-full bg-brand-gold px-1 text-[0.6rem] font-bold text-black" aria-live="polite">0</span>
+        </a>
         <button id="theme-toggle-mobile" class="theme-toggle-btn p-2" aria-label="Toggle theme">
           <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-mobile"></i>
         </button>

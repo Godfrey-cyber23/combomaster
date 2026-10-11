@@ -764,36 +764,6 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
-        .cart-trigger {
-            position: fixed;
-            right: 1rem;
-            bottom: 1.25rem;
-            z-index: 80;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.65rem;
-            padding: 0.8rem 1rem;
-            border: 1px solid rgba(var(--gold-rgb), 0.45);
-            border-radius: 9999px;
-            background: var(--card-bg-solid);
-            color: var(--text-main);
-            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-
-        .cart-trigger-count {
-            display: grid;
-            place-items: center;
-            min-width: 1.4rem;
-            height: 1.4rem;
-            padding: 0 0.3rem;
-            border-radius: 9999px;
-            background: var(--gold);
-            color: #050505;
-            font-size: 0.7rem;
-        }
-
         .cart-overlay {
             position: fixed;
             inset: 0;
@@ -892,11 +862,6 @@
         @media (max-width: 480px) {
             .cart-panel {
                 padding: 1rem;
-            }
-
-            .cart-trigger {
-                right: 0.75rem;
-                bottom: 0.75rem;
             }
         }
 
@@ -1058,12 +1023,6 @@
 
         </div>
     </section>
-
-    <button id="cart-trigger" class="cart-trigger" type="button" aria-controls="cart-panel" aria-expanded="false">
-        <i data-lucide="shopping-bag" class="w-5 h-5 text-gold" aria-hidden="true"></i>
-        <span>Cart</span>
-        <span id="cart-trigger-count" class="cart-trigger-count" aria-label="0 items" aria-live="polite">0</span>
-    </button>
 
     <div id="cart-overlay" class="cart-overlay" hidden>
         <button class="cart-backdrop" type="button" data-cart-close aria-label="Close cart"></button>
@@ -1281,11 +1240,13 @@
         var list = document.getElementById('cart-items');
         var empty = document.getElementById('cart-empty');
         var checkout = document.getElementById('cart-checkout');
-        var triggerCount = document.getElementById('cart-trigger-count');
+        var triggerCount = document.querySelectorAll('[id^="cart-trigger-count"]');
         var itemCount = cartItems.reduce(function (sum, item) { return sum + item.quantity; }, 0);
 
-        triggerCount.textContent = String(itemCount);
-        triggerCount.setAttribute('aria-label', itemCount + (itemCount === 1 ? ' item' : ' items'));
+        triggerCount.forEach(function (badge) { badge.textContent = String(itemCount); });
+        document.querySelectorAll('[data-cart-trigger]').forEach(function (trigger) {
+            trigger.setAttribute('aria-label', 'Shopping cart, ' + itemCount + (itemCount === 1 ? ' item' : ' items'));
+        });
         document.getElementById('cart-item-count').textContent = itemCount + (itemCount === 1 ? ' item' : ' items');
         empty.hidden = cartItems.length > 0;
         checkout.hidden = cartItems.length === 0;
@@ -1326,7 +1287,9 @@
         previousBodyOverflow = document.body.style.overflow;
         overlay.hidden = false;
         document.body.style.overflow = 'hidden';
-        document.getElementById('cart-trigger').setAttribute('aria-expanded', 'true');
+        document.querySelectorAll('[data-cart-trigger]').forEach(function (trigger) {
+            trigger.setAttribute('aria-expanded', 'true');
+        });
         overlay.querySelector('[data-cart-close]:not(.cart-backdrop)').focus();
     }
 
@@ -1335,9 +1298,11 @@
         if (overlay.hidden) return;
         overlay.hidden = true;
         document.body.style.overflow = previousBodyOverflow;
-        document.getElementById('cart-trigger').setAttribute('aria-expanded', 'false');
+        document.querySelectorAll('[data-cart-trigger]').forEach(function (trigger) {
+            trigger.setAttribute('aria-expanded', 'false');
+        });
         if (lastCartFocus && document.contains(lastCartFocus)) lastCartFocus.focus();
-        else document.getElementById('cart-trigger').focus();
+        else document.querySelector('[data-cart-trigger]')?.focus();
     }
 
     function initCartButtons() {
@@ -1388,8 +1353,12 @@
         cartItems = loadCart();
         cartReady = true;
         refreshCartProductDetails();
-        document.getElementById('cart-trigger').addEventListener('click', function () {
-            openCart(this);
+        document.addEventListener('click', function (event) {
+            var target = event.target instanceof Element ? event.target : null;
+            var trigger = target && target.closest('[data-cart-trigger]');
+            if (!trigger) return;
+            event.preventDefault();
+            openCart(trigger);
         });
         document.getElementById('cart-overlay').addEventListener('click', function (event) {
             var target = event.target instanceof Element ? event.target : null;
@@ -1449,6 +1418,10 @@
                         })
                     })
                 });
+                var contentType = response.headers.get('content-type') || '';
+                if (!contentType.toLowerCase().includes('application/json')) {
+                    throw new Error('The checkout API returned a web page instead of JSON. Configure your website host to route /api requests to the ComboMaster backend.');
+                }
                 var result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'Unable to start payment.');
                 window.location.assign(result.checkout_url);
@@ -1463,6 +1436,9 @@
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') closeCart();
         });
+        if (window.location.hash === '#cart') {
+            openCart(document.querySelector('[data-cart-trigger]'));
+        }
     }
 
     // ===== TOAST =====

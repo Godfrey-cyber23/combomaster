@@ -43,6 +43,10 @@
                     var response = await fetch('/api/payments/' + encodeURIComponent(reference), {
                         credentials: 'same-origin'
                     });
+                    var contentType = response.headers.get('content-type') || '';
+                    if (!contentType.toLowerCase().includes('application/json')) {
+                        throw new Error('The payment API returned a web page instead of JSON. Configure your website host to route /api requests to the ComboMaster backend.');
+                    }
                     var order = await response.json();
                     if (!response.ok) throw new Error(order.error || 'Order status could not be checked.');
                     if (order.status === 'successful') {

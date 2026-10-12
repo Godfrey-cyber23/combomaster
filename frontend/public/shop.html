@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop — ComboMaster Fitness</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -63,8 +66,18 @@
             --input-bg: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { overflow-x: hidden; max-width: 100vw; scroll-behavior: smooth; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            overflow-x: hidden;
+            max-width: 100vw;
+            scroll-behavior: smooth;
+        }
 
         body {
             font-size: 1.125rem;
@@ -74,7 +87,9 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .font-display { font-family: 'Oswald', sans-serif; }
+        .font-display {
+            font-family: 'Oswald', sans-serif;
+        }
 
         /* ===== NAVIGATION ===== */
         nav {
@@ -104,7 +119,9 @@
             transition: all 0.3s ease;
         }
 
-        .text-muted-custom { color: var(--text-muted); }
+        .text-muted-custom {
+            color: var(--text-muted);
+        }
 
         .text-gradient {
             background: linear-gradient(to right, var(--gold), #f5dfa0, var(--gold));
@@ -114,8 +131,13 @@
             background-clip: text;
         }
 
-        .text-gold { color: var(--gold); }
-        .border-gold { border-color: var(--gold); }
+        .text-gold {
+            color: var(--gold);
+        }
+
+        .border-gold {
+            border-color: var(--gold);
+        }
 
         /* ===== BUTTONS ===== */
         .btn-gold {
@@ -133,7 +155,9 @@
             transform: translateY(-2px);
         }
 
-        body.light-theme .btn-gold { color: #ffffff; }
+        body.light-theme .btn-gold {
+            color: #ffffff;
+        }
 
         .btn-outline {
             border: 1px solid rgba(var(--gold-rgb), 0.5);
@@ -162,9 +186,60 @@
             box-shadow: 0 8px 30px rgba(var(--gold-rgb), 0.08);
         }
 
-        .shop-tab.active { background: var(--gold); color: #050505; }
-        .shop-tab:not(.active) { background: var(--tab-inactive); color: var(--tab-text); }
-        .shop-tab { cursor: pointer; transition: all 0.2s ease; }
+        .shop-tab.active {
+            background: var(--gold);
+            color: #050505;
+        }
+
+        .shop-tab:not(.active) {
+            background: var(--tab-inactive);
+            color: var(--tab-text);
+        }
+
+        .shop-tab {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* ===== SHOP TABS ROW — scrollable on mobile ===== */
+        .tabs-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            justify-content: flex-start;
+            padding-bottom: 0.25rem;
+        }
+
+        .tabs-row::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tabs-row .shop-tab {
+            flex: 0 0 auto;
+            white-space: nowrap;
+            padding: 0.6rem 1.1rem;
+            border-radius: 0.5rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        @media (min-width: 640px) {
+            .tabs-row {
+                justify-content: center;
+                gap: 0.75rem;
+                margin-bottom: 2.5rem;
+            }
+
+            .tabs-row .shop-tab {
+                padding: 0.65rem 1.35rem;
+                font-size: 0.8rem;
+            }
+        }
 
         /* ===== MOBILE MENU ===== */
         .mobile-menu {
@@ -173,12 +248,15 @@
             transition: max-height 0.4s ease;
             background-color: var(--bg-base);
         }
-        .mobile-menu.open { max-height: 800px; }
 
-        /* ===== TOAST ===== */
+        .mobile-menu.open {
+            max-height: 800px;
+        }
+
+        /* ===== TOAST — bottom raised to clear chat bubble ===== */
         .toast {
             position: fixed;
-            bottom: 2rem;
+            bottom: 6rem;
             right: 2rem;
             z-index: 9999;
             transform: translateY(100px);
@@ -188,56 +266,146 @@
             backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
         }
-        .toast.show { transform: translateY(0); opacity: 1; }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 640px) {
+            .toast {
+                right: 1rem;
+                left: 1rem;
+            }
+        }
 
         /* ===== HERO ANIMATIONS ===== */
         @keyframes heroFadeIn {
-            from { opacity: 0; transform: translateY(30px); filter: blur(6px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+                filter: blur(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
         }
 
         @keyframes wordSlideUp {
-            from { opacity: 0; transform: translateY(100%); filter: blur(10px); }
-            60% { opacity: 1; filter: blur(0); }
-            80% { transform: translateY(-4%); }
-            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+                filter: blur(10px);
+            }
+
+            60% {
+                opacity: 1;
+                filter: blur(0);
+            }
+
+            80% {
+                transform: translateY(-4%);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
         }
 
         @keyframes lineExpand {
-            from { width: 0; opacity: 0; }
-            to { width: 80px; opacity: 1; }
+            from {
+                width: 0;
+                opacity: 0;
+            }
+
+            to {
+                width: 80px;
+                opacity: 1;
+            }
         }
 
         @keyframes heroImageZoom {
-            from { transform: scale(1.15); }
-            to { transform: scale(1.05); }
+            from {
+                transform: scale(1.15);
+            }
+
+            to {
+                transform: scale(1.05);
+            }
         }
 
         @keyframes particleFloat {
-            0% { opacity: 0; transform: translateY(0) translateX(0) scale(0); }
-            15% { opacity: 0.7; transform: scale(1); }
-            50% { opacity: 0.4; }
-            100% { opacity: 0; transform: translateY(-200px) translateX(var(--drift, 20px)) scale(0); }
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0) scale(0);
+            }
+
+            15% {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-200px) translateX(var(--drift, 20px)) scale(0);
+            }
         }
 
         @keyframes goldShimmer {
-            0% { background-position: 200% center; }
-            100% { background-position: -200% center; }
+            0% {
+                background-position: 200% center;
+            }
+
+            100% {
+                background-position: -200% center;
+            }
         }
 
         @keyframes scrollBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(8px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(8px);
+            }
         }
 
         @keyframes pulse-gold {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.4); }
-            50% { box-shadow: 0 0 20px 5px rgba(var(--gold-rgb), 0.15); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 20px 5px rgba(var(--gold-rgb), 0.15);
+            }
         }
 
         @keyframes tabSlideIn {
-            from { opacity: 0; transform: translateY(16px) scale(0.98); filter: blur(4px); }
-            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+            from {
+                opacity: 0;
+                transform: translateY(16px) scale(0.98);
+                filter: blur(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
         }
 
         .hero-animate {
@@ -257,7 +425,7 @@
 
         .hero-word.text-gradient {
             animation: wordSlideUp 1s calc(0.5s + var(--i, 0) * 0.18s) cubic-bezier(0.16, 1, 0.3, 1) both,
-                       goldShimmer 3s 2s ease-in-out 1 both;
+                goldShimmer 3s 2s ease-in-out 1 both;
         }
 
         .hero-line {
@@ -286,9 +454,10 @@
             animation: scrollBounce 2s 2.5s infinite ease-in-out;
         }
 
-        .pulse-gold { animation: pulse-gold 3s infinite; }
+        .pulse-gold {
+            animation: pulse-gold 3s infinite;
+        }
 
-        /* ===== HERO RESPONSIVE TYPOGRAPHY ===== */
         .hero-title {
             font-size: clamp(2.2rem, 6.5vw, 6.5rem);
             line-height: 0.95;
@@ -296,7 +465,9 @@
         }
 
         @media (min-width: 768px) {
-            .hero-title-line { white-space: nowrap; }
+            .hero-title-line {
+                white-space: nowrap;
+            }
         }
 
         /* ===== SCROLL REVEAL ===== */
@@ -313,7 +484,6 @@
             filter: blur(0);
         }
 
-        /* ===== TAB CONTENT ANIMATION ===== */
         .tab-content {
             animation: tabSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
@@ -327,7 +497,8 @@
             background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-base) 100%);
         }
 
-        .product-image-square img {
+        .product-image-square img,
+        .product-image-tall img {
             position: absolute;
             inset: 0;
             width: 100%;
@@ -344,34 +515,215 @@
             background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-base) 100%);
         }
 
-        .product-image-tall img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
         .card-hover:hover .product-image-square img,
         .card-hover:hover .product-image-tall img {
             transform: scale(1.08);
         }
 
         .product-content {
-            padding: 1rem 1.25rem 1.25rem;
+            padding: 1rem 1.1rem 1.15rem;
+            text-align: center;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            line-height: 1.35;
+            margin-bottom: 0.3rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-unit {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.45rem;
+        }
+
+        .btn-cart {
+            position: relative;
+            width: 100%;
+            margin-top: 0.75rem;
+            padding: 0.6rem 0.5rem;
+            border: none;
+            border-radius: 0.6rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #050505;
+            background: linear-gradient(135deg, var(--gold-accent) 0%, var(--gold) 50%, var(--gold-accent) 100%);
+            background-size: 220% auto;
+            box-shadow: 0 4px 14px rgba(var(--gold-rgb), 0.35);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-cart svg {
+            width: 0.9rem;
+            height: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .btn-cart:hover {
+            background-position: right center;
+            box-shadow: 0 6px 22px rgba(var(--gold-rgb), 0.55);
+            transform: translateY(-2px);
+        }
+
+        .btn-cart:active {
+            transform: translateY(0) scale(0.96);
+            box-shadow: 0 2px 8px rgba(var(--gold-rgb), 0.4);
+        }
+
+        .btn-cart:focus-visible {
+            outline: 2px solid rgba(var(--gold-rgb), 0.7);
+            outline-offset: 2px;
+        }
+
+        body.light-theme .btn-cart {
+            color: #ffffff;
+        }
+
+        /* Green success flash after adding */
+        .btn-cart.added {
+            background: linear-gradient(135deg, #15803d, #22c55e);
+            color: #ffffff;
+            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.45);
+        }
+
+        /* ===== PRICE — gold chip ===== */
+        .product-price {
+            display: inline-block;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            line-height: 1;
+            color: var(--gold);
+            background: rgba(var(--gold-rgb), 0.1);
+            border: 1px solid rgba(var(--gold-rgb), 0.25);
+            padding: 0.3rem 0.9rem;
+            border-radius: 9999px;
+        }
+
+        /* ===== Gold accent strip on top of every product card ===== */
+        .shop-content .card-hover {
+            position: relative;
+        }
+
+        .shop-content .card-hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0.85;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* ===== MOBILE: compact product cards ===== */
+        @media (max-width: 640px) {
+            .product-content {
+                padding: 0.6rem 0.6rem 0.75rem;
+            }
+
+            /* min-height = exactly 2 lines, keeps card rows even */
+            .product-name {
+                font-size: 0.78rem;
+                min-height: 2.7em;
+            }
+
+            .product-unit {
+                font-size: 0.6rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .product-price {
+                font-size: 0.95rem;
+                padding: 0.25rem 0.75rem;
+            }
+
+            .btn-cart {
+                margin-top: 0.55rem;
+                padding: 0.55rem 0.4rem;
+                font-size: 0.65rem;
+            }
+
+
+        }
+
+        /* Touch devices: no hover lift/jump on tap */
+        @media (hover: none) {
+            .card-hover:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+            .btn-cart:hover {
+                transform: none;
+                background-position: left center;
+            }
+
+            .card-hover:hover .product-image-square img,
+            .card-hover:hover .product-image-tall img {
+                transform: none;
+            }
         }
 
         /* ===== CUSTOM SCROLLBAR ===== */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-base); }
-        ::-webkit-scrollbar-thumb { background: var(--card-bg-solid); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
-        body.light-theme ::-webkit-scrollbar-thumb { background: #cbd5e1; }
-        body.light-theme ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-base);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--card-bg-solid);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        body.light-theme ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+        }
+
+        body.light-theme ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        .section-padding {
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+        }
+
+        @media (min-width: 768px) {
+            .section-padding {
+                padding-top: 5rem;
+                padding-bottom: 5rem;
+            }
+        }
 
         @media (max-width: 640px) {
-            .section-padding { padding-top: 3rem; padding-bottom: 3rem; }
+            .section-padding {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
         }
 
         .theme-toggle-btn {
@@ -385,29 +737,49 @@
             transition: all 0.2s ease;
             cursor: pointer;
         }
-        .theme-toggle-btn:hover { border-color: var(--gold); transform: scale(1.05); }
 
-        button, a, [role="button"] { pointer-events: auto !important; cursor: pointer; }
-        nav button, nav a { position: relative; z-index: 60; }
-        #mobile-toggle, #theme-toggle-desktop, #theme-toggle-mobile {
-            cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation;
+        .theme-toggle-btn:hover {
+            border-color: var(--gold);
+            transform: scale(1.05);
         }
 
-        body.light-theme .glass-card { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); }
-        body.light-theme nav { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
+        button,
+        a,
+        [role="button"] {
+            pointer-events: auto !important;
+            cursor: pointer;
+        }
 
-        .section-padding { padding-top: 4rem; padding-bottom: 4rem; }
-        @media (min-width: 768px) { .section-padding { padding-top: 5rem; padding-bottom: 5rem; } }
+        nav button,
+        nav a {
+            position: relative;
+            z-index: 60;
+        }
+
+        body.light-theme .glass-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        body.light-theme nav {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
 
         /* ===== REDUCED MOTION ===== */
         @media (prefers-reduced-motion: reduce) {
-            .hero-animate, .hero-word, .hero-line, .particle,
-            .hero-bg-img, .scroll-indicator, .tab-content {
+
+            .hero-animate,
+            .hero-word,
+            .hero-line,
+            .particle,
+            .hero-bg-img,
+            .scroll-indicator,
+            .tab-content {
                 animation: none !important;
                 opacity: 1 !important;
                 transform: none !important;
                 filter: none !important;
             }
+
             .reveal-on-scroll {
                 opacity: 1 !important;
                 transform: none !important;
@@ -417,16 +789,17 @@
         }
     </style>
 </head>
-<body class="font-sans antialiased">
 
-    <!-- Toast -->
-    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
-        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
-        <span id="toast-message" class="text-sm font-medium"></span>
-    </div>
+<body class="font-sans antialiased">
 
     <!-- Prevent theme flash before layout.js loads -->
     <script>if (localStorage.getItem('cm-theme') === 'light') document.body.classList.add('light-theme');</script>
+
+    <!-- Toast -->
+    <div id="toast" class="toast glass-card rounded-xl px-6 py-4 flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500 flex-shrink-0"></i>
+        <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
 
     <!-- Shared navbar injected here -->
     <div id="site-navbar"></div>
@@ -436,15 +809,11 @@
     <!-- ============================================ -->
     <section id="hero" class="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
 
-        <!-- Background Image -->
+        <!-- Background Image (Cloudinary — works on Vercel) -->
         <div class="absolute inset-0">
-            <img
-                src="images/shop-hero.jpg"
-                alt=""
-                class="hero-bg-img w-full h-full object-cover select-none"
-                draggable="false"
-                onerror="this.src='https://picsum.photos/seed/gymshopdark/1920/1080.jpg'"
-            >
+            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788714707/IMG-20260524-WA0031.jpg" alt=""
+                class="hero-bg-img w-full h-full object-cover select-none" draggable="false"
+                onerror="this.src='https://picsum.photos/seed/gymshopdark/1920/1080.jpg'">
         </div>
 
         <!-- Overlays -->
@@ -453,7 +822,9 @@
         <div class="absolute inset-0 bg-gradient-to-b from-[#050505]/70 via-transparent to-[#050505]"></div>
 
         <!-- Gold ambient glow -->
-        <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-amber-500/[0.04] blur-[150px] pointer-events-none"></div>
+        <div
+            class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-amber-500/[0.04] blur-[150px] pointer-events-none">
+        </div>
 
         <!-- Gold floating particles -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
@@ -470,9 +841,11 @@
 
             <!-- Badge -->
             <div class="hero-animate" style="--delay: 0.1s">
-                <div class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-brand-gold/30 bg-brand-gold/[0.08] backdrop-blur-sm mb-8">
+                <div
+                    class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-brand-gold/30 bg-brand-gold/[0.08] backdrop-blur-sm mb-8">
                     <div class="w-2 h-2 rounded-full bg-brand-gold pulse-gold"></div>
-                    <span class="text-[0.7rem] sm:text-xs font-semibold tracking-[0.15em] sm:tracking-[0.2em] uppercase text-gold">Shop</span>
+                    <span
+                        class="text-[0.7rem] sm:text-xs font-semibold tracking-[0.15em] sm:tracking-[0.2em] uppercase text-gold">Shop</span>
                 </div>
             </div>
 
@@ -481,7 +854,7 @@
                 <div class="hero-line" style="--delay: 0.4s"></div>
             </div>
 
-            <!-- Title — word-by-word animation -->
+            <!-- Title -->
             <h1 class="font-display font-semibold tracking-tight mb-8 hero-title">
                 <span class="hero-title-line">
                     <span class="hero-word" style="--i:0">THE</span>
@@ -500,14 +873,16 @@
 
             <!-- Description -->
             <div class="hero-animate" style="--delay: 1.1s">
-                <p class="text-sm sm:text-base md:text-lg lg:text-xl text-muted-custom leading-relaxed max-w-2xl mx-auto">
+                <p
+                    class="text-sm sm:text-base md:text-lg lg:text-xl text-muted-custom leading-relaxed max-w-2xl mx-auto">
                     Everything you need to fuel your transformation — supplements, apparel, and equipment.
                 </p>
             </div>
 
             <!-- Scroll hint -->
             <div class="hero-animate mt-14" style="--delay: 1.8s">
-                <a href="#products" class="scroll-indicator inline-flex flex-col items-center gap-2 text-muted-custom hover:text-gold transition-colors">
+                <a href="#products"
+                    class="scroll-indicator inline-flex flex-col items-center gap-2 text-muted-custom hover:text-gold transition-colors">
                     <span class="text-[0.6rem] tracking-[0.25em] uppercase">Browse</span>
                     <i data-lucide="chevron-down" class="w-4 h-4"></i>
                 </a>
@@ -518,270 +893,31 @@
     <!-- ============================================ -->
     <!-- SHOP TABS SECTION -->
     <!-- ============================================ -->
-    <section id="products" class="py-12 sm:py-16 section-padding">
+    <section id="products" class="section-padding">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
 
-            <!-- Tab Buttons -->
-            <div class="flex flex-wrap justify-center gap-3 mb-10 reveal-on-scroll">
-                <button onclick="switchTab('shop', 'supplements')" id="shop-tab-supplements" class="shop-tab active px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase">Supplements</button>
-                <button onclick="switchTab('shop', 'attire')" id="shop-tab-attire" class="shop-tab px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase">Gym Attire</button>
-                <button onclick="switchTab('shop', 'equipment')" id="shop-tab-equipment" class="shop-tab px-5 py-2.5 rounded-lg text-sm font-semibold tracking-wide uppercase">Equipment</button>
+            <!-- Tab buttons — scroll sideways on small phones instead of wrapping -->
+            <div class="tabs-row reveal-on-scroll">
+                <button onclick="switchTab('shop', 'supplements')" id="shop-tab-supplements"
+                    class="shop-tab active">Supplements</button>
+                <button onclick="switchTab('shop', 'attire')" id="shop-tab-attire" class="shop-tab">Gym Attire</button>
+                <button onclick="switchTab('shop', 'equipment')" id="shop-tab-equipment"
+                    class="shop-tab">Equipment</button>
             </div>
 
-            <!-- SUPPLEMENTS CONTENT -->
+            <!-- SUPPLEMENTS -->
             <div id="shop-supplements" class="shop-content tab-content">
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
-                        <div class="product-image-square">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788716002/IMG-20260904-WA0028.jpg" alt="Whey Protein" onerror="this.src='https://picsum.photos/seed/wheyprotein/400/400.jpg'">
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Whey Protein{Double Chocolate}</h4>
-                            <p class="text-xs text-muted-custom mb-2">5lb/2.27g</p>
-                            <span class="font-display text-lg font-semibold text-gold">K2,700</span>
-                            <button onclick="showToast('Whey Protein{Double Chocolate} added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
-                        <div class="product-image-square">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788718772/IMG-20260904-WA0026_1.jpg" alt="Mass Gainer" onerror="this.src='https://picsum.photos/seed/massgainer/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Whey Protein[Vanilla Ice-cream]</h4>
-                            <p class="text-xs text-muted-custom mb-2">1.5/682g</p>
-                            <span class="font-display text-lg font-semibold text-gold">K1,700</span>
-                            <button onclick="showToast('Whey Protein[Vanilla Ice-cream] added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
-                        <div class="product-image-square">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788714065/IMG-20260904-WA0015_1.jpg" alt="Mass Gainer" onerror="this.src='https://picsum.photos/seed/massgainer/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Whey Protein{Banana}</h4>
-                            <p class="text-xs text-muted-custom mb-2">2.2lb{35.2OZ}</p>
-                            <span class="font-display text-lg font-semibold text-gold">K500</span>
-                            <button onclick="showToast('Whey Protein Powder{Banana} added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.12s;">
-                        <div class="product-image-square">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788716996/IMG-20260906-WA0012.jpg" alt="Pre-Workout" onerror="this.src='https://picsum.photos/seed/preworkout/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">USN Super Grow Beast</h4>
-                            <p class="text-xs text-muted-custom mb-2">4kg</p>
-                            <span class="font-display text-lg font-semibold text-gold">K900</span>
-                            <button onclick="showToast('USN Super Grow Beast added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.18s;">
-                        <div class="product-image-square">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788717627/IMG-20260904-WA0029.jpg" alt="Fat Burner" onerror="this.src='https://picsum.photos/seed/fatburner/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Optimum Nutrition Creatine</h4>
-                            <p class="text-xs text-muted-custom mb-2">60 capsules</p>
-                            <span class="font-display text-lg font-semibold text-gold">K850</span>
-                            <button onclick="showToast('Optimum Nutrition Creatine added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-  
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
-                        <div class="product-image-square">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788719515/IMG-20260904-WA0021.jpg" alt="Mass Gainer" onerror="this.src='https://picsum.photos/seed/massgainer/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Whey Protein Powder{Macha}</h4>
-                            <p class="text-xs text-muted-custom mb-2">2.2lb{35.2OZ}</p>
-                            <span class="font-display text-lg font-semibold text-gold">K500</span>
-                            <button onclick="showToast('Whey Protein Powder{Macha} added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
-                        <div class="product-image-square">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788716608/IMG-20260906-WA0008.jpg" alt="Mass Gainer" onerror="this.src='https://picsum.photos/seed/massgainer/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Whey Protein Powder{Strawberry}</h4>
-                            <p class="text-xs text-muted-custom mb-2">2.2lb{35.2OZ}</p>
-                            <span class="font-display text-lg font-semibold text-gold">K500</span>
-                            <button onclick="showToast('Whey Protein Powder{Macha} added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                   <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
-                        <div class="product-image-square">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788722499/IMG-20260904-WA0025.jpg" alt="Mass Gainer" onerror="this.src='https://picsum.photos/seed/massgainer/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Serious Mass[Chocolate]</h4>
-                            <p class="text-xs text-muted-custom mb-2">12lb/5.44kg</p>
-                            <span class="font-display text-lg font-semibold text-gold">K500</span>
-                            <button onclick="showToast('Serious Mass[Chocolate] {2.73kg} added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
-                        <div class="product-image-square">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788720157/IMG-20260904-WA0027.jpg" alt="Mass Gainer" onerror="this.src='https://picsum.photos/seed/massgainer/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Serious Mass[Strawberry]</h4>
-                            <p class="text-xs text-muted-custom mb-2">2.73kg</p>
-                            <span class="font-display text-lg font-semibold text-gold">K500</span>
-                            <button onclick="showToast('Serious Mass[Strawberry] {2.73kg} added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                     <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
-                        <div class="product-image-square">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788722073/HIBISCUS_Drink.jpg" alt="Mass Gainer" onerror="this.src='https://picsum.photos/seed/massgainer/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Hibiscus</h4>
-                            <p class="text-xs text-muted-custom mb-2">Natural drink</p>
-                            <span class="font-display text-lg font-semibold text-gold">K8</span>
-                            <button onclick="showToast('Hibiscus {2.73kg} added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.24s;">
-                        <div class="product-image-square">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788717790/IMG-20260906-WA0014.jpg" alt="Vitamins" onerror="this.src='https://picsum.photos/seed/vitapack/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Pro Mass</h4>
-                            <p class="text-xs text-muted-custom mb-2">30-day supply</p>
-                            <span class="font-display text-lg font-semibold text-gold">K500</span>
-                            <button onclick="showToast('Pro Mass added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6"></div>
             </div>
 
-            <!-- GYM ATTIRE CONTENT -->
+            <!-- GYM ATTIRE -->
             <div id="shop-attire" class="shop-content tab-content hidden">
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
-                        <div class="product-image-tall">
-                            <img src="images/shop-tshirt.jpg" alt="Gym T-Shirt" onerror="this.src='https://picsum.photos/seed/gymtshirt/400/520.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">CM Gym T-Shirt</h4>
-                            <p class="text-xs text-muted-custom mb-2">S / M / L / XL</p>
-                            <span class="font-display text-lg font-semibold text-gold">K25</span>
-                            <button onclick="showToast('Gym T-Shirt added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
-                        <div class="product-image-tall">
-                            <img src="images/shop-vest.jpg" alt="Training Vest" onerror="this.src='https://picsum.photos/seed/trainingvest/400/520.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">CM Training Vest</h4>
-                            <p class="text-xs text-muted-custom mb-2">S / M / L / XL</p>
-                            <span class="font-display text-lg font-semibold text-gold">K22</span>
-                            <button onclick="showToast('Training Vest added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.12s;">
-                        <div class="product-image-tall">
-                            <img src="images/shop-shorts.jpg" alt="Workout Shorts" onerror="this.src='https://picsum.photos/seed/workoutshorts/400/520.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">CM Workout Shorts</h4>
-                            <p class="text-xs text-muted-custom mb-2">M / L / XL</p>
-                            <span class="font-display text-lg font-semibold text-gold">K20</span>
-                            <button onclick="showToast('Workout Shorts added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
-                        <div class="product-image-tall">
-                            <img src="https://res.cloudinary.com/xfcqi4ts/image/upload/v1788721722/IMG-20260906-WA0005.jpg" alt="Gym gloves" onerror="this.src='https://picsum.photos/seed/trainingvest/400/520.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Gym gloves</h4>
-                            <p class="text-xs text-muted-custom mb-2">S / M / L / XL</p>
-                            <span class="font-display text-lg font-semibold text-gold">K350</span>
-                            <button onclick="showToast('Gym gloves added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.18s;">
-                        <div class="product-image-tall">
-                            <img src="images/shop-hoodie.jpg" alt="Gym Hoodie" onerror="this.src='https://picsum.photos/seed/gymhoodie/400/520.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">CM Gym Hoodie</h4>
-                            <p class="text-xs text-muted-custom mb-2">M / L / XL / XXL</p>
-                            <span class="font-display text-lg font-semibold text-gold">K40</span>
-                            <button onclick="showToast('Gym Hoodie added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6"></div>
             </div>
 
-            <!-- GYM EQUIPMENT CONTENT -->
+            <!-- GYM EQUIPMENT -->
             <div id="shop-equipment" class="shop-content tab-content hidden">
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll">
-                        <div class="product-image-square">
-                            <img src="images/shop-dumbbells.jpg" alt="Dumbbells" onerror="this.src='https://picsum.photos/seed/dumbbellset/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Dumbbell Set</h4>
-                            <p class="text-xs text-muted-custom mb-2">5-25kg pairs</p>
-                            <span class="font-display text-lg font-semibold text-gold">K120</span>
-                            <button onclick="showToast('Dumbbell Set added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.06s;">
-                        <div class="product-image-square">
-                            <img src="images/shop-bands.jpg" alt="Resistance Bands" onerror="this.src='https://picsum.photos/seed/resbands/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Resistance Bands</h4>
-                            <p class="text-xs text-muted-custom mb-2">Set of 5</p>
-                            <span class="font-display text-lg font-semibold text-gold">K18</span>
-                            <button onclick="showToast('Resistance Bands added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.12s;">
-                        <div class="product-image-square">
-                            <img src="images/shop-rope.jpg" alt="Speed Rope" onerror="this.src='https://picsum.photos/seed/speedrope/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Speed Rope</h4>
-                            <p class="text-xs text-muted-custom mb-2">Adjustable</p>
-                            <span class="font-display text-lg font-semibold text-gold">K12</span>
-                            <button onclick="showToast('Speed Rope added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay: 0.18s;">
-                        <div class="product-image-square">
-                            <img src="images/shop-abroller.jpg" alt="Ab Roller" onerror="this.src='https://picsum.photos/seed/abroller/400/400.jpg'">
-                        </div>
-                        <div class="product-content text-center">
-                            <h4 class="font-semibold text-sm mb-1">Ab Roller</h4>
-                            <p class="text-xs text-muted-custom mb-2">Pro quality</p>
-                            <span class="font-display text-lg font-semibold text-gold">K15</span>
-                            <button onclick="showToast('Ab Roller added to cart!')" class="btn-outline w-full mt-3 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6"></div>
             </div>
 
         </div>
@@ -792,150 +928,189 @@
 
     <script src="../components/layout.js"></script>
     <script>
-        // ===== THEME TOGGLE =====
-        function initTheme() {
-            var saved = localStorage.getItem('theme');
-            if (saved === 'light') document.body.classList.add('light-theme');
-            updateThemeIcons();
-        }
+    // ============================================================
+    // PRODUCT DATA — add new products here (one line each)
+    // shape: 'square' (default) or 'tall'
+    // ============================================================
+    var PRODUCTS = {
+        supplements: [
+            { name: 'Whey Protein — Double Chocolate',   unit: '5 lb / 2.27 kg',  price: 'K2,700', img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788716002/IMG-20260904-WA0028.jpg' },
+            { name: 'Whey Protein — Vanilla Ice-Cream',  unit: '1.5 lb / 682 g',  price: 'K1,700', img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788718772/IMG-20260904-WA0026_1.jpg' },
+            { name: 'Whey Protein — Banana',             unit: '2.2 lb / 35.2 oz', price: 'K500',  img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788714065/IMG-20260904-WA0015_1.jpg' },
+            { name: 'USN Super Grow Beast',              unit: '4 kg',            price: 'K900',   img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788716996/IMG-20260906-WA0012.jpg' },
+            { name: 'Optimum Nutrition Creatine',        unit: '60 capsules',     price: 'K850',   img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788717627/IMG-20260904-WA0029.jpg' },
+            { name: 'Whey Protein Powder — Matcha',      unit: '2.2 lb / 35.2 oz', price: 'K500',  img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788719515/IMG-20260904-WA0021.jpg' },
+            { name: 'Whey Protein Powder — Strawberry',  unit: '2.2 lb / 35.2 oz', price: 'K500',  img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788716608/IMG-20260906-WA0008.jpg' },
+            { name: 'Serious Mass — Chocolate',          unit: '12 lb / 5.44 kg', price: 'K500',   img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788722499/IMG-20260904-WA0025.jpg' },
+            { name: 'Serious Mass — Strawberry',         unit: '2.73 kg',         price: 'K500',   img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788720157/IMG-20260904-WA0027.jpg' },
+            { name: 'Hibiscus',                          unit: 'Natural drink',   price: 'K8',     img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788722073/HIBISCUS_Drink.jpg' },
+            { name: 'Pro Mass',                          unit: '30-day supply',   price: 'K500',   img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788717790/IMG-20260906-WA0014.jpg' }
+        ],
+        attire: [
+            { name: 'CM Gym T-Shirt',    unit: 'S / M / L / XL',    price: 'K25',  img: 'images/shop-tshirt.jpg',  shape: 'tall' },
+            { name: 'CM Training Vest',  unit: 'S / M / L / XL',    price: 'K22',  img: 'images/shop-vest.jpg',    shape: 'tall' },
+            { name: 'CM Workout Shorts', unit: 'M / L / XL',        price: 'K20',  img: 'images/shop-shorts.jpg',  shape: 'tall' },
+            { name: 'Gym Gloves',        unit: 'S / M / L / XL',    price: 'K350', img: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788721722/IMG-20260906-WA0005.jpg', shape: 'tall' },
+            { name: 'CM Gym Hoodie',     unit: 'M / L / XL / XXL',  price: 'K40',  img: 'images/shop-hoodie.jpg',  shape: 'tall' }
+        ],
+        equipment: [
+            { name: 'Dumbbell Set',     unit: '5–25 kg pairs', price: 'K120', img: 'images/shop-dumbbells.jpg' },
+            { name: 'Resistance Bands', unit: 'Set of 5',      price: 'K18',  img: 'images/shop-bands.jpg' },
+            { name: 'Speed Rope',       unit: 'Adjustable',    price: 'K12',  img: 'images/shop-rope.jpg' },
+            { name: 'Ab Roller',        unit: 'Pro quality',   price: 'K15',  img: 'images/shop-abroller.jpg' }
+        ]
+    };
 
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            var isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            updateThemeIcons();
-        }
+    // ===== REUSABLE CART BUTTON COMPONENT =====
+    // Every product (anywhere on the page) gets its button from here.
+    function createCartButton(productName) {
+        return '<button type="button" class="btn-cart" data-name="' + esc(productName) + '">' +
+               '<i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Add to Cart' +
+               '</button>';
+    }
 
-        function updateThemeIcons() {
-            var isLight = document.body.classList.contains('light-theme');
-            var iconName = isLight ? 'sun' : 'moon';
-            var desktopIcon = document.getElementById('theme-icon-desktop');
-            if (desktopIcon) desktopIcon.setAttribute('data-lucide', iconName);
-            var mobileIcon = document.getElementById('theme-icon-mobile');
-            if (mobileIcon) mobileIcon.setAttribute('data-lucide', iconName);
-            if (window.lucide) lucide.createIcons();
-        }
+    // ===== REUSABLE PRODUCT CARD COMPONENT =====
+    function createProductCard(p, delay) {
+        var shape = p.shape === 'tall' ? 'product-image-tall' : 'product-image-square';
+        var seed = p.name.toLowerCase().replace(/[^a-z0-9]+/g, '');
+        return '<div class="glass-card card-hover rounded-2xl overflow-hidden reveal-on-scroll" style="transition-delay:' + delay + 's">' +
+               '<div class="' + shape + '">' +
+               '<img src="' + p.img + '" alt="' + esc(p.name) + '" loading="lazy" ' +
+               'onerror="this.src=\'https://picsum.photos/seed/' + seed + '/400/400.jpg\'">' +
+               '</div>' +
+               '<div class="product-content">' +
+               '<h4 class="product-name">' + esc(p.name) + '</h4>' +
+               '<p class="product-unit">' + esc(p.unit) + '</p>' +
+               '<span class="product-price">' + esc(p.price) + '</span>' +
+               createCartButton(p.name) +
+               '</div>' +
+               '</div>';
+    }
 
-        // ===== MOBILE MENU =====
-        function closeMobileMenu() {
-            var menu = document.getElementById('mobile-menu');
-            if (menu) menu.classList.remove('open');
-        }
-
-        function initMobileMenu() {
-            var toggle = document.getElementById('mobile-toggle');
-            var menu = document.getElementById('mobile-menu');
-            if (toggle && menu) {
-                toggle.addEventListener('click', function () { menu.classList.toggle('open'); });
-            }
-        }
-
-        // ===== TOAST =====
-        function showToast(message) {
-            var toast = document.getElementById('toast');
-            var msgEl = document.getElementById('toast-message');
-            if (toast && msgEl) {
-                msgEl.textContent = message;
-                toast.classList.add('show');
-                setTimeout(function () { toast.classList.remove('show'); }, 3000);
-            }
-        }
-
-        // ===== SCROLL REVEAL =====
-        var scrollObserver = null;
-
-        function initScrollReveal() {
-            var elements = document.querySelectorAll('.reveal-on-scroll:not(.is-visible)');
-            if (scrollObserver) scrollObserver.disconnect();
-
-            scrollObserver = new IntersectionObserver(function (entries) {
-                entries.forEach(function (entry) {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        scrollObserver.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-            elements.forEach(function (el) { scrollObserver.observe(el); });
-        }
-
-        // ===== NAVBAR SCROLL =====
-        function initNavScroll() {
-            var nav = document.getElementById('navbar');
-            if (!nav) return;
-            var ticking = false;
-            window.addEventListener('scroll', function () {
-                if (!ticking) {
-                    requestAnimationFrame(function () {
-                        nav.classList.toggle('nav-scrolled', window.scrollY > 60);
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
-        }
-
-        // ===== HERO PARALLAX =====
-        function initHeroParallax() {
-            var heroImg = document.querySelector('.hero-bg-img');
-            if (!heroImg) return;
-            var ticking = false;
-            window.addEventListener('scroll', function () {
-                if (!ticking) {
-                    requestAnimationFrame(function () {
-                        var scrolled = window.scrollY;
-                        var heroEl = document.getElementById('hero');
-                        if (heroEl && scrolled < heroEl.offsetHeight) {
-                            heroImg.style.transform = 'scale(1.05) translateY(' + (scrolled * 0.25) + 'px)';
-                        }
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
-        }
-
-        // ===== TAB SWITCHING =====
-        function switchTab(group, tabName) {
-            var allContents = document.querySelectorAll('.' + group + '-content');
-            allContents.forEach(function (content) { content.classList.add('hidden'); });
-
-            var targetContent = document.getElementById(group + '-' + tabName);
-            if (targetContent) {
-                targetContent.classList.remove('hidden');
-                targetContent.style.animation = 'none';
-                targetContent.offsetHeight;
-                targetContent.style.animation = '';
-            }
-
-            var allTabs = document.querySelectorAll('[id^="' + group + '-tab-"]');
-            allTabs.forEach(function (tab) { tab.classList.remove('active'); });
-
-            var activeTab = document.getElementById(group + '-tab-' + tabName);
-            if (activeTab) activeTab.classList.add('active');
-
-            // Reset & re-init scroll reveal for newly visible items
-            var newCards = targetContent ? targetContent.querySelectorAll('.reveal-on-scroll') : [];
-            newCards.forEach(function (el) { el.classList.remove('is-visible'); });
-            initScrollReveal();
-        }
-
-        // ===== INIT =====
-        document.addEventListener('DOMContentLoaded', function () {
-            initTheme();
-            initMobileMenu();
-            initScrollReveal();
-            initNavScroll();
-            initHeroParallax();
-
-            var desktopToggle = document.getElementById('theme-toggle-desktop');
-            var mobileToggle = document.getElementById('theme-toggle-mobile');
-            if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
-            if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
-
-            if (window.lucide) lucide.createIcons();
+    // ===== RENDER ALL PRODUCTS INTO THEIR GRIDS =====
+    function renderProducts() {
+        Object.keys(PRODUCTS).forEach(function (category) {
+            var grid = document.querySelector('#shop-' + category + ' .grid');
+            if (!grid) return;
+            grid.innerHTML = PRODUCTS[category].map(function (p, i) {
+                // stagger delays row-by-row (4 per row on desktop)
+                return createProductCard(p, (i % 4) * 0.05);
+            }).join('');
         });
-    </script>
+    }
+
+    // ===== HTML-escape (names with quotes/apostrophes stay safe) =====
+    function esc(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#39;');
+    }
+
+    // ===== CART — event delegation: works for ALL .btn-cart buttons,
+    // even ones added to the DOM later =====
+    function initCartButtons() {
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('.btn-cart');
+            if (!btn) return;
+            addToCart(btn.getAttribute('data-name'), btn);
+        });
+    }
+
+    function addToCart(name, btn) {
+        showToast(name + ' added to cart!');
+        if (btn && !btn.classList.contains('added')) {
+            var originalHTML = btn.innerHTML;
+            btn.classList.add('added');
+            btn.innerHTML = '<i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Added!';
+            if (window.lucide) lucide.createIcons();
+            setTimeout(function () {
+                btn.classList.remove('added');
+                btn.innerHTML = originalHTML;
+                if (window.lucide) lucide.createIcons();
+            }, 1500);
+        }
+    }
+
+    // ===== TOAST =====
+    function showToast(message) {
+        var toast = document.getElementById('toast');
+        var msgEl = document.getElementById('toast-message');
+        if (toast && msgEl) {
+            msgEl.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 3000);
+        }
+    }
+
+    // ===== SCROLL REVEAL =====
+    var scrollObserver = null;
+    function initScrollReveal() {
+        var elements = document.querySelectorAll('.reveal-on-scroll:not(.is-visible)');
+        if (scrollObserver) scrollObserver.disconnect();
+        scrollObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    scrollObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        elements.forEach(function (el) { scrollObserver.observe(el); });
+    }
+
+    // ===== HERO PARALLAX =====
+    function initHeroParallax() {
+        var heroImg = document.querySelector('.hero-bg-img');
+        if (!heroImg) return;
+        var ticking = false;
+        window.addEventListener('scroll', function () {
+            if (!ticking) {
+                requestAnimationFrame(function () {
+                    var scrolled = window.scrollY;
+                    var heroEl = document.getElementById('hero');
+                    if (heroEl && scrolled < heroEl.offsetHeight) {
+                        heroImg.style.transform = 'scale(1.05) translateY(' + (scrolled * 0.25) + 'px)';
+                    }
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+    }
+
+    // ===== TAB SWITCHING =====
+    function switchTab(group, tabName) {
+        var allContents = document.querySelectorAll('.' + group + '-content');
+        allContents.forEach(function (content) { content.classList.add('hidden'); });
+
+        var targetContent = document.getElementById(group + '-' + tabName);
+        if (targetContent) {
+            targetContent.classList.remove('hidden');
+            targetContent.style.animation = 'none';
+            targetContent.offsetHeight;
+            targetContent.style.animation = '';
+        }
+
+        var allTabs = document.querySelectorAll('[id^="' + group + '-tab-"]');
+        allTabs.forEach(function (tab) { tab.classList.remove('active'); });
+        var activeTab = document.getElementById(group + '-tab-' + tabName);
+        if (activeTab) activeTab.classList.add('active');
+
+        var newCards = targetContent ? targetContent.querySelectorAll('.reveal-on-scroll') : [];
+        newCards.forEach(function (el) { el.classList.remove('is-visible'); });
+        initScrollReveal();
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function () {
+        renderProducts();      // build all cards + cart buttons from data
+        initCartButtons();     // wire up clicks via delegation
+        initScrollReveal();    // AFTER render, so cards animate in
+        initHeroParallax();
+        if (window.lucide) lucide.createIcons();  // AFTER render, for card icons
+    });
+</script>
 </body>
+
 </html>

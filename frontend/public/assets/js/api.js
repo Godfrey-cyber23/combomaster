@@ -381,18 +381,25 @@
       location.replace('client-dashboard.html');
       return;
     }
-    const [dashboard, clients, bookings, messages] = await Promise.all([
+    const [dashboard, clients, bookings, messages, orders, sales, programs, settings] = await Promise.all([
       api('/admin/dashboard'),
       api('/admin/clients'),
       api('/admin/bookings'),
-      api('/admin/messages')
+      api('/admin/messages'),
+      api('/admin/orders'),
+      api('/admin/sales'),
+      api('/admin/programs'),
+      api('/admin/settings')
     ]);
     renderAdminStats(dashboard.stats);
     renderAdminClients(clients.clients);
     renderAdminRecentBookings(bookings.bookings);
     renderAdminBookings(bookings.bookings);
     renderAdminMessages(messages.messages);
-    markUnavailableAdminViews();
+    renderAdminOrders(orders.orders);
+    renderAdminSales(sales, dashboard.stats);
+    renderAdminPrograms(programs.programs);
+    renderAdminSettings(settings.settings);
   }
 
   function renderAdminStats(stats) {
@@ -435,32 +442,120 @@
       : '<tr><td colspan="4" class="py-2">No booking requests yet.</td></tr>';
   }
 
-  function markUnavailableAdminViews() {
-    const unavailable = {
-      salesView: ['Sales', 'Sales reporting is unavailable because no payment provider is configured.'],
-      paymentsView: ['Payments', 'Payment processing and transaction history are not configured.'],
-      ordersView: ['Orders', 'Order management is not connected to an e-commerce provider.'],
-      coachingProgramsView: ['Coaching Programs', 'Program assignment and enrollment management are not connected yet.'],
-      reportsView: ['Reports', 'Reports will be available when their source data is connected.'],
-      settingsView: ['Business Settings', 'Business settings are not persisted by the backend yet.']
-    };
-    Object.entries(unavailable).forEach(([id, [title, message]]) => {
-      const view = document.getElementById(id);
-      if (view) view.innerHTML = `<h1 class="font-display text-2xl font-semibold">${title}</h1><div class="glass-card p-5 mt-4 text-sm text-muted">${message}</div>`;
-    });
-    const revenueChart = document.getElementById('revenueChart');
-    if (revenueChart) {
-      window.Chart?.getChart(revenueChart)?.destroy();
-      revenueChart.replaceWith(Object.assign(document.createElement('p'), {
-        className: 'text-sm text-muted mt-4',
-        textContent: 'Revenue data is not available until a payment provider is connected.'
-      }));
+  function formatMoney(amount, currency = 'ZMW') {
+    return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(Number(amount) || 0);
+  }
+
+  function renderAdminOrders(orders) {
+    const renderTable = (compact = false) => orders.length
+      ? `<table class="w-full dash-table"><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th>${compact ? '' : '<th>Date</th>'}</tr></thead><tbody>${orders.map((order) => {
+        const items = Array.isArray(order.items) ? order.items : JSON.parse(order.items || '[]');
+        const itemSummary = items.map((item) => `${escapeHtml(item.title)} × ${Number(item.quantity) || 0}`).join(', ');
+        return `<tr><td>${escapeHtml(order.tx_ref.slice(0, 8))}</td><td>${escapeHtml(order.customer_name)}<span class="block text-xs text-muted">${escapeHtml(order.customer_email)}</span></td><td>${itemSummary}</td><td>${formatMoney(order.amount, order.currency)}</td><td><span class="badge">${escapeHtml(order.status)}</span></td>${compact ? '' : `<td>${new Date(order.created_at).toLocaleString()}</td>`}</tr>`;
+      }).join('')}</tbody></table>`
+      : '<p class="p-4 text-sm text-muted">No shop orders yet.</p>';
+    const ordersView = document.getElementById('ordersView');
+    if (ordersView) ordersView.innerHTML = `<h1 class="font-display text-2xl font-semibold mb-4">Recent Orders</h1><div class="glass-card p-5 overflow-x-auto">${renderTable()}</div>`;
+    const paymentsView = document.getElementById('paymentsView');
+    if (paymentsView) paymentsView.innerHTML = `<h1 class="font-display text-2xl font-semibold mb-4">Payment Transactions</h1><div class="glass-card p-5 overflow-x-auto">${renderTable(true)}<p class="text-xs text-muted mt-3">Statuses update only after payment-provider verification.</p></div>`;
+  }
+
+  function renderAdminSales(sales, stats) {
+    const salesView = document.getElementById('salesView');
+    if (salesView) {
+      const metrics = salesView.querySelectorAll('.grid > div');
+      if (metrics[0]) metrics[0].innerHTML = `<p class="text-sm text-muted">Verified shop revenue</p><p class="font-display text-3xl font-bold text-gold">${formatMoney(sales.revenue, sales.currency)}</p>`;
+      if (metrics[1]) metrics[1].innerHTML = `<p class="text-sm text-muted">Completed shop orders</p><p class="font-display text-3xl font-bold text-gold">${sales.completedOrders}</p>`;
     }
-    const programsHeading = [...document.querySelectorAll('#dashboardView h3')]
+    const salesCanvas = document.getElementById('salesChartCanvas');
+    const chart = salesCanvas && window.Chart?.getChart(salesCanvas);
+    if (chart) {
+      chart.data.labels = sales.monthly.map((row) => row.month);
+      chart.data.datasets = [{
+        label: `Verified shop revenue (${sales.currency})`,
+        data: sales.monthly.map((row) => row.revenue),
+        backgroundColor: '#f59e0b'
+      }];
+      chart.update();
+    }
+    const dashboardCanvas = document.getElementById('revenueChart');
+    const dashboardChart = dashboardCanvas && window.Chart?.getChart(dashboardCanvas);
+    if (dashboardChart) {
+      dashboardChart.data.labels = sales.monthly.map((row) => row.month);
+      dashboardChart.data.datasets = [{
+        label: `Verified shop revenue (${sales.currency})`,
+        data: sales.monthly.map((row) => row.revenue),
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,0.08)',
+        fill: true,
+        tension: 0.3
+      }];
+      dashboardChart.update();
+    }
+    const reports = document.getElementById('reportsView');
+    if (reports) {
+      reports.innerHTML = `<h1 class="font-display text-2xl font-semibold">Business Reports</h1><div class="grid md:grid-cols-2 gap-5 mt-5"><div class="glass-card p-5"><h2 class="font-semibold">Verified Shop Sales</h2><p class="font-display text-3xl text-gold mt-2">${formatMoney(sales.revenue, sales.currency)}</p><p class="text-sm text-muted mt-2">${sales.completedOrders} completed orders</p></div><div class="glass-card p-5"><h2 class="font-semibold">Client Activity</h2><p class="text-sm mt-3">${stats.clients} registered clients</p><p class="text-sm text-muted mt-2">${stats.joinedToday} joined today · ${stats.pendingBookings} pending bookings</p></div></div><div class="glass-card p-5 mt-5"><h2 class="font-semibold mb-3">Monthly verified shop revenue</h2><div class="overflow-x-auto"><table class="w-full dash-table"><thead><tr><th>Month</th><th>Orders</th><th>Revenue</th></tr></thead><tbody>${sales.monthly.length ? sales.monthly.map((row) => `<tr><td>${escapeHtml(row.month)}</td><td>${row.orders}</td><td>${formatMoney(row.revenue, sales.currency)}</td></tr>`).join('') : '<tr><td colspan="3">No verified sales yet.</td></tr>'}</tbody></table></div></div>`;
+    }
+  }
+
+  function renderAdminPrograms(programs) {
+    const view = document.getElementById('coachingProgramsView');
+    if (!view) return;
+    view.innerHTML = `<div class="flex justify-between items-center flex-wrap gap-3 mb-5"><h1 class="font-display text-2xl font-semibold">Coaching Programs</h1><button class="btn-gold px-4 py-2 rounded-lg text-sm" id="addProgramButton">Add Program</button></div><div class="grid sm:grid-cols-2 gap-5">${programs.length ? programs.map((program) => `<article class="glass-card p-5"><div class="flex justify-between gap-3"><h2 class="font-semibold">${escapeHtml(program.name)}</h2><span class="badge">${program.is_active ? 'Active' : 'Inactive'}</span></div><p class="text-xs text-muted mt-1">${Number(program.duration_weeks)} weeks</p><p class="text-sm mt-3">${escapeHtml(program.description || 'No description')}</p><button class="btn-outline text-xs px-3 py-1 rounded-lg mt-4" data-edit-program="${program.id}">Edit</button></article>`).join('') : '<p class="text-sm text-muted">No programs have been added yet.</p>'}</div>`;
+    view.querySelector('#addProgramButton')?.addEventListener('click', () => openAdminProgramModal());
+    view.querySelectorAll('[data-edit-program]').forEach((button) => {
+      button.addEventListener('click', () => openAdminProgramModal(programs.find((program) => Number(program.id) === Number(button.dataset.editProgram))));
+    });
+    const dashboardHeading = [...document.querySelectorAll('#dashboardView h3')]
       .find((heading) => heading.textContent.includes('Top Coaching Programs'));
-    if (programsHeading) {
-      const card = programsHeading.closest('.glass-card');
-      if (card) card.innerHTML = `<h3 class="font-display text-lg font-semibold">Program enrollments</h3><p class="text-sm text-muted mt-3">Enrollment data is not connected yet.</p>`;
+    const dashboardCard = dashboardHeading?.closest('.glass-card');
+    if (dashboardCard) {
+      dashboardCard.innerHTML = `<h3 class="font-display text-lg font-semibold">Coaching Programs</h3><div class="mt-4 flex flex-wrap gap-5">${programs.length ? programs.filter((program) => program.is_active).map((program) => `<div><span class="text-gold font-bold">${escapeHtml(program.name)}</span><p class="text-xs text-muted">${Number(program.duration_weeks)} weeks</p></div>`).join('') : '<p class="text-sm text-muted">No active programs.</p>'}</div>`;
+    }
+  }
+
+  function openAdminProgramModal(program) {
+    const editing = Boolean(program);
+    window.openModal?.(editing ? 'Edit Program' : 'Add Program', `<form id="adminProgramForm" class="space-y-4"><div><label class="text-sm block mb-1" for="adminProgramName">Program name</label><input id="adminProgramName" class="form-input" maxlength="160" required value="${escapeHtml(program?.name || '')}"></div><div><label class="text-sm block mb-1" for="adminProgramDuration">Duration (weeks)</label><input id="adminProgramDuration" type="number" min="1" max="104" class="form-input" required value="${Number(program?.duration_weeks) || 12}"></div><div><label class="text-sm block mb-1" for="adminProgramDescription">Description</label><textarea id="adminProgramDescription" class="form-input" maxlength="5000" rows="3">${escapeHtml(program?.description || '')}</textarea></div>${editing ? `<label class="flex items-center gap-2 text-sm"><input id="adminProgramActive" type="checkbox" ${program.is_active ? 'checked' : ''}> Active</label>` : ''}<button class="btn-gold w-full py-2 rounded-lg">${editing ? 'Save Program' : 'Create Program'}</button></form>`);
+    document.getElementById('adminProgramForm')?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const body = {
+        name: document.getElementById('adminProgramName').value,
+        duration_weeks: Number(document.getElementById('adminProgramDuration').value),
+        description: document.getElementById('adminProgramDescription').value,
+        ...(editing ? { is_active: document.getElementById('adminProgramActive').checked } : {})
+      };
+      try {
+        await api(editing ? `/admin/programs/${program.id}` : '/admin/programs', {
+          method: editing ? 'PUT' : 'POST', body
+        });
+        window.closeModal?.();
+        await loadAdminDashboard();
+      } catch (error) {
+        toast(error.message, 'error');
+      }
+    });
+  }
+
+  function renderAdminSettings(settings) {
+    const name = document.getElementById('businessName');
+    const email = document.getElementById('contactEmail');
+    if (name) name.value = settings.business_name;
+    if (email) email.value = settings.contact_email;
+  }
+
+  async function saveBusinessSettings() {
+    try {
+      await api('/admin/settings', {
+        method: 'PUT',
+        body: {
+          business_name: document.getElementById('businessName').value,
+          contact_email: document.getElementById('contactEmail').value
+        }
+      });
+      toast('Settings saved', 'success');
+    } catch (error) {
+      toast(error.message, 'error');
     }
   }
 
@@ -550,6 +645,7 @@
         toast(error.message, 'error');
       }
     };
+    window.saveBusinessSettings = saveBusinessSettings;
   }
 
   document.addEventListener('DOMContentLoaded', () => {

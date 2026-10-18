@@ -87,6 +87,18 @@ test('content management requires an authenticated staff account', async () => {
   });
 });
 
+test('admin business routes require an authenticated administrator', async () => {
+  await withServer(async (baseUrl) => {
+    for (const route of ['/orders', '/sales', '/programs', '/settings']) {
+      const response = await fetch(`${baseUrl}/api/admin${route}`);
+      assert.equal(response.status, config.sessionConfigured ? 401 : 503, `${route} should be protected`);
+      assert.deepEqual(await response.json(), {
+        error: config.sessionConfigured ? 'Authentication required' : 'Authentication is not configured'
+      });
+    }
+  });
+});
+
 test('public content API validates page keys before querying the database', async () => {
   await withServer(async (baseUrl) => {
     const response = await fetch(`${baseUrl}/api/content/not-a-site-page`);

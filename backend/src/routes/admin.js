@@ -46,6 +46,135 @@ router.get('/bookings', async (_request, response) => {
   response.json({ bookings });
 });
 
+router.get('/orders', async (_request, response) => {
+  const [orders] = await pool.execute(
+    `SELECT id, tx_ref, customer_name, customer_email, customer_phone, payment_method,
+       currency, amount, items, status, created_at, updated_at
+     FROM shop_orders ORDER BY created_at DESC LIMIT 200`
+  );
+  response.json({ orders });
+});
+
+router.get('/sales', async (_request, response) => {
+  const [[summary], [monthly]] = await Promise.all([
+    pool.execute(
+      `SELECT COUNT(*) AS completed_orders, COALESCE(SUM(amount), 0) AS revenue
+       FROM shop_orders WHERE status = 'successful'`
+    ),
+    pool.execute(
+      `SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS orders,
+         COALESCE(SUM(amount), 0) AS revenue
+       FROM shop_orders
+       WHERE status = 'successful' AND created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 11 MONTH)
+       GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY month`
+    )
+  ]);
+  response.json({
+    currency: 'ZMW',
+    completedOrders: Number(summary[0].completed_orders),
+    revenue: Number(summary[0].revenue),
+    monthly: monthly.map((row) => ({
+      month: row.month,
+      orders: Number(row.orders),
+      revenue: Number(row.revenue)
+    }))
+  });
+});
+
+router.get('/programs', async (_request, response) => {
+  const [programs] = await pool.execute(
+    `SELECT id, name, description, duration_weeks, is_active, created_at, updated_at
+     FROM coaching_programs ORDER BY is_active DESC, name`
+  );
+  response.json({ programs });
+});
+
+router.post('/programs', async (request, response) => {
+  const name = typeof request.body.name === 'string' ? request.body.name.trim() : '';
+  const description = typeof request.body.description === 'string' ? request.body.description.trim() : '';
+  const duration = Number(request.body.duration_weeks);
+  if (!name || name.length > 160 || description.length > 5000 ||
+      !Number.isInteger(duration) || duration < 1 || duration > 104) {
+    return response.status(400).json({ error: 'Program details are invalid' });
+  }
+  const [result] = await pool.execute(
+    'INSERT INTO coaching_programs (name, description, duration_weeks) VALUES (?, ?, ?)',
+    [name, description, duration]
+  );
+  response.status(201).json({
+    program: { id: result.insertId, name, description, duration_weeks: duration, is_active: 1 }
+  });
+});
+
+router.put('/programs/:id', async (request, response) => {
+  if (!/^\d+$/.test(request.params.id)) {
+    return response.status(400).json({ error: 'Program id is invalid' });
+  }
+  const name = typeof request.body.name === 'string' ? request.body.name.trim() : '';
+  const description = typeof request.body.description === 'string' ? request.body.description.trim() : '';
+  const duration = Number(request.body.duration_weeks);
+  const isActive = request.body.is_active;
+  if (!name || name.length > 160 || description.length > 5000 ||
+      !Number.isInteger(duration) || duration < 1 || duration > 104 ||
+      typeof isActive !== 'boolean') {
+    return response.status(400).json({ error: 'Program details are invalid' });
+  }
+  const [result] = await pool.execute(
+    `UPDATE coaching_programs SET name = ?, description = ?, duration_weeks = ?, is_active = ?
+     WHERE id = ?`,
+    [name, description, duration, isActive, request.params.id]
+  );
+  if (!result.affectedRows) return response.status(404).json({ error: 'Program not found' });
+  response.json({
+    program: { id: Number(request.params.id), name, description, duration_weeks: duration, is_active: isActive }
+  });
+});
+
+const defaultSettings = {
+  business_name: 'ComboMaster Fitness',
+  contact_email: 'admin@combomaster.com'
+};
+
+router.get('/settings', async (_request, response) => {
+  const [rows] = await pool.execute(
+    'SELECT setting_key, setting_value FROM business_settings WHERE setting_key IN (?, ?)',
+    Object.keys(defaultSettings)
+  );
+  const settings = { ...defaultSettings };
+  rows.forEach(({ setting_key, setting_value }) => { settings[setting_key] = setting_value; });
+  response.json({ settings });
+});
+
+router.put('/settings', async (request, response) => {
+  const settings = {
+    business_name: typeof request.body.business_name === 'string' ? request.body.business_name.trim() : '',
+    contact_email: typeof request.body.contact_email === 'string' ? request.body.contact_email.trim() : ''
+  };
+  if (!settings.business_name || settings.business_name.length > 160 ||
+      settings.contact_email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(settings.contact_email)) {
+    return response.status(400).json({ error: 'Business settings are invalid' });
+  }
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+    for (const [key, value] of Object.entries(settings)) {
+      await connection.execute(
+        `INSERT INTO business_settings (setting_key, setting_value, updated_by)
+         VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE
+           setting_value = VALUES(setting_value), updated_by = VALUES(updated_by)`,
+        [key, value, request.auth.sub]
+      );
+    }
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+  response.json({ settings });
+});
+
 router.patch('/bookings/:id', async (request, response) => {
   const status = request.body.status;
   if (!['approved', 'declined', 'completed'].includes(status)) {

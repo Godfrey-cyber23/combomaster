@@ -105,6 +105,15 @@ nav > div {
 }
 
 @media (max-width: 639px) {
+    .footer-main-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .footer-main-grid > :first-child,
+    .footer-main-grid > :last-child {
+        grid-column: 1 / -1;
+    }
+
     .footer-main-grid > * {
         text-align: center;
     }

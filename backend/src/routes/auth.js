@@ -1,7 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const pool = require('../db');
+const crypto = require('node:crypto');
+const { getDocument, getFirestore } = require('../firestore');
 const config = require('../config');
 const { requireAuth } = require('../middleware/auth');
 
@@ -43,20 +44,24 @@ router.post('/register', async (request, response) => {
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
-  try {
-    const [result] = await pool.execute(
-      'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-      [name, email, passwordHash, 'client']
-    );
-    const user = { id: result.insertId, name, email, role: 'client' };
-    setSession(response, user);
-    return response.status(201).json({ user, message: 'Account created successfully' });
-  } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') {
-      return response.status(409).json({ error: 'An account with that email already exists' });
-    }
-    throw error;
-  }
+  const db = getFirestore();
+  const emailRef = db.collection('_user_emails').doc(crypto.createHash('sha256').update(email).digest('hex'));
+  const user = await db.runTransaction(async (transaction) => {
+    const emailSnapshot = await transaction.get(emailRef);
+    if (emailSnapshot.exists) return null;
+    const counterRef = db.collection('_counters').doc('users');
+    const counter = await transaction.get(counterRef);
+    const id = (counter.exists ? Number(counter.get('value')) : 0) + 1;
+    const userRef = db.collection('users').doc(String(id));
+    const createdUser = { id, name, email, password_hash: passwordHash, role: 'client', created_at: new Date(), updated_at: new Date() };
+    transaction.set(counterRef, { value: id });
+    transaction.create(userRef, createdUser);
+    transaction.create(emailRef, { user_id: id });
+    return publicUser(createdUser);
+  });
+  if (!user) return response.status(409).json({ error: 'An account with that email already exists' });
+  setSession(response, user);
+  return response.status(201).json({ user, message: 'Account created successfully' });
 });
 
 router.post('/login', async (request, response) => {
@@ -69,25 +74,24 @@ router.post('/login', async (request, response) => {
     return response.status(400).json({ error: 'Enter a valid email address and password' });
   }
 
-  const [users] = await pool.execute(
-    'SELECT id, name, email, password, role FROM users WHERE email = ? LIMIT 1',
-    [email]
-  );
-  if (!users.length || !users[0].password || !(await bcrypt.compare(password, users[0].password))) {
+  const emailHash = crypto.createHash('sha256').update(email).digest('hex');
+  const emailSnapshot = await getDocument('_user_emails', emailHash).get();
+  const userSnapshot = emailSnapshot.exists
+    ? await getDocument('users', emailSnapshot.get('user_id')).get()
+    : null;
+  const userRecord = userSnapshot?.exists ? userSnapshot.data() : null;
+  if (!userRecord?.password_hash || !(await bcrypt.compare(password, userRecord.password_hash))) {
     return response.status(401).json({ error: 'Invalid email or password' });
   }
 
-  const user = publicUser(users[0]);
+  const user = publicUser(userRecord);
   setSession(response, user);
   return response.json({ user, message: 'Login successful' });
 });
 
 router.get('/me', requireAuth, async (request, response) => {
-  const [users] = await pool.execute(
-    'SELECT id, name, email, role FROM users WHERE id = ? LIMIT 1',
-    [request.auth.sub]
-  );
-  if (!users.length) {
+  const userSnapshot = await getDocument('users', request.auth.sub).get();
+  if (!userSnapshot.exists) {
     response.clearCookie(config.sessionName, {
       httpOnly: true,
       secure: config.nodeEnv === 'production',
@@ -96,7 +100,7 @@ router.get('/me', requireAuth, async (request, response) => {
     });
     return response.status(401).json({ error: 'Account no longer exists' });
   }
-  return response.json({ user: publicUser(users[0]) });
+  return response.json({ user: publicUser(userSnapshot.data()) });
 });
 
 router.post('/logout', (_request, response) => {

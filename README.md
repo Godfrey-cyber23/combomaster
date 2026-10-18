@@ -24,43 +24,37 @@ implementation is not part of the active runtime.
 
 ## Local configuration
 
-Copy `.env.example` to `.env` and replace every placeholder. Never commit `.env`, database credentials, Firebase service-account files, or runtime uploads.
-
-Create the MySQL database and a least-privilege application account, then apply
-the versioned schema before starting the server:
+Create a Firebase project and a Cloud Firestore database in Native mode. In
+Google Cloud IAM, give a dedicated service account the `Cloud Datastore User`
+role and create a JSON key. Keep that key outside the repository; never paste it
+into chat or commit it. Copy `.env.example` to `.env`, set the project ID and
+the absolute path to that service-account JSON, and create a private session
+secret locally:
 
 ```bash
-mysql -u root -p
+openssl rand -base64 48
 ```
 
-```sql
-CREATE DATABASE combomaster_fitness CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'combomaster_app'@'127.0.0.1' IDENTIFIED BY 'replace-with-an-app-password';
-GRANT SELECT, INSERT, UPDATE, DELETE ON combomaster_fitness.* TO 'combomaster_app'@'127.0.0.1';
-CREATE USER 'combomaster_migrator'@'127.0.0.1' IDENTIFIED BY 'replace-with-a-migration-password';
-GRANT ALL PRIVILEGES ON combomaster_fitness.* TO 'combomaster_migrator'@'127.0.0.1';
-```
-
-Configure both sets of credentials in `.env`, then run:
+Put that command's output directly into `JWT_SECRET` in `.env`. Do not share it.
+Then deploy the Firestore indexes and verify the service-account connection:
 
 ```bash
 npm install --prefix backend
-npm --prefix backend run migrate
+firebase deploy --only firestore:indexes
+npm --prefix backend run check:db
 npm start
 ```
 
-The initial schema grants every public registration the `client` role. To
-bootstrap an administrator, register that account through the signup page and
-promote it directly in MySQL using its exact email:
+The Firebase CLI must be installed and authenticated to the same project for
+index deployment. Firestore collections are created as the API first writes
+records; no SQL migrations are used by the active backend.
 
-```sql
-UPDATE users SET role = 'admin' WHERE email = 'admin@example.com';
-```
+Every public registration receives the `client` role. To bootstrap an
+administrator, register that account through the signup page, then promote the
+registered email using the server-side command:
 
-Promote a coach with the same controlled database access:
-
-```sql
-UPDATE users SET role = 'coach' WHERE email = 'coach@example.com';
+```bash
+npm --prefix backend run admin:promote -- admin@example.com
 ```
 
 Admins and coaches can use
@@ -76,7 +70,7 @@ The shop cart is stored in the visitor's browser. Checkout uses Flutterwave
 Standard in ZMW for card or Zambian mobile money. Before enabling checkout,
 set `PUBLIC_APP_URL` to the public HTTPS origin, configure
 `FLUTTERWAVE_SECRET_KEY` and `FLUTTERWAVE_WEBHOOK_SECRET_HASH` in the private
-server `.env`, and apply database migrations. In the Flutterwave dashboard,
+server `.env`, and verify Firestore connectivity. In the Flutterwave dashboard,
 enable card and Zambia mobile money, turn off dashboard payment options if
 using per-checkout payment choices, and set the webhook URL to
 `https://your-domain.example/api/payments/webhook` with the same secret hash.

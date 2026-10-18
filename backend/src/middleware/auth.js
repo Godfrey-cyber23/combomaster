@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-const pool = require('../db');
+const { getDocument } = require('../firestore');
 
 async function requireAuth(request, response, next) {
   if (!config.sessionConfigured) {
@@ -14,8 +14,8 @@ async function requireAuth(request, response, next) {
 
   try {
     const decoded = jwt.verify(token, config.jwtSecret);
-    const [users] = await pool.execute('SELECT id, role FROM users WHERE id = ? LIMIT 1', [decoded.sub]);
-    if (!users.length) {
+    const user = await getDocument('users', decoded.sub).get();
+    if (!user.exists) {
       response.clearCookie(config.sessionName, {
         httpOnly: true,
         secure: config.nodeEnv === 'production',
@@ -24,13 +24,14 @@ async function requireAuth(request, response, next) {
       });
       return response.status(401).json({ error: 'Account no longer exists' });
     }
-    request.auth = { sub: String(users[0].id), role: users[0].role };
+    request.auth = { sub: String(user.id), role: user.get('role') };
     return next();
   } catch (_error) {
     if (_error.name !== 'JsonWebTokenError' && _error.name !== 'TokenExpiredError' &&
-        _error.name !== 'NotBeforeError') {
+        _error.name !== 'NotBeforeError' && _error.status !== 503) {
       return next(_error);
     }
+    if (_error.status === 503) return next(_error);
     return response.status(401).json({ error: 'Session expired or invalid' });
   }
 }

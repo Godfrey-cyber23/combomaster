@@ -2,7 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const path = require('node:path');
-const pool = require('./db');
+const { getFirestore } = require('./firestore');
 const config = require('./config');
 const authRoutes = require('./routes/auth');
 const clientRoutes = require('./routes/client');
@@ -33,7 +33,7 @@ app.use((request, response, next) => {
 
 app.get('/api/health', async (_request, response) => {
   try {
-    await pool.query('SELECT 1');
+    await getFirestore().collection('_health').limit(1).get();
     const status = config.sessionConfigured ? 'ok' : 'unavailable';
     const body = {
       status,
@@ -78,6 +78,9 @@ app.use((error, _request, response, _next) => {
   if (response.headersSent) return;
   if (error.type === 'entity.parse.failed') {
     return response.status(400).json({ error: 'Request body must contain valid JSON' });
+  }
+  if (error.status === 503) {
+    return response.status(503).json({ error: error.message });
   }
   return response.status(500).json({ error: 'An unexpected server error occurred' });
 });

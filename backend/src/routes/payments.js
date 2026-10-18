@@ -1,7 +1,7 @@
 const crypto = require('node:crypto');
 const express = require('express');
-const pool = require('../db');
 const config = require('../config');
+const { getCollection, getDocument, getFirestore, listDocuments } = require('../firestore');
 
 const router = express.Router();
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -64,11 +64,9 @@ async function flutterwaveRequest(path, options = {}) {
 }
 
 async function updateOrderFromTransaction(transactionId, reference) {
-  const [orders] = await pool.execute(
-    'SELECT amount FROM shop_orders WHERE tx_ref = ? LIMIT 1',
-    [reference]
-  );
-  if (!orders.length) return 'not_found';
+  const orderRef = getDocument('shop_orders', reference);
+  const order = await orderRef.get();
+  if (!order.exists) return 'not_found';
 
   const transaction = await flutterwaveRequest(
     `/transactions/${encodeURIComponent(transactionId)}/verify`
@@ -78,40 +76,43 @@ async function updateOrderFromTransaction(transactionId, reference) {
     return 'pending';
   }
   if (transaction.currency !== currency) {
-    await pool.execute(
-      "UPDATE shop_orders SET status = 'failed' WHERE tx_ref = ? AND status <> 'successful'",
-      [reference]
-    );
+    await setOrderStatus(reference, 'failed');
     return 'failed';
   }
 
-  const expectedCents = Math.round(Number(orders[0].amount) * 100);
+  const expectedCents = Math.round(Number(order.get('amount')) * 100);
   const paidCents = Math.round(Number(transaction.amount) * 100);
   if (transaction.status !== 'successful') {
     if (!['failed', 'cancelled'].includes(String(transaction.status).toLowerCase())) {
       return 'pending';
     }
-    await pool.execute(
-      "UPDATE shop_orders SET status = 'failed' WHERE tx_ref = ? AND status <> 'successful'",
-      [reference]
-    );
+    await setOrderStatus(reference, 'failed');
     return 'failed';
   }
   if (paidCents !== expectedCents) {
-    await pool.execute(
-      "UPDATE shop_orders SET status = 'failed' WHERE tx_ref = ? AND status <> 'successful'",
-      [reference]
-    );
+    await setOrderStatus(reference, 'failed');
     return 'failed';
   }
 
-  await pool.execute(
-    `UPDATE shop_orders
-     SET status = 'successful', flutterwave_transaction_id = ?
-     WHERE tx_ref = ? AND status <> 'successful'`,
-    [String(transaction.id), reference]
-  );
+  await getFirestore().runTransaction(async (transactionUpdate) => {
+    const current = await transactionUpdate.get(orderRef);
+    if (current.exists && current.get('status') !== 'successful') {
+      transactionUpdate.update(orderRef, {
+        status: 'successful', flutterwave_transaction_id: String(transaction.id), updated_at: new Date()
+      });
+    }
+  });
   return 'successful';
+}
+
+async function setOrderStatus(reference, status) {
+  const orderRef = getDocument('shop_orders', reference);
+  await getFirestore().runTransaction(async (transaction) => {
+    const order = await transaction.get(orderRef);
+    if (order.exists && order.get('status') !== 'successful') {
+      transaction.update(orderRef, { status, updated_at: new Date() });
+    }
+  });
 }
 
 router.post('/checkout', async (request, response) => {
@@ -148,13 +149,10 @@ router.post('/checkout', async (request, response) => {
   }
 
   const names = [...quantities.keys()];
-  const placeholders = names.map(() => '?').join(', ');
-  const [products] = await pool.execute(
-    `SELECT id, title, category, unit, price FROM site_content
-     WHERE page_key = 'shop' AND kind = 'product' AND is_published = 1
-       AND title IN (${placeholders})`,
-    names
-  );
+  const catalog = await listDocuments('site_content', {
+    filters: [['page_key', '==', 'shop'], ['kind', '==', 'product']], limit: 500
+  });
+  const products = catalog.filter((product) => product.is_published && quantities.has(product.title));
   if (products.length !== names.length ||
       new Set(products.map((product) => product.title)).size !== products.length) {
     return response.status(400).json({ error: 'One or more cart products are unavailable. Refresh the shop and try again.' });
@@ -185,12 +183,11 @@ router.post('/checkout', async (request, response) => {
     return response.status(400).json({ error: 'The order total is outside the supported payment range.' });
   }
   const reference = crypto.randomUUID();
-  await pool.execute(
-    `INSERT INTO shop_orders
-     (tx_ref, customer_name, customer_email, customer_phone, payment_method, currency, amount, items)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [reference, name, email, phone || null, method, currency, amount, JSON.stringify(items)]
-  );
+  await getCollection('shop_orders').doc(reference).create({
+    tx_ref: reference, customer_name: name, customer_email: email,
+    customer_phone: phone || null, payment_method: method, currency, amount, items,
+    status: 'pending', flutterwave_transaction_id: null, created_at: new Date(), updated_at: new Date()
+  });
 
   try {
     const appUrl = new URL(config.publicAppUrl);
@@ -217,10 +214,7 @@ router.post('/checkout', async (request, response) => {
     }
     return response.status(201).json({ checkout_url: checkoutUrl.toString(), tx_ref: reference });
   } catch (error) {
-    await pool.execute(
-      "UPDATE shop_orders SET status = 'failed' WHERE tx_ref = ? AND status = 'pending'",
-      [reference]
-    );
+    await setOrderStatus(reference, 'failed');
     console.error('[payments] Checkout could not be started:', error.message);
     return response.status(502).json({
       error: 'We could not start checkout. Please try again or contact the store.'
@@ -252,12 +246,9 @@ router.get('/:reference', async (request, response) => {
   if (!referencePattern.test(request.params.reference)) {
     return response.status(404).json({ error: 'Order not found.' });
   }
-  const [orders] = await pool.execute(
-    'SELECT tx_ref, status, currency, amount FROM shop_orders WHERE tx_ref = ? LIMIT 1',
-    [request.params.reference]
-  );
-  if (!orders.length) return response.status(404).json({ error: 'Order not found.' });
-  const order = orders[0];
+  const orderSnapshot = await getDocument('shop_orders', request.params.reference).get();
+  if (!orderSnapshot.exists) return response.status(404).json({ error: 'Order not found.' });
+  const order = orderSnapshot.data();
   return response.json({
     tx_ref: order.tx_ref,
     status: order.status,

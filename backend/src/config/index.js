@@ -12,19 +12,13 @@ module.exports = {
   ),
   sessionLifetime: Number(process.env.SESSION_LIFETIME) || 3600,
   sessionName: process.env.SESSION_NAME || 'combomaster_session',
-  database: {
-    host: process.env.DB_HOST || '127.0.0.1',
-    port: Number(process.env.DB_PORT) || 3306,
-    database: process.env.DB_DATABASE || 'combomaster_fitness',
-    user: process.env.DB_USERNAME || 'combomaster_app',
-    password: process.env.DB_PASSWORD || ''
-  },
+  firebaseProjectId: process.env.FIREBASE_PROJECT_ID || '',
+  firebaseDatabaseId: process.env.FIREBASE_DATABASE_ID || 'default',
+  firebaseServiceAccountPath: process.env.FIREBASE_SERVICE_ACCOUNT_PATH
+    ? path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT_PATH)
+    : '',
   publicAppUrl: process.env.PUBLIC_APP_URL || '',
   flutterwaveSecretKey: process.env.FLUTTERWAVE_SECRET_KEY || '',
   flutterwaveWebhookSecretHash: process.env.FLUTTERWAVE_WEBHOOK_SECRET_HASH || '',
-  uploadDirectory: path.resolve(__dirname, '../../../storage/uploads'),
-  migrationDatabase: {
-    user: process.env.DB_MIGRATION_USERNAME || process.env.DB_USERNAME || 'combomaster_migrator',
-    password: process.env.DB_MIGRATION_PASSWORD || process.env.DB_PASSWORD || ''
-  }
+  uploadDirectory: path.resolve(__dirname, '../../../storage/uploads')
 };

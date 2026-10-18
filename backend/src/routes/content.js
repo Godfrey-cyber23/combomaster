@@ -3,8 +3,8 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const express = require('express');
 const multer = require('multer');
-const pool = require('../db');
 const config = require('../config');
+const { allocateId, getDocument, getFirestore, listDocuments } = require('../firestore');
 const { requireAuth, requireStaff } = require('../middleware/auth');
 const { products, mealPlans } = require('../content-defaults');
 
@@ -69,53 +69,44 @@ function cleanItem(body) {
 
 async function seedCatalogs() {
   for (const [page, items] of [['shop', products], ['mealplans', mealPlans]]) {
-    const connection = await pool.getConnection();
-    try {
-      await connection.beginTransaction();
-      const [marker] = await connection.execute(
-        'INSERT IGNORE INTO site_content_catalogs (page_key) VALUES (?)',
-        [page]
-      );
-      if (marker.affectedRows) {
-        for (const [sortOrder, item] of items.entries()) {
-          await connection.execute(
-            `INSERT INTO site_content
-             (page_key, kind, target_key, title, description, image_url, category, unit, price, details, is_published, sort_order)
-             VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, 1, ?)`,
-            [
-              item.page, item.kind, item.title, item.description || '',
-              item.imageUrl || null, item.category || null, item.unit || null,
-              item.price || null, JSON.stringify(item.details || {}), sortOrder
-            ]
-          );
-        }
-      }
-      await connection.commit();
-    } catch (error) {
-      await connection.rollback();
-      throw error;
-    } finally {
-      connection.release();
-    }
+    const db = getFirestore();
+    const markerRef = getDocument('site_content_catalogs', page);
+    await db.runTransaction(async (transaction) => {
+      const marker = await transaction.get(markerRef);
+      if (marker.exists) return;
+      const counterRef = getDocument('_counters', 'site_content');
+      const counter = await transaction.get(counterRef);
+      let id = (counter.exists ? Number(counter.get('value')) : 0);
+      items.forEach((item, sortOrder) => {
+        id += 1;
+        transaction.create(getDocument('site_content', id), {
+          id, page: item.page, page_key: item.page, kind: item.kind, target_key: null,
+          title: item.title, description: item.description || '', image_url: item.imageUrl || null,
+          category: item.category || null, unit: item.unit || null, price: item.price || null,
+          details: item.details || {}, is_published: true, sort_order: sortOrder,
+          created_at: new Date(), updated_at: new Date()
+        });
+      });
+      transaction.set(counterRef, { value: id });
+      transaction.create(markerRef, { page_key: page, initialized_at: new Date() });
+    });
   }
+}
+
+function sortItems(items) {
+  return items.sort((a, b) => Number(a.sort_order) - Number(b.sort_order) || Number(a.id) - Number(b.id));
 }
 
 router.get('/content/:page', async (request, response) => {
   if (!validatePage(request.params.page)) {
     return response.status(404).json({ error: 'Content page not found' });
   }
-  const [items] = await pool.execute(
-    `SELECT id, page_key AS page, kind, target_key, title, description, image_url,
-       category, unit, price, details, sort_order
-     FROM site_content WHERE page_key = ? AND is_published = 1
-     ORDER BY sort_order, id`,
-    [request.params.page]
-  );
-  const [catalog] = await pool.execute(
-    'SELECT page_key FROM site_content_catalogs WHERE page_key = ? LIMIT 1',
-    [request.params.page]
-  );
-  response.json({ items, managed: catalog.length > 0 });
+  const [records, catalog] = await Promise.all([
+    listDocuments('site_content', { filters: [['page_key', '==', request.params.page]], limit: 500 }),
+    getDocument('site_content_catalogs', request.params.page).get()
+  ]);
+  const items = sortItems(records.filter((item) => item.is_published).map((item) => ({ ...item, page: item.page || item.page_key })));
+  response.json({ items, managed: catalog.exists });
 });
 
 router.use('/admin/content', requireAuth, requireStaff);
@@ -126,29 +117,22 @@ router.get('/admin/content', async (request, response) => {
     return response.status(400).json({ error: 'A valid page must be selected' });
   }
   if (page === 'shop' || page === 'mealplans') await seedCatalogs();
-  const [items] = await pool.execute(
-    `SELECT id, page_key AS page, kind, target_key, title, description, image_url,
-       category, unit, price, details, is_published, sort_order
-     FROM site_content WHERE page_key = ? ORDER BY sort_order, id`,
-    [page]
-  );
+  const items = sortItems(await listDocuments('site_content', {
+    filters: [['page_key', '==', page]], limit: 500
+  }));
   response.json({ items });
 });
 
 router.post('/admin/content', async (request, response) => {
   const item = cleanItem(request.body);
   if (!item) return response.status(400).json({ error: 'Content fields are invalid' });
-  const [result] = await pool.execute(
-    `INSERT INTO site_content
-     (page_key, kind, target_key, title, description, image_url, category, unit, price, details, is_published, sort_order, created_by, updated_by)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      item.page, item.kind, item.target_key, item.title, item.description, item.image_url,
-      item.category, item.unit, item.price, JSON.stringify(item.details),
-      item.is_published, item.sort_order, request.auth.sub, request.auth.sub
-    ]
-  );
-  response.status(201).json({ id: result.insertId, ...item });
+  const id = await allocateId('site_content');
+  const record = {
+    id, page_key: item.page, ...item, created_by: Number(request.auth.sub),
+    updated_by: Number(request.auth.sub), created_at: new Date(), updated_at: new Date()
+  };
+  await getDocument('site_content', id).create(record);
+  response.status(201).json(record);
 });
 
 router.put('/admin/content/:id', async (request, response) => {
@@ -157,31 +141,22 @@ router.put('/admin/content/:id', async (request, response) => {
   }
   const item = cleanItem(request.body);
   if (!item) return response.status(400).json({ error: 'Content fields are invalid' });
-  const [existing] = await pool.execute('SELECT id FROM site_content WHERE id = ? LIMIT 1', [request.params.id]);
-  if (!existing.length) return response.status(404).json({ error: 'Content item not found' });
-  const [result] = await pool.execute(
-    `UPDATE site_content SET page_key = ?, kind = ?, target_key = ?, title = ?, description = ?,
-       image_url = ?, category = ?, unit = ?, price = ?, details = ?, is_published = ?, sort_order = ?, updated_by = ?
-     WHERE id = ?`,
-    [
-      item.page, item.kind, item.target_key, item.title, item.description, item.image_url,
-      item.category, item.unit, item.price, JSON.stringify(item.details),
-      item.is_published, item.sort_order, request.auth.sub, request.params.id
-    ]
-  );
-  if (!result.affectedRows) {
-    response.json({ id: Number(request.params.id), ...item });
-    return;
-  }
-  response.json({ id: Number(request.params.id), ...item });
+  const contentRef = getDocument('site_content', request.params.id);
+  const existing = await contentRef.get();
+  if (!existing.exists) return response.status(404).json({ error: 'Content item not found' });
+  const record = { ...existing.data(), ...item, page_key: item.page, updated_by: Number(request.auth.sub), updated_at: new Date() };
+  await contentRef.set(record);
+  response.json(record);
 });
 
 router.delete('/admin/content/:id', async (request, response) => {
   if (!/^\d+$/.test(request.params.id)) {
     return response.status(400).json({ error: 'Content id is invalid' });
   }
-  const [result] = await pool.execute('DELETE FROM site_content WHERE id = ?', [request.params.id]);
-  if (!result.affectedRows) return response.status(404).json({ error: 'Content item not found' });
+  const contentRef = getDocument('site_content', request.params.id);
+  const existing = await contentRef.get();
+  if (!existing.exists) return response.status(404).json({ error: 'Content item not found' });
+  await contentRef.delete();
   response.status(204).end();
 });
 

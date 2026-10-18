@@ -28,3 +28,5 @@ Thumbs.db
 *.sql.gz
 *.pem
 *service-account*.json
+*-firebase-adminsdk-*.json
+/combomaster-fitness-*.json

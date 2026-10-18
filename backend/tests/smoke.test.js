@@ -1,6 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const config = require('../src/config');
+const { normalizeValue } = require('../src/firestore');
 
 async function withServer(callback) {
   const { app } = require('../server');
@@ -20,6 +21,28 @@ test('backend entry point is configured', () => {
 
   assert.equal(typeof server.app, 'function');
   assert.equal(typeof server.start, 'function');
+});
+
+test('Firestore timestamps normalize to frontend-compatible dates', () => {
+  const timestamp = new Date('2026-10-18T12:00:00.000Z');
+  const normalized = normalizeValue({ created_at: { toDate: () => timestamp }, values: [{ at: { toDate: () => timestamp } }] });
+
+  assert.equal(normalized.created_at.toISOString(), timestamp.toISOString());
+  assert.equal(normalized.values[0].at.toISOString(), timestamp.toISOString());
+});
+
+test('health reports missing Firestore credentials clearly', {
+  skip: Boolean(config.firebaseServiceAccountPath)
+}, async () => {
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/health`);
+    assert.equal(response.status, 503);
+    assert.deepEqual(await response.json(), {
+      status: 'unavailable',
+      database: 'disconnected',
+      authentication: config.sessionConfigured ? 'configured' : 'unconfigured'
+    });
+  });
 });
 
 test('unknown API routes return a JSON 404', async () => {

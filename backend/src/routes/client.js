@@ -1,41 +1,24 @@
 const express = require('express');
-const pool = require('../db');
+const { allocateId, getCollection, getDocument, listDocuments } = require('../firestore');
 const { requireAuth, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 router.use(requireAuth, requireRole('client'));
 
 router.get('/dashboard', async (request, response) => {
-  const userId = request.auth.sub;
-  const [[profileRows], [progress], [meals], [workouts], [bookings], [messages]] = await Promise.all([
-    pool.execute(
-      'SELECT phone, goal, height_cm FROM client_profiles WHERE user_id = ? LIMIT 1',
-      [userId]
-    ),
-    pool.execute(
-      'SELECT id, weight_kg, body_fat_percent, note, recorded_at FROM progress_entries WHERE user_id = ? ORDER BY recorded_at DESC LIMIT 30',
-      [userId]
-    ),
-    pool.execute(
-      'SELECT id, meal_name, calories, protein_g, logged_at FROM meal_logs WHERE user_id = ? ORDER BY logged_at DESC LIMIT 20',
-      [userId]
-    ),
-    pool.execute(
-      'SELECT id, workout_name, duration_minutes, completed_at FROM workout_logs WHERE user_id = ? ORDER BY completed_at DESC LIMIT 20',
-      [userId]
-    ),
-    pool.execute(
-      'SELECT id, service, requested_at, status FROM bookings WHERE user_id = ? ORDER BY requested_at DESC LIMIT 20',
-      [userId]
-    ),
-    pool.execute(
-      'SELECT id, sender_id, body, created_at FROM messages WHERE user_id = ? ORDER BY created_at DESC LIMIT 50',
-      [userId]
-    )
+  const userId = Number(request.auth.sub);
+  const [profileSnapshot, progress, meals, workouts, bookings, messages] = await Promise.all([
+    getDocument('client_profiles', userId).get(),
+    listDocuments('progress_entries', { filters: [['user_id', '==', userId]], orderBy: [['recorded_at', 'desc']], limit: 30 }),
+    listDocuments('meal_logs', { filters: [['user_id', '==', userId]], orderBy: [['logged_at', 'desc']], limit: 20 }),
+    listDocuments('workout_logs', { filters: [['user_id', '==', userId]], orderBy: [['completed_at', 'desc']], limit: 20 }),
+    listDocuments('bookings', { filters: [['user_id', '==', userId]], orderBy: [['requested_at', 'desc']], limit: 20 }),
+    listDocuments('messages', { filters: [['user_id', '==', userId]], orderBy: [['created_at', 'desc']], limit: 50 })
   ]);
+  const profile = profileSnapshot.exists ? profileSnapshot.data() : {};
 
   response.json({
-    profile: profileRows[0] || { phone: null, goal: null, height_cm: null },
+    profile: { phone: profile.phone || null, goal: profile.goal || null, height_cm: profile.height_cm ?? null },
     progress,
     meals,
     workouts,
@@ -51,11 +34,10 @@ router.get('/dashboard', async (request, response) => {
 });
 
 router.patch('/profile', async (request, response) => {
-  const [profiles] = await pool.execute(
-    'SELECT phone, goal, height_cm FROM client_profiles WHERE user_id = ? LIMIT 1',
-    [request.auth.sub]
-  );
-  const current = profiles[0] || { phone: null, goal: null, height_cm: null };
+  const userId = Number(request.auth.sub);
+  const profileRef = getDocument('client_profiles', userId);
+  const currentSnapshot = await profileRef.get();
+  const current = currentSnapshot.exists ? currentSnapshot.data() : { phone: null, goal: null, height_cm: null };
   if ((Object.hasOwn(request.body, 'name') && typeof request.body.name !== 'string') ||
       (Object.hasOwn(request.body, 'phone') && request.body.phone !== null && typeof request.body.phone !== 'string') ||
       (Object.hasOwn(request.body, 'goal') && request.body.goal !== null && typeof request.body.goal !== 'string') ||
@@ -80,25 +62,16 @@ router.patch('/profile', async (request, response) => {
     return response.status(400).json({ error: 'Profile values are invalid' });
   }
 
-  const connection = await pool.getConnection();
-  try {
-    await connection.beginTransaction();
-    await connection.execute(
-      `INSERT INTO client_profiles (user_id, phone, goal, height_cm)
-       VALUES (?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE phone = VALUES(phone), goal = VALUES(goal), height_cm = VALUES(height_cm)`,
-      [request.auth.sub, phone || null, goal || null, height]
-    );
+  const db = profileRef.firestore;
+  await db.runTransaction(async (transaction) => {
+    transaction.set(profileRef, {
+      user_id: userId, phone: phone || null, goal: goal || null, height_cm: height,
+      updated_at: new Date()
+    }, { merge: true });
     if (name !== undefined) {
-      await connection.execute('UPDATE users SET name = ? WHERE id = ?', [name, request.auth.sub]);
+      transaction.set(getDocument('users', userId), { name, updated_at: new Date() }, { merge: true });
     }
-    await connection.commit();
-  } catch (error) {
-    await connection.rollback();
-    throw error;
-  } finally {
-    connection.release();
-  }
+  });
   return response.json({ profile: { name, phone: phone || null, goal: goal || null, height_cm: height } });
 });
 
@@ -116,11 +89,9 @@ router.post('/meals', async (request, response) => {
       (protein !== null && (!Number.isFinite(protein) || protein < 0 || protein > 1000))) {
     return response.status(400).json({ error: 'Meal name and nutrition values are invalid' });
   }
-  const [result] = await pool.execute(
-    'INSERT INTO meal_logs (user_id, meal_name, calories, protein_g) VALUES (?, ?, ?, ?)',
-    [request.auth.sub, mealName, calories, protein]
-  );
-  return response.status(201).json({ id: result.insertId, meal_name: mealName, calories, protein_g: protein });
+  const meal = { id: await allocateId('meal_logs'), user_id: Number(request.auth.sub), meal_name: mealName, calories, protein_g: protein, logged_at: new Date() };
+  await getCollection('meal_logs').doc(String(meal.id)).create(meal);
+  return response.status(201).json(meal);
 });
 
 router.post('/workouts', async (request, response) => {
@@ -132,11 +103,9 @@ router.post('/workouts', async (request, response) => {
   if (!name || name.length > 120 || !Number.isInteger(duration) || duration < 1 || duration > 1440) {
     return response.status(400).json({ error: 'Workout name and duration are invalid' });
   }
-  const [result] = await pool.execute(
-    'INSERT INTO workout_logs (user_id, workout_name, duration_minutes) VALUES (?, ?, ?)',
-    [request.auth.sub, name, duration]
-  );
-  return response.status(201).json({ id: result.insertId, workout_name: name, duration_minutes: duration });
+  const workout = { id: await allocateId('workout_logs'), user_id: Number(request.auth.sub), workout_name: name, duration_minutes: duration, completed_at: new Date() };
+  await getCollection('workout_logs').doc(String(workout.id)).create(workout);
+  return response.status(201).json(workout);
 });
 
 router.post('/progress', async (request, response) => {
@@ -154,11 +123,9 @@ router.post('/progress', async (request, response) => {
       (note && note.length > 500)) {
     return response.status(400).json({ error: 'Progress values are invalid' });
   }
-  const [result] = await pool.execute(
-    'INSERT INTO progress_entries (user_id, weight_kg, body_fat_percent, note) VALUES (?, ?, ?, ?)',
-    [request.auth.sub, weight, bodyFat, note || null]
-  );
-  return response.status(201).json({ id: result.insertId, weight_kg: weight, body_fat_percent: bodyFat, note });
+  const progress = { id: await allocateId('progress_entries'), user_id: Number(request.auth.sub), weight_kg: weight, body_fat_percent: bodyFat, note: note || null, recorded_at: new Date() };
+  await getCollection('progress_entries').doc(String(progress.id)).create(progress);
+  return response.status(201).json(progress);
 });
 
 router.post('/bookings', async (request, response) => {
@@ -171,11 +138,9 @@ router.post('/bookings', async (request, response) => {
       requestedAt.getTime() < Date.now() - 60_000) {
     return response.status(400).json({ error: 'Choose a valid service and a future booking time' });
   }
-  const [result] = await pool.execute(
-    'INSERT INTO bookings (user_id, service, requested_at) VALUES (?, ?, ?)',
-    [request.auth.sub, service, requestedAt]
-  );
-  return response.status(201).json({ id: result.insertId, service, requested_at: requestedAt, status: 'pending' });
+  const booking = { id: await allocateId('bookings'), user_id: Number(request.auth.sub), service, requested_at: requestedAt, status: 'pending', created_at: new Date() };
+  await getCollection('bookings').doc(String(booking.id)).create(booking);
+  return response.status(201).json(booking);
 });
 
 router.post('/messages', async (request, response) => {
@@ -183,11 +148,9 @@ router.post('/messages', async (request, response) => {
   if (!body || body.length > 4000) {
     return response.status(400).json({ error: 'Message must be between 1 and 4000 characters' });
   }
-  const [result] = await pool.execute(
-    'INSERT INTO messages (user_id, sender_id, body) VALUES (?, ?, ?)',
-    [request.auth.sub, request.auth.sub, body]
-  );
-  return response.status(201).json({ id: result.insertId, sender_id: request.auth.sub, body });
+  const message = { id: await allocateId('messages'), user_id: Number(request.auth.sub), sender_id: Number(request.auth.sub), body, created_at: new Date() };
+  await getCollection('messages').doc(String(message.id)).create(message);
+  return response.status(201).json(message);
 });
 
 module.exports = router;

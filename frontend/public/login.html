@@ -824,17 +824,17 @@
         function showFieldError(fieldId, message) { var errorEl = document.getElementById(fieldId + '-error'); var inputEl = document.getElementById(fieldId); if (errorEl) { errorEl.textContent = message; errorEl.classList.add('visible'); } if (inputEl) { inputEl.classList.add('input-error'); } }
         function initNavScroll() { var nav = document.getElementById('navbar'); if (!nav) return; var ticking = false; window.addEventListener('scroll', function () { if (!ticking) { requestAnimationFrame(function () { nav.classList.toggle('nav-scrolled', window.scrollY > 60); ticking = false; }); ticking = true; } }); }
         function initPasswordToggle() { var toggleBtn = document.getElementById('togglePassword'); var passwordInput = document.getElementById('password'); var passwordIcon = document.getElementById('passwordIcon'); if (toggleBtn && passwordInput && passwordIcon) { toggleBtn.addEventListener('click', function () { var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password'; passwordInput.setAttribute('type', type); passwordIcon.setAttribute('data-lucide', type === 'password' ? 'eye' : 'eye-off'); if (window.lucide) lucide.createIcons(); }); } }
-        function initClearErrorsOnType() { var inputs = document.querySelectorAll('.form-input'); inputs.forEach(function (input) { input.addEventListener('input', function () { input.classList.remove('input-error'); var fieldId = input.getAttribute('id'); var errorEl = document.getElementById(fieldId + '-error'); if (errorEl) { errorEl.textContent = ''; errorEl.classList.remove('visible'); } }); }); }
 
         // ===== 3. SOCIAL LOGIN — FIREBASE POPUPS =====
         function socialLogin(provider) {
             var providerObj;
             if (provider === 'google') {
                 providerObj = new firebase.auth.GoogleAuthProvider();
-            } else if (provider === 'microsoft') {
-                providerObj = new firebase.auth.OAuthProvider('microsoft.com');
-            } else if (provider === 'apple') {
-                providerObj = new firebase.auth.OAuthProvider('apple.com');
+            } else if (provider === 'microsoft' || provider === 'apple') {
+                // Microsoft/Apple need extra provider setup in the Firebase Console.
+                // Remove this guard once those providers are configured and verified.
+                showToast(provider.charAt(0).toUpperCase() + provider.slice(1) + ' sign-in is coming soon. Please use Google or email.', 'success');
+                return;
             } else if (provider === 'phone') {
                 showToast('Phone sign-in needs a phone verification step. Please use email or another provider.', 'success');
                 return;
@@ -847,7 +847,7 @@
 
             auth.signInWithPopup(providerObj)
                 .then(function (result) {
-                    // Get the Firebase ID Token to send to PHP
+                    // Get the Firebase ID token to send to the Express backend
                     result.user.getIdToken().then(function (idToken) {
                         verifyTokenWithBackend(idToken, provider);
                     });
@@ -864,36 +864,34 @@
                 });
         }
 
-        // Send the secure Firebase token to your PHP backend
+        // Send the Firebase token to the Express backend, which verifies it
+        // and issues the same JWT session cookie used by email/password login.
         async function verifyTokenWithBackend(idToken, provider) {
             try {
-                var response = await fetch('api/firebase_login.php', {
+                var response = await fetch('/api/auth/firebase-login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
                     body: JSON.stringify({ token: idToken, provider: provider })
                 });
 
                 var data = await response.json();
 
-                if (response.ok && data.success) {
+                if (response.ok && data.user) {
                     showToast(data.message || 'Login successful!', 'success');
 
-                    // Save user data to localStorage
-                    var authenticatedUser = data.user || data;
+                    var authenticatedUser = data.user;
 
-                    // REDIRECTION LOGIC
+                    // Redirect by role — the JWT cookie is already set by the backend,
+                    // so /api/auth/me on the dashboard authenticates automatically.
                     setTimeout(function () {
-                        if (authenticatedUser.role === 'admin') {
-                            // Redirect admins to the admin dashboard
-                            window.location.href = 'admin-dashboard.html';
-                        } else {
-                            // Redirect regular clients to the client dashboard/membership area
-                            window.location.href = 'client-dashboard.html';
-                        }
+                        window.location.href = authenticatedUser.role === 'admin'
+                            ? 'admin-dashboard.html'
+                            : 'client-dashboard.html';
                     }, 1500);
 
                 } else {
-                    showToast(data.message || 'Server verification failed.', 'error');
+                    showToast(data.message || data.error || 'Server verification failed.', 'error');
                 }
             } catch (error) {
                 console.error('Backend error:', error);
@@ -901,30 +899,14 @@
             }
         }
 
-        // ===== 4. STANDARD EMAIL/PASSWORD LOGIN =====
-        function initLoginForm() {
-            var loginForm = document.getElementById('loginForm'); var loginButton = document.getElementById('loginButton'); var loginButtonText = document.getElementById('loginButtonText'); var loginSpinner = document.getElementById('loginSpinner');
-            if (loginForm) {
-                loginForm.addEventListener('submit', async function (e) {
-                    e.preventDefault(); clearFieldErrors(); var email = document.getElementById('email').value.trim(); var password = document.getElementById('password').value; var hasError = false;
-                    if (!email) { showFieldError('email', 'Email address is required.'); hasError = true; } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('email', 'Please enter a valid email address.'); hasError = true; }
-                    if (!password) { showFieldError('password', 'Password is required.'); hasError = true; } else if (password.length < 6) { showFieldError('password', 'Password must be at least 6 characters.'); hasError = true; }
-                    if (hasError) { showToast('Please fix the errors above.', 'error'); return false; }
-                    loginButton.disabled = true; loginButtonText.textContent = 'Signing in...'; loginSpinner.classList.remove('hidden');
-                    try {
-                        var response = await fetch('api/login.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: password }) });
-                        var data = await response.json();
-                        if (response.ok && data.user) { showToast(data.message || 'Login successful!', 'success'); setTimeout(function () { window.location.href = data.user.role === 'admin' ? 'admin-dashboard.html' : 'client-dashboard.html'; }, 1500); }
-                        else { var errorMsg = data.message || 'Invalid credentials. Please try again.'; if (errorMsg.toLowerCase().includes('email')) { showFieldError('email', errorMsg); } else if (errorMsg.toLowerCase().includes('password') || errorMsg.toLowerCase().includes('invalid')) { showFieldError('password', errorMsg); showFieldError('email', ''); var emailInput = document.getElementById('email'); if (emailInput) emailInput.classList.add('input-error'); } showToast(errorMsg, 'error'); loginButton.disabled = false; loginButtonText.textContent = 'Sign In'; loginSpinner.classList.add('hidden'); }
-                    } catch (error) { console.error('Login error:', error); showToast('Cannot connect to server. Please try again later.', 'error'); loginButton.disabled = false; loginButtonText.textContent = 'Sign In'; loginSpinner.classList.add('hidden'); }
-                    return false;
-                });
-            }
-        }
+        // ===== 4. EMAIL/PASSWORD LOGIN (handled by assets/js/api.js) =====
+        // The form submit handler, client-side validation and the POST to
+        // /api/auth/login all live in api.js. Do NOT re-bind #loginForm here:
+        // a second handler would post to a stale endpoint and fight api.js.
 
         // ===== 5. INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', function () {
-            initTheme(); initNavScroll(); initPasswordToggle(); initLoginForm(); initClearErrorsOnType();
+            initTheme(); initNavScroll(); initPasswordToggle();
             var desktopToggle = document.getElementById('theme-toggle-desktop'); var mobileToggle = document.getElementById('theme-toggle-mobile');
             if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme); if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
             if (window.lucide) lucide.createIcons();

@@ -89,6 +89,51 @@ router.post('/login', async (request, response) => {
   return response.json({ user, message: 'Login successful' });
 });
 
+router.post('/firebase-login', async (request, response) => {
+  if (!config.sessionConfigured) return response.status(503).json({ error: 'Authentication is not configured' });
+  if (!config.firebaseServiceAccountPath) return response.status(503).json({ error: 'Firebase is not configured' });
+  const { token } = request.body || {};
+  if (!token || typeof token !== 'string') return response.status(400).json({ error: 'Firebase token required' });
+
+  let decoded;
+  try { decoded = await getAuth().verifyIdToken(token); }
+  catch { return response.status(401).json({ error: 'Invalid Firebase token' }); }
+  if (!decoded.email) return response.status(400).json({ error: 'Firebase token did not include an email' });
+
+  const email = decoded.email.trim().toLowerCase();
+  const emailHash = crypto.createHash('sha256').update(email).digest('hex');
+  const db = getFirestore();
+
+  const user = await db.runTransaction(async (transaction) => {
+    const emailRef = db.collection('_user_emails').doc(emailHash);
+    const emailSnapshot = await transaction.get(emailRef);
+
+    if (emailSnapshot.exists) {                          // existing account
+      const userRef = db.collection('users').doc(String(emailSnapshot.get('user_id')));
+      const userSnapshot = await transaction.get(userRef);
+      if (!userSnapshot.exists) return null;
+      const data = userSnapshot.data();
+      if (!data.firebase_uid) transaction.update(userRef, { firebase_uid: decoded.uid, updated_at: new Date() });
+      return publicUser(data);
+    }
+    // new account — mirror /register's allocation exactly
+    const counterRef = db.collection('_counters').doc('users');
+    const counter = await transaction.get(counterRef);
+    const id = (counter.exists ? Number(counter.get('value')) : 0) + 1;
+    const userRef = db.collection('users').doc(String(id));
+    const createdUser = { id, name: decoded.name || email.split('@')[0].slice(0, 100), email, role: 'client',
+                          firebase_uid: decoded.uid, created_at: new Date(), updated_at: new Date() };
+    transaction.set(counterRef, { value: id });
+    transaction.create(userRef, createdUser);
+    transaction.create(emailRef, { user_id: id });
+    return publicUser(createdUser);
+  });
+
+  if (!user) return response.status(401).json({ error: 'Account not found' });
+  setSession(response, user);
+  return response.json({ user, message: 'Signed in successfully' });
+});
+
 router.get('/me', requireAuth, async (request, response) => {
   const userSnapshot = await getDocument('users', request.auth.sub).get();
   if (!userSnapshot.exists) {

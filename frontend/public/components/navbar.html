@@ -1,4 +1,3 @@
-
 <!-- ============ SHARED NAVBAR (injected by layout.js) ============ -->
 
 <!-- Navigation -->
@@ -34,8 +33,25 @@
         <button id="theme-toggle-desktop" class="theme-toggle-btn" aria-label="Toggle light/dark mode">
           <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-desktop"></i>
         </button>
-        <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
-        <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase cta-pulse">Join Now</a>
+
+        <!-- GUEST: Login + Join Now -->
+        <div data-auth="guest" class="hidden flex items-center gap-3">
+          <a href="login.html" class="btn-outline px-5 py-2 rounded-lg text-sm font-semibold tracking-wide">Login</a>
+          <a href="membership.html" class="btn-gold px-5 py-2 rounded-lg text-sm font-semibold tracking-wide uppercase cta-pulse">Join Now</a>
+        </div>
+
+        <!-- LOGGED IN: Dashboard + Name + Logout -->
+        <div data-auth="user" class="hidden flex items-center gap-3">
+          <a data-dashboard-link href="#" class="inline-flex items-center gap-2 rounded-lg border border-[color:var(--border-color)] px-3 py-2 text-sm font-semibold text-muted-custom transition-colors hover:border-brand-gold hover:text-brand-gold">
+            <i data-lucide="layout-dashboard" class="h-4 w-4" aria-hidden="true"></i>
+            <span>Dashboard</span>
+          </a>
+          <span class="text-sm font-semibold text-gold" data-user-name>—</span>
+          <button data-logout class="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-custom transition-colors hover:text-red-400">
+            <i data-lucide="log-out" class="h-4 w-4" aria-hidden="true"></i>
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
 
       <div class="lg:hidden flex items-center gap-2">
@@ -46,6 +62,12 @@
         <button id="theme-toggle-mobile" class="theme-toggle-btn p-2" aria-label="Toggle theme">
           <i data-lucide="moon" class="w-5 h-5 text-gold" id="theme-icon-mobile"></i>
         </button>
+
+        <!-- LOGGED IN: dashboard shortcut on mobile bar -->
+        <a data-auth="user" data-dashboard-link href="#" class="hidden p-2 text-muted-custom hover:text-brand-gold transition-colors" aria-label="Dashboard">
+          <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+        </a>
+
         <button id="mobile-toggle" class="p-2 text-muted-custom hover:text-brand-gold transition-colors" aria-label="Toggle menu">
           <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
         </button>
@@ -62,9 +84,29 @@
         <a href="shop.html" class="mobile-nav-link block py-3 px-4 text-muted-custom hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Shop</a>
         <a href="transformations.html" class="mobile-nav-link block py-3 px-4 text-muted-custom hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Transformations</a>
         <a href="contact.html" class="mobile-nav-link block py-3 px-4 text-muted-custom hover:bg-white/5 rounded-lg transition-colors" onclick="closeMobileMenu()">Contact</a>
-        <div class="pt-3 flex gap-2 px-4">
+
+        <!-- GUEST (mobile menu) -->
+        <div data-auth="guest" class="hidden pt-3 flex gap-2 px-4">
           <a href="login.html" class="btn-outline flex-1 text-center py-3 rounded-lg text-sm font-semibold">Login</a>
           <a href="membership.html" class="btn-gold flex-1 text-center py-3 rounded-lg text-sm font-semibold cta-pulse">Join Now</a>
+        </div>
+
+        <!-- LOGGED IN (mobile menu) -->
+        <div data-auth="user" class="hidden pt-3 px-4 space-y-2">
+          <div class="flex items-center gap-2 px-1 pb-2">
+            <div class="w-9 h-9 rounded-full bg-brand-gold/15 flex items-center justify-center">
+              <i data-lucide="user" class="w-4 h-4 text-brand-gold"></i>
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-gold truncate" data-user-name>—</p>
+              <p class="text-[0.65rem] text-muted-custom truncate" data-user-email>—</p>
+            </div>
+          </div>
+          <a data-dashboard-link href="#" class="btn-outline block text-center py-3 rounded-lg text-sm font-semibold" onclick="closeMobileMenu()">Dashboard</a>
+          <button data-logout class="btn-gold w-full text-center py-3 rounded-lg text-sm font-semibold uppercase flex items-center justify-center gap-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            <span>Logout</span>
+          </button>
         </div>
       </div>
     </div>

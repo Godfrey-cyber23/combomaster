@@ -1,226 +1,1075 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>MyCompass | Client Dashboard - Workouts, Meals, Progress</title>
-    <!-- Tailwind + Fonts + Icons -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg-base: #0a0c12; --bg-secondary: #11151f; --bg-card: rgba(22, 28, 38, 0.7);
-            --text-main: #edf2f7; --text-muted: #8ba0bc; --border-color: rgba(255,255,255,0.06);
-            --gold-rgb: 250 204 21; --gold: rgb(250 204 21); --gold-accent: #eab308;
-            --card-solid: #1a1f2b; --toast-bg: #1e2432f2; --success: #10b981;
-        }
-        body.light-theme {
-            --bg-base: #f4f7fc; --bg-secondary: #ffffff; --bg-card: rgba(255,255,255,0.85);
-            --text-main: #0f172a; --text-muted: #475569; --border-color: rgba(0,0,0,0.06);
-            --gold-rgb: 217 119 6; --gold: #d97706; --card-solid: #ffffff;
-        }
-        body { background: var(--bg-base); color: var(--text-main); font-family: 'Inter', sans-serif; transition: all 0.2s; }
-        .font-display { font-family: 'Oswald', sans-serif; letter-spacing: 0.01em; }
-        .glass-card { background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 1.5rem; transition: all 0.2s; }
-        .stat-border { border-left: 3px solid var(--gold); }
-        .text-gold { color: var(--gold); }
-        .btn-gold { background: var(--gold); color: #0f172a; font-weight: 600; transition: 0.2s; cursor: pointer; border: none; }
-        .btn-gold:hover { background: #eab308; transform: translateY(-1px); box-shadow: 0 6px 14px rgba(250,204,21,0.3); }
-        .btn-outline { border: 1px solid rgba(250,204,21,0.5); background: transparent; color: var(--gold); font-weight: 500; transition: 0.2s; }
-        .btn-outline:hover { background: rgba(250,204,21,0.1); border-color: var(--gold); }
-        .form-input { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.6rem 1rem; color: var(--text-main); font-size: 0.875rem; outline: none; width: 100%; }
-        .form-input:focus { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(250,204,21,0.2); }
-        .badge-gold { background: rgba(250,204,21,0.15); color: var(--gold); border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.7rem; font-weight: 600; }
-        .progress-ring-bg { stroke: var(--border-color); }
-        .progress-ring-fill { stroke: var(--gold); transition: stroke-dashoffset 0.6s; }
-        .client-sidebar { width: 280px; position: fixed; left: 0; top: 0; bottom: 0; background: var(--bg-secondary); border-right: 1px solid var(--border-color); z-index: 40; overflow-y: auto; transition: transform 0.2s; }
-        .client-main { margin-left: 280px; transition: margin-left 0.2s; min-height: 100vh; }
-        @media (max-width: 1024px) {
-            .client-sidebar { transform: translateX(-100%); }
-            .client-sidebar.mobile-open { transform: translateX(0); }
-            .client-main { margin-left: 0; }
-        }
-        .sidebar-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1.25rem; margin: 0.25rem 0.75rem; border-radius: 0.75rem; color: var(--text-muted); transition: 0.2s; cursor: pointer; }
-        .sidebar-link:hover, .sidebar-link.active { background: rgba(250,204,21,0.1); color: var(--gold); }
-        .view-pane { display: none; }
-        .view-pane.active-view { display: block; }
-        .toast-fixed { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; background: var(--toast-bg); backdrop-filter: blur(12px); border-radius: 1rem; padding: 0.75rem 1.5rem; transition: all 0.3s; transform: translateY(100px); opacity: 0; border: 1px solid var(--border-color); }
-        .toast-fixed.show { transform: translateY(0); opacity: 1; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.2s; }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-card { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 1.5rem; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; }
-        .meal-item, .workout-item { transition: 0.1s; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
-        .achievement-card { background: linear-gradient(135deg, rgba(250,204,21,0.05), transparent); border: 1px solid rgba(250,204,21,0.2); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyCompass · Client Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg-base:#0a0c12;--bg-secondary:#11151f;--bg-card:rgba(22,28,38,.7);
+      --text-main:#edf2f7;--text-muted:#8ba0bc;--border-color:rgba(255,255,255,.06);
+      --gold-rgb:250 204 21;--gold:rgb(250 204 21);--gold-accent:#eab308;
+      --card-solid:#1a1f2b;--toast-bg:#1e2432f2;--success:#10b981;--danger:#ef4444;
+    }
+    body.light-theme{
+      --bg-base:#f4f7fc;--bg-secondary:#fff;--bg-card:rgba(255,255,255,.85);
+      --text-main:#0f172a;--text-muted:#475569;--border-color:rgba(0,0,0,.06);
+      --gold-rgb:217 119 6;--gold:#d97706;--card-solid:#fff;
+    }
+    body{background:var(--bg-base);color:var(--text-main);font-family:'Inter',sans-serif;transition:background .2s,color .2s}
+    .font-display{font-family:'Oswald',sans-serif;letter-spacing:.01em}
+    .glass-card{background:var(--bg-card);backdrop-filter:blur(12px);border:1px solid var(--border-color);border-radius:1.5rem;transition:all .2s}
+    .stat-border{border-left:3px solid var(--gold)}
+    .text-gold{color:var(--gold)}
+    .btn-gold{background:var(--gold);color:#0f172a;font-weight:600;transition:.2s;cursor:pointer;border:none}
+    .btn-gold:hover:not(:disabled){background:#eab308;transform:translateY(-1px);box-shadow:0 6px 14px rgba(250,204,21,.3)}
+    .btn-gold:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
+    .btn-outline{border:1px solid rgba(250,204,21,.5);background:transparent;color:var(--gold);font-weight:500;transition:.2s;cursor:pointer}
+    .btn-outline:hover{background:rgba(250,204,21,.1);border-color:var(--gold)}
+    .btn-danger{background:transparent;color:#f87171;border:1px solid rgba(248,113,113,.35);font-weight:500;transition:.2s;cursor:pointer}
+    .btn-danger:hover{background:rgba(248,113,113,.1)}
+    .form-input{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:.75rem;padding:.6rem 1rem;color:var(--text-main);font-size:.875rem;outline:none;width:100%}
+    .form-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(250,204,21,.2)}
+    .badge-gold{background:rgba(250,204,21,.15);color:var(--gold);border-radius:999px;padding:.2rem .7rem;font-size:.7rem;font-weight:600}
+    .badge-gray{background:rgba(139,160,188,.15);color:var(--text-muted);border-radius:999px;padding:.2rem .7rem;font-size:.7rem;font-weight:600}
+    .client-sidebar{width:280px;position:fixed;left:0;top:0;bottom:0;background:var(--bg-secondary);border-right:1px solid var(--border-color);z-index:40;overflow-y:auto;transition:transform .2s}
+    .client-main{margin-left:280px;transition:margin-left .2s;min-height:100vh}
+    @media(max-width:1024px){
+      .client-sidebar{transform:translateX(-100%)}
+      .client-sidebar.mobile-open{transform:translateX(0)}
+      .client-main{margin-left:0}
+    }
+    .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.25rem;margin:.25rem .75rem;border-radius:.75rem;color:var(--text-muted);transition:.2s;cursor:pointer}
+    .sidebar-link:hover,.sidebar-link.active{background:rgba(250,204,21,.1);color:var(--gold)}
+    .view-pane{display:none}
+    .view-pane.active-view{display:block}
+    .toast-fixed{position:fixed;bottom:2rem;right:2rem;z-index:9999;background:var(--toast-bg);backdrop-filter:blur(12px);border-radius:1rem;padding:.75rem 1.5rem;transition:all .3s;transform:translateY(100px);opacity:0;border:1px solid var(--border-color);max-width:calc(100vw - 2rem)}
+    .toast-fixed.show{transform:translateY(0);opacity:1}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.2s;padding:1rem}
+    .modal-overlay.active{opacity:1;pointer-events:auto}
+    .modal-card{background:var(--bg-base);border:1px solid var(--border-color);border-radius:1.5rem;max-width:500px;width:100%;max-height:85vh;overflow-y:auto}
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--gold);border-radius:10px}
+    .achievement-card{background:linear-gradient(135deg,rgba(250,204,21,.05),transparent);border:1px solid rgba(250,204,21,.2)}
+    .skeleton{background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.12) 37%,rgba(255,255,255,.05) 63%);background-size:400% 100%;animation:shimmer 1.4s infinite;border-radius:.5rem}
+    @keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+    .empty-state{padding:2rem;text-align:center;color:var(--text-muted);font-size:.85rem}
+  </style>
 </head>
 <body>
 
-    <!-- Toast -->
-    <div id="clientToast" class="toast-fixed flex items-center gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i><span id="toastMsg"></span></div>
+  <!-- Toast -->
+  <div id="clientToast" class="toast-fixed flex items-center gap-3">
+    <i data-lucide="check-circle" class="w-5 h-5 text-green-500" id="toastIcon"></i>
+    <span id="toastMsg"></span>
+  </div>
 
-    <!-- Modal -->
-    <div id="globalModal" class="modal-overlay" onclick="if(event.target===this)closeModal()"><div class="modal-card p-6"><div class="flex justify-between items-center mb-4"><h3 id="modalTitle" class="font-display text-xl font-bold text-gold"></h3><button onclick="closeModal()" class="text-muted text-2xl">&times;</button></div><div id="modalBody"></div></div></div>
+  <!-- Modal -->
+  <div id="globalModal" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal-card p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="modalTitle" class="font-display text-xl font-bold text-gold"></h3>
+        <button onclick="closeModal()" class="text-muted text-2xl leading-none">&times;</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
 
-    <!-- SIDEBAR (Client) -->
-    <aside id="clientSidebar" class="client-sidebar flex flex-col">
-        <div class="h-16 flex items-center px-5 border-b border-[var(--border-color)]">
-            <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-yellow-500 to-amber-600 flex items-center justify-center text-black font-bold">CM</div><span class="font-display text-xl tracking-wide text-gold font-semibold">MY<span class="text-white">COMPASS</span></span></div>
+  <!-- SIDEBAR -->
+  <aside id="clientSidebar" class="client-sidebar flex flex-col">
+    <div class="h-16 flex items-center px-5 border-b border-[var(--border-color)]">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-yellow-500 to-amber-600 flex items-center justify-center text-black font-bold">CM</div>
+        <span class="font-display text-xl tracking-wide text-gold font-semibold">MY<span style="color:var(--text-main)">COMPASS</span></span>
+      </div>
+    </div>
+    <div class="py-6 flex-1">
+      <div class="px-5 mb-2 text-[0.6rem] font-bold uppercase tracking-wider text-muted-custom" style="color:var(--text-muted)">CLIENT PORTAL</div>
+      <a href="#" class="sidebar-link active" data-section="profile-overview"><i data-lucide="user-circle" class="w-5 h-5"></i><span>Profile &amp; Overview</span></a>
+      <a href="#" class="sidebar-link" data-section="meal-plans"><i data-lucide="utensils" class="w-5 h-5"></i><span>Meal Plans</span></a>
+      <a href="#" class="sidebar-link" data-section="workout-plans"><i data-lucide="dumbbell" class="w-5 h-5"></i><span>Workout Plans</span></a>
+      <a href="#" class="sidebar-link" data-section="progress-tracking"><i data-lucide="trending-up" class="w-5 h-5"></i><span>Progress Tracking</span></a>
+      <a href="#" class="sidebar-link" data-section="payments"><i data-lucide="credit-card" class="w-5 h-5"></i><span>Payments</span></a>
+      <a href="#" class="sidebar-link" data-section="bookings"><i data-lucide="calendar" class="w-5 h-5"></i><span>Bookings</span></a>
+      <a href="#" class="sidebar-link" data-section="messages"><i data-lucide="message-square" class="w-5 h-5"></i><span>Messages</span></a>
+      <a href="#" class="sidebar-link" data-section="achievements"><i data-lucide="award" class="w-5 h-5"></i><span>Achievements</span></a>
+      <div class="border-t border-[var(--border-color)] my-4 mx-4"></div>
+      <a href="#" class="sidebar-link" data-section="settings"><i data-lucide="settings" class="w-5 h-5"></i><span>Settings</span></a>
+      <a href="#" data-logout class="sidebar-link" style="color:#f87171"><i data-lucide="log-out" class="w-5 h-5"></i><span>Logout</span></a>
+    </div>
+    <div class="p-4 text-center text-[0.6rem] border-t border-[var(--border-color)]" style="color:var(--text-muted)">Your fitness journey starts here</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="clientMain" class="client-main">
+    <header class="sticky top-0 z-30 border-b border-[var(--border-color)] h-16 flex items-center justify-between px-5 lg:px-7" style="background:rgba(10,12,18,.8);backdrop-filter:blur(20px)">
+      <div class="flex items-center gap-4">
+        <button id="mobileMenuBtn" class="lg:hidden p-2 text-muted-custom hover:text-gold" style="color:var(--text-muted)"><i data-lucide="menu" class="w-5 h-5"></i></button>
+        <h2 id="sectionTitle" class="font-display text-xl font-semibold">Profile &amp; Overview</h2>
+      </div>
+      <div class="flex gap-3 items-center">
+        <button onclick="toggleClientTheme()" class="p-2 hover:text-gold" style="color:var(--text-muted)"><i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i></button>
+        <div class="w-9 h-9 rounded-full flex items-center justify-center text-gold font-bold" style="background:rgba(250,204,21,.15)" id="avatarInitial">?</div>
+      </div>
+    </header>
+
+    <div class="p-5 lg:p-7 space-y-7">
+
+      <!-- ============ PROFILE & OVERVIEW ============ -->
+      <div id="profileOverviewView" class="view-pane active-view space-y-6">
+        <div class="flex flex-wrap justify-between items-start gap-4">
+          <div>
+            <h1 class="font-display text-2xl font-bold">Welcome back, <span id="clientNameSpan" class="text-gold">—</span></h1>
+            <p id="currentDate" class="text-sm" style="color:var(--text-muted)"></p>
+          </div>
+          <button class="btn-gold px-5 py-2 rounded-xl text-sm flex gap-2" onclick="openCheckInModal()">
+            <i data-lucide="calendar-check" class="w-4 h-4"></i> Daily Check-in
+          </button>
         </div>
-        <div class="py-6 flex-1">
-            <div class="px-5 mb-2 text-[0.6rem] font-bold uppercase tracking-wider text-muted">CLIENT PORTAL</div>
-            <a href="#" class="sidebar-link active" data-section="profile-overview"><i data-lucide="user-circle" class="w-5 h-5"></i><span>Profile & Overview</span></a>
-            <a href="#" class="sidebar-link" data-section="meal-plans"><i data-lucide="utensils" class="w-5 h-5"></i><span>Meal Plans</span></a>
-            <a href="#" class="sidebar-link" data-section="workout-plans"><i data-lucide="dumbbell" class="w-5 h-5"></i><span>Workout Plans</span></a>
-            <a href="#" class="sidebar-link" data-section="progress-tracking"><i data-lucide="trending-up" class="w-5 h-5"></i><span>Progress Tracking</span></a>
-            <a href="#" class="sidebar-link" data-section="payments"><i data-lucide="credit-card" class="w-5 h-5"></i><span>Payments</span></a>
-            <a href="#" class="sidebar-link" data-section="bookings"><i data-lucide="calendar" class="w-5 h-5"></i><span>Bookings</span></a>
-            <a href="#" class="sidebar-link" data-section="messages"><i data-lucide="message-square" class="w-5 h-5"></i><span>Messages</span></a>
-            <a href="#" class="sidebar-link" data-section="achievements"><i data-lucide="award" class="w-5 h-5"></i><span>Achievements</span></a>
-            <div class="border-t border-[var(--border-color)] my-4 mx-4"></div>
-            <a href="#" class="sidebar-link" data-section="settings"><i data-lucide="settings" class="w-5 h-5"></i><span>Settings</span></a>
-            <a href="#" onclick="event.preventDefault();logoutClient()" class="sidebar-link text-red-400"><i data-lucide="log-out" class="w-5 h-5"></i><span>Logout</span></a>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div class="glass-card p-5 stat-border"><p class="text-xs uppercase" style="color:var(--text-muted)">Current Weight</p><p class="font-display text-3xl font-bold text-gold" id="statWeight">—</p></div>
+          <div class="glass-card p-5 stat-border"><p class="text-xs uppercase" style="color:var(--text-muted)">Body Fat %</p><p class="font-display text-3xl font-bold text-gold" id="statBodyfat">—</p></div>
+          <div class="glass-card p-5 stat-border"><p class="text-xs uppercase" style="color:var(--text-muted)">Workout Streak</p><p class="font-display text-3xl font-bold text-gold" id="statStreak">—</p></div>
+          <div class="glass-card p-5 stat-border"><p class="text-xs uppercase" style="color:var(--text-muted)">Achievements</p><p class="font-display text-3xl font-bold text-gold" id="statBadges">—</p></div>
         </div>
-        <div class="p-4 text-center text-[0.6rem] text-muted border-t border-[var(--border-color)]">Your fitness journey starts here</div>
-    </aside>
 
-    <!-- MAIN CONTENT -->
-    <main id="clientMain" class="client-main bg-[var(--bg-base)]">
-        <header class="sticky top-0 z-30 bg-[var(--bg-base)]/80 backdrop-blur-xl border-b border-[var(--border-color)] h-16 flex items-center justify-between px-5 lg:px-7">
-            <div class="flex items-center gap-4"><button id="mobileMenuBtn" class="lg:hidden p-2 text-muted hover:text-gold"><i data-lucide="menu" class="w-5 h-5"></i></button><h2 id="sectionTitle" class="font-display text-xl font-semibold">Profile & Overview</h2></div>
-            <div class="flex gap-3 items-center"><button onclick="toggleClientTheme()" class="p-2 text-muted hover:text-gold"><i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i></button><div class="w-9 h-9 rounded-full bg-gold/20 flex items-center justify-center text-gold font-bold">JD</div></div>
-        </header>
-
-        <div class="p-5 lg:p-7 space-y-7">
-            <!-- 1) PROFILE & OVERVIEW DASHBOARD -->
-            <div id="profileOverviewView" class="view-pane active-view space-y-6">
-                <div class="flex flex-wrap justify-between items-start gap-4">
-                    <div><h1 class="font-display text-2xl font-bold">Welcome back, <span id="clientNameSpan" class="text-gold">James</span></h1><p id="currentDate" class="text-muted text-sm"></p></div>
-                    <button class="btn-gold px-5 py-2 rounded-xl text-sm flex gap-2" onclick="openCheckInModal()"><i data-lucide="calendar-check"></i> Daily Check-in</button>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div class="glass-card p-5 stat-border"><p class="text-xs text-muted uppercase">Current Weight</p><p class="font-display text-3xl font-bold text-gold" id="statWeight">82.5 <span class="text-base">kg</span></p></div>
-                    <div class="glass-card p-5 stat-border"><p class="text-xs text-muted uppercase">Body Fat %</p><p class="font-display text-3xl font-bold text-gold" id="statBodyfat">16.2<span class="text-base">%</span></p></div>
-                    <div class="glass-card p-5 stat-border"><p class="text-xs text-muted uppercase">Workout Streak</p><p class="font-display text-3xl font-bold text-gold" id="statStreak">12<span class="text-base"> days</span></p></div>
-                    <div class="glass-card p-5 stat-border"><p class="text-xs text-muted uppercase">Achievements Earned</p><p class="font-display text-3xl font-bold text-gold" id="statBadges">4</p></div>
-                </div>
-                <div class="glass-card p-5"><div class="flex justify-between items-center"><h3 class="font-display text-lg font-semibold">Recent Activity</h3><span class="text-xs text-muted">Last 7 days</span></div><div class="mt-3 h-32 w-full"><canvas id="activityChart"></canvas></div></div>
-            </div>
-
-            <!-- 2) MEAL PLANS -->
-            <div id="mealPlansView" class="view-pane space-y-5">
-                <div class="flex justify-between items-center"><h1 class="font-display text-2xl font-semibold">🍽️ My Meal Plan</h1><button class="btn-outline text-sm px-4 py-2 rounded-xl" onclick="openLogMealModal()">+ Log Custom Meal</button></div>
-                <div class="grid md:grid-cols-2 gap-5">
-                    <div class="glass-card p-5"><h3 class="font-semibold flex gap-2"><i data-lucide="sunrise" class="w-5 h-5 text-gold"></i> Breakfast</h3><p class="text-sm mt-2">Protein Oats + Berries + Almond butter</p><div class="text-xs text-muted mt-1">450 cal | 30g P | 55g C | 15g F</div><button class="btn-outline text-xs mt-3 px-3 py-1 rounded-full" onclick="logQuickMeal('Breakfast','Protein Oats',450)">Log Meal</button></div>
-                    <div class="glass-card p-5"><h3 class="font-semibold flex gap-2"><i data-lucide="sun" class="w-5 h-5 text-gold"></i> Lunch</h3><p class="text-sm mt-2">Grilled Chicken Bowl (quinoa, avocado, greens)</p><div class="text-xs text-muted mt-1">580 cal | 48g P | 52g C | 22g F</div><button class="btn-outline text-xs mt-3 px-3 py-1 rounded-full" onclick="logQuickMeal('Lunch','Chicken Bowl',580)">Log Meal</button></div>
-                    <div class="glass-card p-5"><h3 class="font-semibold flex gap-2"><i data-lucide="moon" class="w-5 h-5 text-gold"></i> Dinner</h3><p class="text-sm mt-2">Salmon + Sweet potato + Asparagus</p><div class="text-xs text-muted mt-1">520 cal | 40g P | 45g C | 18g F</div><button class="btn-outline text-xs mt-3 px-3 py-1 rounded-full" onclick="logQuickMeal('Dinner','Salmon meal',520)">Log Meal</button></div>
-                    <div class="glass-card p-5"><h3 class="font-semibold flex gap-2"><i data-lucide="coffee" class="w-5 h-5 text-gold"></i> Snack</h3><p class="text-sm mt-2">Greek Yogurt + Whey + Berries</p><div class="text-xs text-muted mt-1">210 cal | 28g P | 12g C | 6g F</div><button class="btn-outline text-xs mt-3 px-3 py-1 rounded-full" onclick="logQuickMeal('Snack','Protein Yogurt',210)">Log Meal</button></div>
-                </div>
-                <div class="glass-card p-5"><h3 class="font-semibold mb-3">Today's Logged Meals</h3><div id="mealLogList" class="space-y-2"></div></div>
-            </div>
-
-            <!-- 3) WORKOUT PLANS -->
-            <div id="workoutPlansView" class="view-pane space-y-5">
-                <div class="flex justify-between"><h1 class="font-display text-2xl font-semibold">💪 Weekly Workout Plan</h1><button class="btn-gold text-sm px-4 py-2 rounded-xl" onclick="openLogWorkoutModal()">+ Log Workout</button></div>
-                <div class="grid md:grid-cols-2 gap-5">
-                    <div class="glass-card p-5"><div class="flex justify-between"><h3 class="font-bold">Upper Body Push</h3><span class="badge-gold">Today</span></div><ul class="text-sm mt-3 space-y-2"><li>• Bench Press 4x8-10</li><li>• Overhead Press 3x10</li><li>• Incline DB Fly 3x12</li><li>• Triceps Dips 3x15</li></ul><button class="btn-outline w-full mt-4 py-2 rounded-lg text-sm" onclick="completeWorkout('Upper Body Push')">Complete Workout</button></div>
-                    <div class="glass-card p-5"><div class="flex justify-between"><h3 class="font-bold">Lower Body Strength</h3><span class="badge-gold">Tomorrow</span></div><ul class="text-sm mt-3 space-y-2"><li>• Squats 4x6-8</li><li>• Deadlifts 3x5</li><li>• Lunges 3x12</li><li>• Leg Press 3x10</li></ul><button class="btn-outline w-full mt-4 py-2 rounded-lg text-sm" disabled>Pending</button></div>
-                </div>
-                <div class="glass-card p-5"><h3 class="font-semibold mb-3">Workout History</h3><div id="workoutHistoryList" class="space-y-2 text-sm"></div></div>
-            </div>
-
-            <!-- 4) PROGRESS TRACKING -->
-            <div id="progressTrackingView" class="view-pane space-y-6">
-                <h1 class="font-display text-2xl font-semibold">📈 Body Metrics</h1>
-                <div class="grid md:grid-cols-2 gap-5">
-                    <div class="glass-card p-5"><h3 class="font-semibold">Weight Trend (kg)</h3><canvas id="weightProgressChart" height="150"></canvas><button class="btn-outline w-full mt-4 py-2 rounded-xl text-sm" onclick="openLogWeightModal()">Log New Weight</button></div>
-                    <div class="glass-card p-5"><h3 class="font-semibold">Strength Score</h3><div class="mt-4"><div class="flex justify-between text-sm"><span>Bench Press PR</span><span class="text-gold">85kg</span></div><div class="w-full bg-gray-700 h-2 rounded-full mt-1"><div class="bg-gold h-2 rounded-full w-[75%]"></div></div><div class="flex justify-between text-sm mt-3"><span>Squat PR</span><span class="text-gold">120kg</span></div><div class="w-full bg-gray-700 h-2 rounded-full mt-1"><div class="bg-gold h-2 rounded-full w-[65%]"></div></div></div></div>
-                </div>
-            </div>
-
-            <!-- 5) PAYMENTS -->
-            <div id="paymentsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">💰 Billing & Payments</h1><div class="glass-card p-5 mt-4"><div class="flex justify-between border-b pb-3"><span>Subscription Plan</span><span class="text-gold font-bold">Pro Monthly</span></div><div class="flex justify-between py-3 border-b"><span>Next billing date</span><span>March 15, 2026</span></div><div class="flex justify-between py-3"><span>Amount</span><span class="font-bold">$79.00</span></div><button class="btn-gold w-full mt-3 py-2 rounded-xl" onclick="showToast('Payment method updated','success')">Update Payment Method</button><button class="btn-outline w-full mt-2 py-2 rounded-xl text-sm" onclick="showToast('Invoice sent to email','success')">Download Invoice</button></div></div>
-
-            <!-- 6) BOOKINGS -->
-            <div id="bookingsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">📅 Coach Sessions</h1><div class="glass-card p-5 mt-4 space-y-3"><div class="flex justify-between items-center"><div><p class="font-semibold">Nutrition Review</p><p class="text-xs text-muted">Feb 20, 2025 • 10:00 AM</p></div><span class="badge-gold">Confirmed</span></div><div class="flex justify-between items-center"><div><p class="font-semibold">1-on-1 Coaching Call</p><p class="text-xs text-muted">Feb 22, 2025 • 2:30 PM</p></div><span class="badge-gold">Upcoming</span></div><button onclick="openBookingRequestModal()" class="btn-outline w-full mt-4 py-2 rounded-xl">+ Request Booking</button></div></div>
-
-            <!-- 7) MESSAGES -->
-            <div id="messagesView" class="view-pane"><h1 class="font-display text-2xl font-semibold">💬 Coach Messages</h1><div class="glass-card p-5 mt-4"><div class="h-80 overflow-y-auto border-b pb-3" id="chatMessagesContainer"><div class="text-center text-muted text-sm">Loading conversation...</div></div><div class="flex gap-3 mt-4"><input type="text" id="messageInput" class="form-input flex-1" placeholder="Ask your coach..."><button onclick="sendClientMessage()" class="btn-gold px-4 py-2 rounded-xl">Send</button></div></div></div>
-
-            <!-- 8) ACHIEVEMENTS -->
-            <div id="achievementsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">🏆 Fitness Achievements</h1><div class="grid sm:grid-cols-2 gap-4 mt-5"><div class="achievement-card glass-card p-4 flex items-center gap-3"><i data-lucide="flame" class="w-8 h-8 text-gold"></i><div><p class="font-bold">7-Day Streak</p><p class="text-xs text-muted">Completed 7 workouts in a row</p></div><span class="ml-auto text-gold text-sm">✓</span></div><div class="achievement-card glass-card p-4 flex items-center gap-3"><i data-lucide="trophy" class="w-8 h-8 text-gold"></i><div><p class="font-bold">Iron Warrior</p><p class="text-xs text-muted">50 workouts completed</p></div><span class="ml-auto text-gold text-sm">48/50</span></div><div class="achievement-card glass-card p-4 flex items-center gap-3"><i data-lucide="apple" class="w-8 h-8 text-gold"></i><div><p class="font-bold">Nutrition Master</p><p class="text-xs text-muted">Log 30 perfect meal days</p></div><span class="ml-auto text-gold text-sm">12/30</span></div><div class="achievement-card glass-card p-4 flex items-center gap-3"><i data-lucide="dumbbell" class="w-8 h-8 text-gold"></i><div><p class="font-bold">Strength PR</p><p class="text-xs text-muted">Set a new personal record</p></div><span class="ml-auto text-gold text-sm">✓</span></div></div></div>
-
-            <!-- 9) SETTINGS -->
-            <div id="settingsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">⚙️ Account Settings</h1><div class="glass-card p-6 mt-5 space-y-4"><div><label class="text-sm block mb-1">Full Name</label><input type="text" id="settingsName" class="form-input"></div><div><label class="text-sm block mb-1">Email</label><input type="email" id="settingsEmail" class="form-input" disabled></div><div><label class="text-sm block mb-1">Height (cm)</label><input type="number" id="settingsHeight" class="form-input"></div><div><label class="text-sm block mb-1">Weight (kg)</label><input type="number" id="settingsWeight" class="form-input"></div><button class="btn-gold w-full py-2 rounded-xl" onclick="saveClientProfile()">Save Changes</button></div></div>
+        <div class="glass-card p-5">
+          <div class="flex justify-between items-center"><h3 class="font-display text-lg font-semibold">Recent Activity</h3><span class="text-xs" style="color:var(--text-muted)">Last 7 days</span></div>
+          <div class="mt-3 h-40 w-full"><canvas id="activityChart"></canvas></div>
         </div>
-    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script>
-        // ---------- CLIENT STATE ----------
-        let activityChart, weightChart;
-        let workoutHistory = [];
-        let mealLog = [];
-        let weightLog = [];
-        let clientData = { name: 'Member', email: '', height: '', weight: '', bodyfat: '', streak: 0, badges: 0 };
+        <div class="glass-card p-5">
+          <h3 class="font-display text-lg font-semibold mb-3">Latest Updates</h3>
+          <div id="recentFeed" class="space-y-2 text-sm"></div>
+        </div>
+      </div>
 
-        // Helper
-        function showToast(msg, type='success'){ let t=document.getElementById('clientToast'),m=document.getElementById('toastMsg'); m.innerText=msg; t.classList.add('show'); clearTimeout(window.toastTimer); window.toastTimer=setTimeout(()=>t.classList.remove('show'),3000); }
-        function closeModal(){ document.getElementById('globalModal').classList.remove('active'); }
-        function openModal(title, html){ document.getElementById('modalTitle').innerHTML=title; document.getElementById('modalBody').innerHTML=html; document.getElementById('globalModal').classList.add('active'); if(window.lucide)lucide.createIcons(); }
+      <!-- ============ MEAL PLANS ============ -->
+      <div id="mealPlansView" class="view-pane space-y-5">
+        <div class="flex flex-wrap justify-between items-center gap-3">
+          <h1 class="font-display text-2xl font-semibold">🍽️ My Meal Plan</h1>
+          <button class="btn-outline text-sm px-4 py-2 rounded-xl" onclick="openLogMealModal()">+ Log Custom Meal</button>
+        </div>
 
-        // Navigation
-        function initClientNav(){ document.querySelectorAll('.sidebar-link[data-section]').forEach(link=>{link.addEventListener('click',(e)=>{e.preventDefault(); let sec=link.dataset.section; document.querySelectorAll('.view-pane').forEach(p=>p.classList.remove('active-view')); document.getElementById(`${sec}View`).classList.add('active-view'); document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active')); link.classList.add('active'); let titles={ 'profile-overview':'Profile & Overview','meal-plans':'Meal Plans','workout-plans':'Workout Plans','progress-tracking':'Progress Tracking','payments':'Payments','bookings':'Bookings','messages':'Messages','achievements':'Achievements','settings':'Settings' }; document.getElementById('sectionTitle').innerText=titles[sec]||'Dashboard'; if(window.innerWidth<1024)document.getElementById('clientSidebar').classList.remove('mobile-open'); });}); }
-        
-        function updateDashboardUI(){ document.getElementById('clientNameSpan').innerText=(clientData.name || 'Member').split(' ')[0]; document.getElementById('statWeight').innerHTML=clientData.weight ? `${clientData.weight} <span class="text-base">kg</span>` : '-'; document.getElementById('statBodyfat').innerHTML=clientData.bodyfat ? `${clientData.bodyfat}<span class="text-base">%</span>` : '-'; document.getElementById('statStreak').innerHTML=`${clientData.streak}<span class="text-base"> days</span>`; document.getElementById('statBadges').innerHTML=clientData.badges; document.getElementById('settingsName').value=clientData.name; document.getElementById('settingsEmail').value=clientData.email; document.getElementById('settingsHeight').value=clientData.height; document.getElementById('settingsWeight').value=clientData.weight; }
-        function saveClientProfile(){ let n=document.getElementById('settingsName').value; let h=document.getElementById('settingsHeight').value; let w=document.getElementById('settingsWeight').value; if(n)clientData.name=n; if(h)clientData.height=parseInt(h); if(w){clientData.weight=parseFloat(w); updateDashboardUI(); showToast('Profile updated','success');} updateDashboardUI(); }
+        <div id="assignedMealPlan" class="grid md:grid-cols-2 gap-5"></div>
 
-        // Meal logging
-        function logQuickMeal(){ showToast('Meal API is not available yet','error'); }
-        function renderMealLog(){ let container=document.getElementById('mealLogList'); if(!container)return; container.innerHTML=mealLog.slice(0,5).map(m=>`<div class="flex justify-between bg-[var(--bg-secondary)] p-2 rounded-lg"><div><span class="text-xs font-bold">${m.meal}</span><p class="text-sm">${m.description}</p></div><span class="text-gold text-sm">${m.calories} cal</span></div>`).join(''); if(mealLog.length===0) container.innerHTML='<div class="text-muted text-center text-sm">No meals logged today.</div>'; }
-        function openLogMealModal(){ openModal('Log Custom Meal',`<form onsubmit="event.preventDefault();customLogMeal();"><div><label class="text-xs">Meal Name</label><input id="customMealName" class="form-input mb-3" required></div><div><label class="text-xs">Calories</label><input id="customMealCal" type="number" class="form-input mb-4" required></div><button type="submit" class="btn-gold w-full py-2 rounded-xl">Log Meal</button></form>`); }
-        function customLogMeal(){ let name=document.getElementById('customMealName').value; let cal=document.getElementById('customMealCal').value; if(name&&cal){ logQuickMeal('Custom',name,parseInt(cal)); closeModal();} }
+        <div class="glass-card p-5">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-semibold">Today's Logged Meals</h3>
+            <span class="badge-gold" id="mealKcalTotal">0 kcal</span>
+          </div>
+          <div id="mealLogList" class="space-y-2"></div>
+        </div>
+      </div>
 
-        // Workout handling
-        function completeWorkout(){ showToast('Workout API is not available yet','error'); }
-        function renderWorkoutHistory(){ let container=document.getElementById('workoutHistoryList'); if(container) container.innerHTML=workoutHistory.slice(0,5).map(w=>`<div class="flex justify-between border-b border-[var(--border-color)] py-2"><span>${w.date}</span><span class="text-gold">${w.workout}</span><span class="text-green-400">✓</span></div>`).join(''); }
-        function openLogWorkoutModal(){ openModal('Log Custom Workout',`<form onsubmit="event.preventDefault();customLogWorkout();"><div><label>Workout Name</label><input id="customWorkoutName" class="form-input mb-3" required></div><div><label>Duration (min)</label><input id="customWorkoutDur" type="number" class="form-input mb-4" required></div><button type="submit" class="btn-gold w-full py-2">Log Workout</button></form>`); }
-        function customLogWorkout(){ let name=document.getElementById('customWorkoutName').value; if(name){ workoutHistory.unshift({date:new Date().toLocaleDateString(),workout:name,completed:true}); localStorage.setItem('clientWorkouts',JSON.stringify(workoutHistory)); renderWorkoutHistory(); clientData.streak+=1; updateDashboardUI(); showToast(`Custom workout "${name}" logged!`,'success'); closeModal();} }
-        
-        // weight & progress chart
-        function openLogWeightModal(){ openModal('Log Weight',`<form onsubmit="event.preventDefault();addWeightEntry();"><div><label>Weight (kg)</label><input id="newWeightValue" type="number" step="0.1" class="form-input mb-4" required></div><button type="submit" class="btn-gold w-full">Save Weight</button></form>`); }
-        function addWeightEntry(){ showToast('Progress API is not available yet','error'); closeModal(); }
-        function initProgressCharts(){ let ctx=document.getElementById('weightProgressChart')?.getContext('2d'); if(ctx&&weightChart)weightChart.destroy(); if(ctx){ let labels=weightLog.slice(-6).map(e=>e.date.slice(5)); let data=weightLog.slice(-6).map(e=>e.weight); weightChart=new Chart(ctx,{type:'line',data:{labels:labels,datasets:[{label:'Weight (kg)',data:data,borderColor:'#facc15',backgroundColor:'rgba(250,204,21,0.1)',fill:true,tension:0.2}]}});} }
-        function initActivityChart(){ let ctx=document.getElementById('activityChart')?.getContext('2d'); if(ctx&&activityChart)activityChart.destroy(); if(ctx){ activityChart=new Chart(ctx,{type:'bar',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{label:'Workouts Completed',data:[1,1,0,1,1,0,0],backgroundColor:'#facc15',borderRadius:8}]}});} }
+      <!-- ============ WORKOUT PLANS ============ -->
+      <div id="workoutPlansView" class="view-pane space-y-5">
+        <div class="flex flex-wrap justify-between items-center gap-3">
+          <h1 class="font-display text-2xl font-semibold">💪 Weekly Workout Plan</h1>
+          <button class="btn-gold text-sm px-4 py-2 rounded-xl" onclick="openLogWorkoutModal()">+ Log Workout</button>
+        </div>
 
-        // Messages (coach simulation)
-        let messageHistory = [];
-        function renderMessages(){ let container=document.getElementById('chatMessagesContainer'); if(!container)return; container.innerHTML=messageHistory.map(m=>`<div class="mb-3 ${m.sender==='coach'?'text-left':'text-right'}"><div class="inline-block p-2 rounded-xl ${m.sender==='coach'?'bg-[var(--bg-secondary)] text-muted':'bg-gold/20 text-gold'} text-sm">${m.text}</div><div class="text-[0.6rem] text-muted mt-1">${m.time}</div></div>`).join(''); container.scrollTop=container.scrollHeight; }
-        function sendClientMessage(){ showToast('Messaging API is not available yet','error'); }
-        function loadMessages(){ renderMessages(); }
-        
-        // bookings, checkin modal
-        function openCheckInModal(){ openModal('Daily Check-in',`<form onsubmit="event.preventDefault();showToast('Check-in submitted! Coach notified','success');closeModal();"><div><label>How are you feeling today?</label><select class="form-input my-2"><option>Energetic 🔥</option><option>Good 😊</option><option>Tired 😴</option></select></div><div><label>Notes for coach</label><textarea class="form-input mt-2" rows="2"></textarea></div><button type="submit" class="btn-gold w-full mt-4 py-2 rounded-xl">Submit Check-in</button></form>`); }
-        function openBookingRequestModal(){ openModal('Request Booking',`<form onsubmit="event.preventDefault();showToast('Booking request sent to coach','success');closeModal();"><div><label>Preferred Date</label><input type="date" class="form-input my-2"></div><div><label>Time slot</label><select class="form-input"><option>9:00-10:00 AM</option><option>2:00-3:00 PM</option></select></div><div><label>Topic</label><input class="form-input" placeholder="e.g., Form check"></div><button type="submit" class="btn-gold w-full mt-4 py-2 rounded-xl">Send Request</button></form>`); }
+        <div id="assignedWorkoutPlan" class="grid md:grid-cols-2 gap-5"></div>
 
-        // Theme & logout
-        function toggleClientTheme(){ document.body.classList.toggle('light-theme'); let icon=document.getElementById('themeIcon'); icon.setAttribute('data-lucide',document.body.classList.contains('light-theme')?'sun':'moon'); if(window.lucide)lucide.createIcons(); localStorage.setItem('clientTheme',document.body.classList.contains('light-theme')?'light':'dark'); }
-        function loadTheme(){ if(localStorage.getItem('clientTheme')==='light'){document.body.classList.add('light-theme');document.getElementById('themeIcon')?.setAttribute('data-lucide','sun');} else{document.getElementById('themeIcon')?.setAttribute('data-lucide','moon');} if(window.lucide)lucide.createIcons(); }
-        async function logoutClient(){ await fetch('api/logout.php',{method:'POST',credentials:'same-origin'}); window.location.replace('login.html'); }
-        
-        function setDate(){ let d=new Date(); document.getElementById('currentDate').innerText=d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
+        <div class="glass-card p-5">
+          <h3 class="font-semibold mb-3">Workout History</h3>
+          <div id="workoutHistoryList" class="space-y-2 text-sm"></div>
+        </div>
+      </div>
 
-        // FULL INIT
-        document.addEventListener('DOMContentLoaded',()=>{
-            loadTheme(); initClientNav(); updateDashboardUI(); renderMealLog(); renderWorkoutHistory(); initProgressCharts(); initActivityChart(); loadMessages(); setDate(); if(window.lucide)lucide.createIcons();
-            document.getElementById('mobileMenuBtn')?.addEventListener('click',()=>{document.getElementById('clientSidebar').classList.toggle('mobile-open');});
-            window.addEventListener('click',(e)=>{let s=document.getElementById('clientSidebar'); if(window.innerWidth<1024 && s && !s.contains(e.target) && e.target!==document.getElementById('mobileMenuBtn')) s.classList.remove('mobile-open');});
+      <!-- ============ PROGRESS TRACKING ============ -->
+      <div id="progressTrackingView" class="view-pane space-y-6">
+        <h1 class="font-display text-2xl font-semibold">📈 Body Metrics</h1>
+        <div class="grid md:grid-cols-2 gap-5">
+          <div class="glass-card p-5">
+            <h3 class="font-semibold">Weight Trend (kg)</h3>
+            <div class="mt-2 h-48"><canvas id="weightProgressChart"></canvas></div>
+            <button class="btn-outline w-full mt-4 py-2 rounded-xl text-sm" onclick="openLogWeightModal()">Log New Weight</button>
+          </div>
+          <div class="glass-card p-5">
+            <h3 class="font-semibold">Recent Measurements</h3>
+            <div id="recentMeasurements" class="mt-3 space-y-2 text-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ PAYMENTS ============ -->
+      <div id="paymentsView" class="view-pane">
+        <h1 class="font-display text-2xl font-semibold">💰 Billing &amp; Payments</h1>
+        <div class="glass-card p-6 mt-4">
+          <div class="flex items-center gap-3">
+            <i data-lucide="info" class="w-5 h-5 text-gold"></i>
+            <p class="text-sm" style="color:var(--text-muted)">No payment provider is connected yet. Once billing is enabled, your plan and invoices will appear here.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ BOOKINGS ============ -->
+      <div id="bookingsView" class="view-pane">
+        <div class="flex flex-wrap justify-between items-center gap-3">
+          <h1 class="font-display text-2xl font-semibold">📅 Coach Sessions</h1>
+          <button class="btn-gold text-sm px-4 py-2 rounded-xl" onclick="openBookingRequestModal()">+ Request Booking</button>
+        </div>
+        <div id="bookingsList" class="glass-card p-5 mt-4 space-y-3"></div>
+      </div>
+
+      <!-- ============ MESSAGES ============ -->
+      <div id="messagesView" class="view-pane">
+        <h1 class="font-display text-2xl font-semibold">💬 Coach Messages</h1>
+        <div class="glass-card p-5 mt-4">
+          <div class="h-80 overflow-y-auto border-b pb-3" id="chatMessagesContainer"></div>
+          <div class="flex gap-3 mt-4">
+            <input type="text" id="messageInput" class="form-input flex-1" placeholder="Ask your coach...">
+            <button onclick="sendClientMessage()" class="btn-gold px-4 py-2 rounded-xl">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ ACHIEVEMENTS ============ -->
+      <div id="achievementsView" class="view-pane">
+        <h1 class="font-display text-2xl font-semibold">🏆 Fitness Achievements</h1>
+        <div id="achievementsGrid" class="grid sm:grid-cols-2 gap-4 mt-5"></div>
+      </div>
+
+      <!-- ============ SETTINGS ============ -->
+      <div id="settingsView" class="view-pane">
+        <h1 class="font-display text-2xl font-semibold">⚙️ Account Settings</h1>
+        <div class="glass-card p-6 mt-5 space-y-4">
+          <div><label class="text-sm block mb-1">Full Name</label><input type="text" id="settingsName" class="form-input"></div>
+          <div><label class="text-sm block mb-1">Email</label><input type="email" id="settingsEmail" class="form-input" disabled></div>
+          <div><label class="text-sm block mb-1">Height (cm)</label><input type="number" id="settingsHeight" class="form-input" min="50" max="260"></div>
+          <div><label class="text-sm block mb-1">Weight (kg)</label><input type="number" id="settingsWeight" class="form-input" step="0.1" min="20" max="400"></div>
+          <button class="btn-gold w-full py-2 rounded-xl" id="saveProfileBtn" onclick="saveClientProfile()">Save Changes</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="assets/js/api.js" defer></script>
+  <script>
+  /* ============================================================
+     CLIENT DASHBOARD — fully wired to /api/client/*
+     ============================================================ */
+  (function () {
+    'use strict';
+
+    /* ---------- state ---------- */
+    const state = {
+      user: null,
+      profile: { name: '', email: '', height_cm: null },
+      stats: { latestWeightKg: null, latestBodyFatPercent: null, streak: 0, badges: 0 },
+      meals: [],
+      workouts: [],
+      progress: [],
+      messages: [],
+      bookings: [],
+      achievements: [],
+      mealPlan: null,
+      workoutPlan: null,
+      charts: { activity: null, weight: null },
+      refreshTimer: null
+    };
+
+    /* ---------- tiny helpers ---------- */
+    function $(id) { return document.getElementById(id); }
+    function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function fmtDate(d) { return new Date(d).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); }
+    function fmtTime(d) { return new Date(d).toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}); }
+    function toast(msg, type) {
+      const t = $('clientToast'), m = $('toastMsg'), icon = $('toastIcon');
+      if (!t) return;
+      m.textContent = msg;
+      if (icon) {
+        icon.setAttribute('data-lucide', type === 'error' ? 'alert-circle' : 'check-circle');
+        icon.className = 'w-5 h-5 ' + (type === 'error' ? 'text-red-500' : 'text-green-500');
+        if (window.lucide) lucide.createIcons();
+      }
+      t.classList.add('show');
+      clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+    }
+    function openModal(title, html) {
+      $('modalTitle').innerHTML = title;
+      $('modalBody').innerHTML = html;
+      $('globalModal').classList.add('active');
+      if (window.lucide) lucide.createIcons();
+    }
+    function closeModal() { $('globalModal').classList.remove('active'); }
+    window.closeModal = closeModal;
+
+    /* ---------- API wrapper (uses window.API if present, else fetch) ---------- */
+    async function apiCall(path, options = {}) {
+      if (window.API && typeof window.API.request === 'function') {
+        return window.API.request(path, options);
+      }
+      const headers = new Headers(options.headers || {});
+      if (options.body !== undefined) headers.set('Content-Type', 'application/json');
+      const res = await fetch('/api' + path, {
+        ...options,
+        headers,
+        credentials: 'same-origin',
+        body: options.body === undefined ? undefined : JSON.stringify(options.body)
+      });
+      if (res.status === 204) return null;
+      const ct = res.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) throw new Error('Unexpected response');
+      const data = await res.json();
+      if (!res.ok) { const e = new Error(data.error || `Request failed (${res.status})`); e.status = res.status; throw e; }
+      return data;
+    }
+
+    /* ============================================================
+       SIDEBAR NAV
+       ============================================================ */
+    const SECTION_TITLES = {
+      'profile-overview': 'Profile & Overview',
+      'meal-plans': 'Meal Plans',
+      'workout-plans': 'Workout Plans',
+      'progress-tracking': 'Progress Tracking',
+      'payments': 'Payments',
+      'bookings': 'Bookings',
+      'messages': 'Messages',
+      'achievements': 'Achievements',
+      'settings': 'Settings'
+    };
+
+    function switchSection(section) {
+      document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active-view'));
+      const view = $((section.replace(/-(\w)/g, (_, c) => c.toUpperCase())) + 'View');
+      // map hyphenated keys to camelCase view IDs
+      const map = {
+        'profile-overview': 'profileOverviewView',
+        'meal-plans': 'mealPlansView',
+        'workout-plans': 'workoutPlansView',
+        'progress-tracking': 'progressTrackingView',
+        'payments': 'paymentsView',
+        'bookings': 'bookingsView',
+        'messages': 'messagesView',
+        'achievements': 'achievementsView',
+        'settings': 'settingsView'
+      };
+      const target = $(map[section]);
+      if (target) target.classList.add('active-view');
+
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`.sidebar-link[data-section="${section}"]`);
+      if (link) link.classList.add('active');
+
+      $('sectionTitle').textContent = SECTION_TITLES[section] || 'Dashboard';
+      if (window.innerWidth < 1024) $('clientSidebar').classList.remove('mobile-open');
+
+      // Lazy-load heavy views on first open
+      if (section === 'progress-tracking') renderWeightChart();
+      if (section === 'messages') renderMessages();
+    }
+
+    function initClientNav() {
+      document.querySelectorAll('.sidebar-link[data-section]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          switchSection(link.dataset.section);
         });
-    </script>
-    <script src="assets/js/api.js"></script>
+      });
+      $('mobileMenuBtn')?.addEventListener('click', () => {
+        $('clientSidebar').classList.toggle('mobile-open');
+      });
+      window.addEventListener('click', (e) => {
+        const s = $('clientSidebar');
+        if (window.innerWidth < 1024 && s && !s.contains(e.target) && e.target !== $('mobileMenuBtn')) {
+          s.classList.remove('mobile-open');
+        }
+      });
+    }
+
+    /* ============================================================
+       LOAD DATA
+       ============================================================ */
+    async function loadDashboard() {
+      try {
+        const data = await apiCall('/client/dashboard');
+        applyDashboardData(data);
+      } catch (err) {
+        if (err.status === 401) return location.replace('login.html');
+        toast(err.message || 'Could not load dashboard', 'error');
+      }
+    }
+
+    async function loadPlans() {
+      try {
+        const { mealPlan, workoutPlan } = await apiCall('/client/plans');
+        state.mealPlan = mealPlan;
+        state.workoutPlan = workoutPlan;
+        renderAssignedPlans();
+      } catch (_) { /* plans optional */ }
+    }
+
+    function applyDashboardData(data) {
+      state.user = data.user || state.user;
+      state.profile = { ...state.profile, ...(data.profile || {}) };
+      state.stats = { ...state.stats, ...(data.stats || {}) };
+      state.meals = data.meals || [];
+      state.workouts = data.workouts || [];
+      state.progress = data.progress || [];
+      state.messages = data.messages || [];
+      state.bookings = data.bookings || [];
+      state.achievements = (data.achievements && data.achievements.items) || [];
+
+      updateProfileHeader();
+      updateStatsCards();
+      renderRecentFeed();
+      renderActivityChart();
+      renderMeals();
+      renderWorkouts();
+      renderWeightChart();
+      renderRecentMeasurements();
+      renderMessages();
+      renderBookings();
+      renderAchievements();
+      hydrateSettings();
+    }
+
+    /* ============================================================
+       PROFILE & OVERVIEW
+       ============================================================ */
+    function updateProfileHeader() {
+      const name = (state.profile.name || state.user?.name || 'Member').trim();
+      const first = name.split(' ')[0];
+      $('clientNameSpan').textContent = first || 'Member';
+      const avatar = $('avatarInitial');
+      if (avatar) avatar.textContent = (first[0] || '?').toUpperCase();
+      $('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+    }
+
+    function updateStatsCards() {
+      const { latestWeightKg, latestBodyFatPercent, streak, badges } = state.stats;
+      $('statWeight').innerHTML = latestWeightKg != null
+        ? `${latestWeightKg} <span class="text-base">kg</span>` : '—';
+      $('statBodyfat').innerHTML = latestBodyFatPercent != null
+        ? `${latestBodyFatPercent}<span class="text-base">%</span>` : '—';
+      $('statStreak').innerHTML = `${streak ?? 0}<span class="text-base"> days</span>`;
+      $('statBadges').textContent = badges ?? state.achievements.length ?? 0;
+    }
+
+    function renderRecentFeed() {
+      const feed = $('recentFeed');
+      if (!feed) return;
+
+      const items = [];
+      state.workouts.slice(0, 3).forEach(w => items.push({
+        icon: 'dumbbell', color: 'text-gold',
+        text: `Completed <b>${esc(w.workout_name)}</b>`,
+        when: w.completed_at
+      }));
+      state.meals.slice(0, 3).forEach(m => items.push({
+        icon: 'utensils', color: 'text-gold',
+        text: `Logged <b>${esc(m.meal_name)}</b>${m.calories ? ' · ' + m.calories + ' kcal' : ''}`,
+        when: m.logged_at || m.created_at
+      }));
+      state.progress.slice(0, 2).forEach(p => items.push({
+        icon: 'trending-up', color: 'text-gold',
+        text: `Weighed in at <b>${esc(p.weight_kg)} kg</b>`,
+        when: p.recorded_at
+      }));
+      state.bookings.slice(0, 2).forEach(b => items.push({
+        icon: 'calendar', color: 'text-gold',
+        text: `Booking <b>${esc(b.service)}</b> · ${esc(b.status)}`,
+        when: b.requested_at
+      }));
+
+      items.sort((a, b) => new Date(b.when) - new Date(a.when));
+
+      feed.innerHTML = items.length
+        ? items.slice(0, 6).map(i => `
+          <div class="flex items-center gap-3 p-2 rounded-xl" style="background:var(--bg-secondary)">
+            <i data-lucide="${i.icon}" class="w-4 h-4 ${i.color}"></i>
+            <div class="flex-1 text-sm">${i.text}</div>
+            <div class="text-[0.65rem]" style="color:var(--text-muted)">${fmtDate(i.when)}</div>
+          </div>`).join('')
+        : '<div class="empty-state">No activity yet — log a meal or workout to get started.</div>';
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderActivityChart() {
+      const canvas = $('activityChart');
+      if (!canvas || !window.Chart) return;
+
+      const today = new Date(); today.setHours(0,0,0,0);
+      const labels = [], counts = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today); d.setDate(today.getDate() - i);
+        labels.push(d.toLocaleDateString(undefined, { weekday: 'short' }));
+        counts.push(0);
+      }
+      state.workouts.forEach(w => {
+        const d = new Date(w.completed_at); d.setHours(0,0,0,0);
+        const offset = Math.round((today - d) / 86400000);
+        if (offset >= 0 && offset <= 6) counts[6 - offset] += 1;
+      });
+
+      if (state.charts.activity) state.charts.activity.destroy();
+      state.charts.activity = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Workouts',
+            data: counts,
+            backgroundColor: '#facc15',
+            borderRadius: 8,
+            maxBarThickness: 32
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { precision: 0, color: '#8ba0bc' }, grid: { color: 'rgba(255,255,255,.05)' } },
+            x: { ticks: { color: '#8ba0bc' }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    /* ============================================================
+       MEALS
+       ============================================================ */
+    function renderMeals() {
+      const list = $('mealLogList');
+      if (!list) return;
+
+      const total = state.meals.reduce((s, m) => s + (Number(m.calories) || 0), 0);
+      $('mealKcalTotal').textContent = `${total} kcal`;
+
+      list.innerHTML = state.meals.length
+        ? state.meals.slice(0, 20).map(m => `
+          <div class="flex items-center justify-between gap-2 p-2 rounded-lg" style="background:var(--bg-secondary)">
+            <div class="min-w-0">
+              <p class="text-sm font-medium truncate">${esc(m.meal_name)}</p>
+              <p class="text-[0.7rem]" style="color:var(--text-muted)">${fmtDate(m.logged_at || m.created_at)}</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              ${m.calories ? `<span class="text-gold text-xs font-semibold">${m.calories} kcal</span>` : ''}
+              <button class="p-1 hover:text-red-400" style="color:var(--text-muted)" onclick="deleteMeal('${esc(m.id)}')" aria-label="Delete meal">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>`).join('')
+        : '<div class="empty-state">No meals logged yet — tap "+ Log Custom Meal" to start.</div>';
+      if (window.lucide) lucide.createIcons();
+    }
+
+    window.logQuickMeal = async function (mealName, description, calories) {
+      try {
+        await apiCall('/client/meals', { method: 'POST', body: { meal_name: mealName, calories } });
+        toast(`${mealName} logged`);
+        await loadDashboard();
+      } catch (err) { toast(err.message, 'error'); }
+    };
+
+    window.openLogMealModal = function () {
+      openModal('Log Custom Meal', `
+        <form onsubmit="event.preventDefault();submitCustomMeal();" class="space-y-3">
+          <div><label class="text-sm block mb-1">Meal Name</label>
+            <input id="customMealName" class="form-input" required maxlength="120" placeholder="e.g. Chicken Bowl"></div>
+          <div><label class="text-sm block mb-1">Calories</label>
+            <input id="customMealCal" type="number" min="0" max="5000" class="form-input" required placeholder="e.g. 480"></div>
+          <button type="submit" class="btn-gold w-full py-2 rounded-xl" id="customMealSubmit">Log Meal</button>
+        </form>`);
+    };
+
+    window.submitCustomMeal = async function () {
+      const name = $('customMealName').value.trim();
+      const cal = $('customMealCal').value;
+      if (!name) return;
+      const btn = $('customMealSubmit');
+      if (btn) { btn.disabled = true; btn.textContent = 'Logging…'; }
+      try {
+        await apiCall('/client/meals', { method: 'POST', body: { meal_name: name, calories: Number(cal) } });
+        toast('Meal logged');
+        closeModal();
+        await loadDashboard();
+      } catch (err) { toast(err.message, 'error'); }
+      finally { if (btn) { btn.disabled = false; btn.textContent = 'Log Meal'; } }
+    };
+
+    window.deleteMeal = async function (id) {
+      if (!confirm('Delete this meal entry?')) return;
+      try {
+        await apiCall('/client/meals/' + encodeURIComponent(id), { method: 'DELETE' });
+        toast('Meal deleted');
+        await loadDashboard();
+      } catch (err) { toast(err.message, 'error'); }
+    };
+
+    /* ============================================================
+       WORKOUTS
+       ============================================================ */
+    function renderWorkouts() {
+      const list = $('workoutHistoryList');
+      if (!list) return;
+      list.innerHTML = state.workouts.length
+        ? state.workouts.slice(0, 20).map(w => `
+          <div class="flex items-center justify-between gap-2 p-2 rounded-lg" style="background:var(--bg-secondary)">
+            <div class="min-w-0">
+              <p class="text-sm font-medium truncate">${esc(w.workout_name)}</p>
+              <p class="text-[0.7rem]" style="color:var(--text-muted)">
+                ${fmtDate(w.completed_at)} · ${w.duration_minutes || 0} min
+              </p>
+            </div>
+            <button class="p-1 hover:text-red-400" style="color:var(--text-muted)" onclick="deleteWorkout('${esc(w.id)}')" aria-label="Delete workout">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>`).join('')
+        : '<div class="empty-state">No workouts logged yet.</div>';
+      if (window.lucide) lucide.createIcons();
+    }
+
+    window.openLogWorkoutModal = function () {
+      openModal('Log Workout', `
+        <form onsubmit="event.preventDefault();submitCustomWorkout();" class="space-y-3">
+          <div><label class="text-sm block mb-1">Workout Name</label>
+            <input id="customWorkoutName" class="form-input" required maxlength="120" placeholder="e.g. Upper Body Push"></div>
+          <div><label class="text-sm block mb-1">Duration (min)</label>
+            <input id="customWorkoutDur" type="number" min="1" max="600" class="form-input" required placeholder="60"></div>
+          <button type="submit" class="btn-gold w-full py-2 rounded-xl" id="customWorkoutSubmit">Log Workout</button>
+        </form>`);
+    };
+
+    window.submitCustomWorkout = async function () {
+      const name = $('customWorkoutName').value.trim();
+      const dur = Number($('customWorkoutDur').value) || 0;
+      if (!name || !dur) return;
+      const btn = $('customWorkoutSubmit');
+      if (btn) { btn.disabled = true; btn.textContent = 'Logging…'; }
+      try {
+        await apiCall('/client/workouts', { method: 'POST', body: { workout_name: name, duration_minutes: dur } });
+        toast('Workout logged');
+        closeModal();
+        await loadDashboard();
+      } catch (err) { toast(err.message, 'error'); }
+      finally { if (btn) { btn.disabled = false; btn.textContent = 'Log Workout'; } }
+    };
+
+    window.deleteWorkout = async function (id) {
+      if (!confirm('Delete this workout?')) return;
+      try {
+        await apiCall('/client/workouts/' + encodeURIComponent(id), { method: 'DELETE' });
+        toast('Workout deleted');
+        await loadDashboard();
+      } catch (err) { toast(err.message, 'error'); }
+    };
+
+    window.completeWorkout = async function (name) {
+      try {
+        await apiCall('/client/workouts', { method: 'POST', body: { workout_name: name, duration_minutes: 60 } });
+        toast(`"${name}" completed!`);
+        await loadDashboard();
+      } catch (err) { toast(err.message, 'error'); }
+    };
+
+    /* ============================================================
+       ASSIGNED PLANS (meal + workout templates)
+       ============================================================ */
+    function renderAssignedPlans() {
+      const mealHost = $('assignedMealPlan');
+      if (mealHost) {
+        if (state.mealPlan && Array.isArray(state.mealPlan.days)) {
+          mealHost.innerHTML = state.mealPlan.days.map(day => `
+            <div class="glass-card p-5">
+              <h3 class="font-semibold flex items-center gap-2">
+                <i data-lucide="calendar" class="w-5 h-5 text-gold"></i>${esc(day.name || 'Day')}
+              </h3>
+              <ul class="text-sm mt-2 space-y-1">
+                ${(day.meals || []).map(m => `<li>• ${esc(m.name)}${m.calories ? ` <span style="color:var(--text-muted)">· ${m.calories} kcal</span>` : ''}</li>`).join('')}
+              </ul>
+              <button class="btn-outline text-xs mt-3 px-3 py-1 rounded-full" onclick="logQuickMeal('${esc(day.name)}','',0)">Log Day</button>
+            </div>`).join('');
+        } else {
+          mealHost.innerHTML = `<div class="glass-card p-5 col-span-2">
+            <div class="flex items-center gap-2 text-sm" style="color:var(--text-muted)">
+              <i data-lucide="info" class="w-4 h-4 text-gold"></i>
+              Your coach hasn't assigned a meal plan yet. Log meals manually meanwhile.
+            </div>
+          </div>`;
+        }
+      }
+
+      const workoutHost = $('assignedWorkoutPlan');
+      if (workoutHost) {
+        if (state.workoutPlan && Array.isArray(state.workoutPlan.days)) {
+          workoutHost.innerHTML = state.workoutPlan.days.map((day, i) => `
+            <div class="glass-card p-5">
+              <div class="flex justify-between">
+                <h3 class="font-bold">${esc(day.name || 'Day')}</h3>
+                <span class="badge-${i === 0 ? 'gold' : 'gray'}">${i === 0 ? 'Today' : 'Upcoming'}</span>
+              </div>
+              <ul class="text-sm mt-3 space-y-2">
+                ${(day.exercises || []).map(ex => `<li>• ${esc(ex.name)} ${ex.sets ? `${ex.sets}x${ex.reps || ''}` : ''}</li>`).join('')}
+              </ul>
+              <button class="btn-outline w-full mt-4 py-2 rounded-lg text-sm" onclick="completeWorkout('${esc(day.name)}')">Complete Workout</button>
+            </div>`).join('');
+        } else {
+          workoutHost.innerHTML = `<div class="glass-card p-5 col-span-2">
+            <div class="flex items-center gap-2 text-sm" style="color:var(--text-muted)">
+              <i data-lucide="info" class="w-4 h-4 text-gold"></i>
+              Your coach hasn't assigned a workout plan yet. Log workouts manually meanwhile.
+            </div>
+          </div>`;
+        }
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    /* ============================================================
+       PROGRESS
+       ============================================================ */
+    function renderWeightChart() {
+      const canvas = $('weightProgressChart');
+      if (!canvas || !window.Chart) return;
+
+      const ordered = [...state.progress].slice().sort((a, b) =>
+        new Date(a.recorded_at) - new Date(b.recorded_at)
+      );
+      if (state.charts.weight) state.charts.weight.destroy();
+      state.charts.weight = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: ordered.map(p => new Date(p.recorded_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })),
+          datasets: [{
+            label: 'Weight (kg)',
+            data: ordered.map(p => Number(p.weight_kg)),
+            borderColor: '#facc15',
+            backgroundColor: 'rgba(250,204,21,0.1)',
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#facc15'
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { ticks: { color: '#8ba0bc' }, grid: { color: 'rgba(255,255,255,.05)' } },
+            x: { ticks: { color: '#8ba0bc' }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function renderRecentMeasurements() {
+      const host = $('recentMeasurements');
+      if (!host) return;
+      const rows = state.progress.slice(0, 6);
+      host.innerHTML = rows.length
+        ? rows.map(p => `
+          <div class="flex justify-between items-center p-2 rounded-lg" style="background:var(--bg-secondary)">
+            <span>${esc(p.weight_kg)} kg</span>
+            <span class="text-xs" style="color:var(--text-muted)">${fmtDate(p.recorded_at)}</span>
+          </div>`).join('')
+        : '<div class="empty-state">No measurements yet.</div>';
+    }
+
+    window.openLogWeightModal = function () {
+      openModal('Log Weight', `
+        <form onsubmit="event.preventDefault();submitLogWeight();" class="space-y-3">
+          <div><label class="text-sm block mb-1">Weight (kg)</label>
+            <input id="newWeightValue" type="number" step="0.1" min="20" max="400" class="form-input" required placeholder="82.5"></div>
+          <button type="submit" class="btn-gold w-full py-2 rounded-xl" id="logWeightSubmit">Save Weight</button>
+        </form>`);
+    };
+
+    window.submitLogWeight = async function () {
+      const val = $('newWeightValue').value;
+      if (!val) return;
+      const btn = $('logWeightSubmit');
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      try {
+        await apiCall('/client/progress', { method: 'POST', body: { weight_kg: Number(val) } });
+        toast('Weight logged');
+        closeModal();
+        await loadDashboard();
+      } catch (err) { toast(err.message, 'error'); }
+      finally { if (btn) { btn.disabled = false; btn.textContent = 'Save Weight'; } }
+    };
+
+    /* ============================================================
+       MESSAGES
+       ============================================================ */
+    function renderMessages() {
+      const host = $('chatMessagesContainer');
+      if (!host) return;
+      const meId = state.user?.id ?? state.profile?.id ?? null;
+
+      host.innerHTML = state.messages.length
+        ? [...state.messages].map(m => {
+            const own = meId != null && Number(m.sender_id) === Number(meId);
+            return `<div class="mb-3 ${own ? 'text-right' : 'text-left'}">
+              <div class="inline-block p-2 rounded-xl text-sm ${own ? 'text-gold' : ''}"
+                   style="${own ? 'background:rgba(250,204,21,.15)' : 'background:var(--bg-secondary);color:var(--text-muted)'}">
+                ${esc(m.body)}
+              </div>
+              <div class="text-[0.6rem] mt-1" style="color:var(--text-muted)">
+                ${own ? 'You' : 'Coach'} · ${fmtDate(m.created_at)} ${fmtTime(m.created_at)}
+              </div>
+            </div>`;
+          }).join('')
+        : '<div class="empty-state">No messages yet — say hi to your coach!</div>';
+      host.scrollTop = host.scrollHeight;
+    }
+
+    window.sendClientMessage = async function () {
+      const input = $('messageInput');
+      const body = input?.value.trim();
+      if (!body) return;
+      input.value = '';
+      try {
+        await apiCall('/client/messages', { method: 'POST', body: { body } });
+        await loadDashboard();
+      } catch (err) {
+        toast(err.message, 'error');
+        input.value = body; // restore on failure
+      }
+    };
+
+    /* ============================================================
+       BOOKINGS
+       ============================================================ */
+    function renderBookings() {
+      const host = $('bookingsList');
+      if (!host) return;
+      host.innerHTML = state.bookings.length
+        ? state.bookings.map(b => `
+          <div class="flex justify-between items-center gap-3 p-3 rounded-xl" style="background:var(--bg-secondary)">
+            <div class="min-w-0">
+              <p class="font-semibold truncate">${esc(b.service)}</p>
+              <p class="text-xs" style="color:var(--text-muted)">${fmtDate(b.requested_at)} · ${fmtTime(b.requested_at)}</p>
+            </div>
+            <span class="${b.status === 'approved' ? 'badge-gold' : b.status === 'declined' ? 'badge-gray' : 'badge-gold'}">${esc(b.status)}</span>
+          </div>`).join('')
+        : '<div class="empty-state">No bookings yet — request your first session.</div>';
+    }
+
+    window.openBookingRequestModal = function () {
+      openModal('Request Booking', `
+        <form onsubmit="event.preventDefault();submitBooking();" class="space-y-3">
+          <div><label class="text-sm block mb-1">Service</label>
+            <input id="bookingService" class="form-input" required maxlength="120" placeholder="Personal training"></div>
+          <div><label class="text-sm block mb-1">Date &amp; time</label>
+            <input id="bookingDate" type="datetime-local" class="form-input" required></div>
+          <button type="submit" class="btn-gold w-full py-2 rounded-xl" id="bookingSubmit">Send Request</button>
+        </form>`);
+    };
+
+    window.submitBooking = async function () {
+      const service = $('bookingService').value.trim();
+      const date = $('bookingDate').value;
+      if (!service || !date) return;
+      const btn = $('bookingSubmit');
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+      try {
+        await apiCall('/client/bookings', { method: 'POST', body: { service, requested_at: date } });
+        toast('Booking request sent');
+        closeModal();
+        await loadDashboard();
+      } catch (err) { toast(err.message, 'error'); }
+      finally { if (btn) { btn.disabled = false; btn.textContent = 'Send Request'; } }
+    };
+
+    /* ============================================================
+       ACHIEVEMENTS
+       ============================================================ */
+    function renderAchievements() {
+      const host = $('achievementsGrid');
+      if (!host) return;
+
+      const streak = state.stats.streak || 0;
+      const workoutCount = state.workouts.length;
+      const mealCount = state.meals.length;
+      const weightCount = state.progress.length;
+
+      const items = state.achievements.length
+        ? state.achievements
+        : [
+            { icon: 'flame', name: '7-Day Streak', desc: 'Complete 7 workouts in a row',
+              progress: Math.min(streak, 7), target: 7 },
+            { icon: 'trophy', name: 'Iron Warrior', desc: '50 workouts completed',
+              progress: workoutCount, target: 50 },
+            { icon: 'apple', name: 'Nutrition Master', desc: 'Log 30 meals',
+              progress: mealCount, target: 30 },
+            { icon: 'scale', name: 'Consistent Tracker', desc: 'Log 10 weigh-ins',
+              progress: weightCount, target: 10 }
+          ];
+
+      host.innerHTML = items.map(a => {
+        const done = a.progress >= a.target;
+        const pct = Math.min(100, Math.round((a.progress / a.target) * 100));
+        return `
+          <div class="achievement-card glass-card p-4 flex items-center gap-3">
+            <i data-lucide="${esc(a.icon || 'award')}" class="w-8 h-8 text-gold shrink-0"></i>
+            <div class="flex-1 min-w-0">
+              <p class="font-bold truncate">${esc(a.name)}</p>
+              <p class="text-xs" style="color:var(--text-muted)">${esc(a.desc || '')}</p>
+              ${!done ? `
+                <div class="mt-2 h-1.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,.08)">
+                  <div class="h-full text-gold" style="width:${pct}%;background:var(--gold)"></div>
+                </div>` : ''}
+            </div>
+            <span class="ml-auto text-gold text-sm font-semibold shrink-0">${done ? '✓' : `${a.progress}/${a.target}`}</span>
+          </div>`;
+      }).join('');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    /* ============================================================
+       SETTINGS
+       ============================================================ */
+    function hydrateSettings() {
+      $('settingsName').value = state.profile.name || '';
+      $('settingsEmail').value = state.profile.email || state.user?.email || '';
+      $('settingsHeight').value = state.profile.height_cm || '';
+      $('settingsWeight').value = state.stats.latestWeightKg || '';
+    }
+
+    window.saveClientProfile = async function () {
+      const btn = $('saveProfileBtn');
+      const name = $('settingsName').value.trim();
+      const height = $('settingsHeight').value;
+      const weight = $('settingsWeight').value;
+      if (!name) { toast('Name is required', 'error'); return; }
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      try {
+        await apiCall('/client/profile', {
+          method: 'PATCH',
+          body: { name, height_cm: height ? Number(height) : null }
+        });
+        if (weight && Number(weight) !== Number(state.stats.latestWeightKg)) {
+          await apiCall('/client/progress', { method: 'POST', body: { weight_kg: Number(weight) } });
+        }
+        toast('Profile updated');
+        await loadDashboard();
+      } catch (err) { toast(err.message, 'error'); }
+      finally { if (btn) { btn.disabled = false; btn.textContent = 'Save Changes'; } }
+    };
+
+    /* ============================================================
+       CHECK-IN
+       ============================================================ */
+    window.openCheckInModal = function () {
+      openModal('Daily Check-in', `
+        <form onsubmit="event.preventDefault();submitCheckIn();" class="space-y-3">
+          <div><label class="text-sm block mb-1">How are you feeling today?</label>
+            <select id="checkinMood" class="form-input">
+              <option>Energetic 🔥</option><option>Good 😊</option><option>Tired 😴</option>
+            </select></div>
+          <div><label class="text-sm block mb-1">Notes for your coach</label>
+            <textarea id="checkinNotes" class="form-input" rows="3" maxlength="1000" placeholder="Optional"></textarea></div>
+          <button type="submit" class="btn-gold w-full py-2 rounded-xl" id="checkinSubmit">Submit Check-in</button>
+        </form>`);
+    };
+
+    window.submitCheckIn = async function () {
+      const mood = $('checkinMood').value;
+      const notes = $('checkinNotes').value.trim();
+      const btn = $('checkinSubmit');
+      if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+      try {
+        await apiCall('/client/checkins', { method: 'POST', body: { mood, notes } });
+        toast('Check-in submitted');
+        closeModal();
+      } catch (err) {
+        toast(err.message, 'error');
+        if (btn) { btn.disabled = false; btn.textContent = 'Submit Check-in'; }
+      }
+    };
+
+    /* ============================================================
+       THEME
+       ============================================================ */
+    window.toggleClientTheme = function () {
+      document.body.classList.toggle('light-theme');
+      const icon = $('themeIcon');
+      const isLight = document.body.classList.contains('light-theme');
+      if (icon) icon.setAttribute('data-lucide', isLight ? 'sun' : 'moon');
+      if (window.lucide) lucide.createIcons();
+      localStorage.setItem('clientTheme', isLight ? 'light' : 'dark');
+    };
+
+    function loadTheme() {
+      if (localStorage.getItem('clientTheme') === 'light') {
+        document.body.classList.add('light-theme');
+        $('themeIcon')?.setAttribute('data-lucide', 'sun');
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    /* ============================================================
+       BOOT
+       ============================================================ */
+       document.addEventListener('DOMContentLoaded', async () => {
+      loadTheme();
+      initClientNav();
+      if (window.lucide) lucide.createIcons();
+
+      // Boot the dashboard after session.js confirms auth state.
+      // Fall back to immediate load if session.js isn't present.
+      const startDashboard = async () => {
+        if (window.ComboSession && !window.ComboSession.isLoggedIn()) {
+          window.location.replace('login.html');
+          return;
+        }
+
+        // Fetch the current user (cached by session.js if it ran)
+        if (window.ComboSession?.user) {
+          state.user = window.ComboSession.user;
+          state.profile.name = window.ComboSession.user.name || '';
+          state.profile.email = window.ComboSession.user.email || '';
+          updateProfileHeader();
+          hydrateSettings();
+        }
+
+        // Load everything
+        await Promise.all([loadDashboard(), loadPlans()]);
+
+        // Poll for new messages/bookings every 30s so the page feels live.
+        clearInterval(state.refreshTimer);
+        state.refreshTimer = setInterval(async () => {
+          // Skip polling while a modal is open to avoid surprising the user.
+          if ($('globalModal')?.classList.contains('active')) return;
+          try {
+            const data = await apiCall('/client/dashboard');
+            applyDashboardData(data);
+          } catch (_) { /* silent */ }
+        }, 30000);
+      };
+
+      // If session.js is loaded, wait for its `session:ready` event.
+      if (window.ComboSession) {
+        if (window.ComboSession.user !== undefined) {
+          startDashboard();
+        } else {
+          document.addEventListener('session:ready', startDashboard, { once: true });
+        }
+      } else {
+        // No session.js — just try loading. The API will 401 and we redirect.
+        startDashboard();
+      }
+    });
+
+    // Cleanup polling on navigation away
+    window.addEventListener('beforeunload', () => {
+      if (state.refreshTimer) clearInterval(state.refreshTimer);
+    });
+  })();
+  </script>
 </body>
 </html>

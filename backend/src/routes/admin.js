@@ -193,19 +193,22 @@ router.put('/settings', async (request, response) => {
   response.json({ settings });
 });
 
+// PATCH /api/admin/bookings/:id  
 router.patch('/bookings/:id', async (request, response) => {
-  const status = request.body.status;
-  if (!['approved', 'declined', 'completed'].includes(status)) {
-    return response.status(400).json({ error: 'Booking status is invalid' });
+  const status = request.body?.status;
+  if (!['approved', 'declined'].includes(status)) {
+    return response.status(400).json({ error: 'Status must be approved or declined' });
   }
-  if (!/^\d+$/.test(request.params.id)) {
-    return response.status(400).json({ error: 'Booking id is invalid' });
-  }
-  const bookingRef = getDocument('bookings', request.params.id);
-  const booking = await bookingRef.get();
-  if (!booking.exists) return response.status(404).json({ error: 'Booking not found' });
-  await bookingRef.update({ status, updated_at: new Date() });
-  response.json({ id: Number(request.params.id), status });
+  const ref = getDocument('bookings', request.params.id);
+  const snap = await ref.get();
+  if (!snap.exists) return response.status(404).json({ error: 'Booking not found' });
+  await ref.set({
+    status,
+    [`${status}_at`]: new Date(),
+    updated_at: new Date(),
+  }, { merge: true });
+  const fresh = await ref.get();
+  return response.json({ booking: { id: ref.id, ...fresh.data() } });
 });
 
 router.get('/messages', async (_request, response) => {

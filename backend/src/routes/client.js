@@ -269,7 +269,7 @@ router.post('/progress', async (request, response) => {
 });
 
 /* ============================================================
-   BOOKINGS  (list + create)
+   BOOKINGS  (list + get + create + update + cancel/delete)
    ============================================================ */
 router.get('/bookings', async (request, response) => {
   const bookings = await listDocuments('bookings', {
@@ -280,19 +280,119 @@ router.get('/bookings', async (request, response) => {
   response.json({ bookings: normalizeArray(bookings) });
 });
 
+router.get('/bookings/:id', async (request, response) => {
+  const ref = getDocument('bookings', request.params.id);
+  const snap = await ref.get();
+  if (!snap.exists) return response.status(404).json({ error: 'Booking not found' });
+  if (Number(snap.get('user_id')) !== Number(request.auth.sub)) {
+    return response.status(403).json({ error: 'Not your booking' });
+  }
+  response.json({ booking: normalizeTimestamps({ id: snap.id, ...snap.data() }) });
+});
+
 router.post('/bookings', async (request, response) => {
   const service = typeof request.body.service === 'string' ? request.body.service.trim() : '';
   const requestedAtInput = request.body.requested_at;
   const requestedAt = typeof requestedAtInput === 'string' &&
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})?$/.test(requestedAtInput)
     ? new Date(requestedAtInput) : null;
+  const notes = typeof request.body.notes === 'string' ? request.body.notes.trim().slice(0, 500) : null;
   if (!service || service.length > 120 || !requestedAt || Number.isNaN(requestedAt.getTime()) ||
       requestedAt.getTime() < Date.now() - 60_000) {
     return response.status(400).json({ error: 'Choose a valid service and a future booking time' });
   }
-  const booking = { id: await allocateId('bookings'), user_id: Number(request.auth.sub), service, requested_at: requestedAt, status: 'pending', created_at: new Date() };
+  const booking = {
+    id: await allocateId('bookings'),
+    user_id: Number(request.auth.sub),
+    service,
+    requested_at: requestedAt,
+    status: 'pending',
+    notes: notes || null,
+    created_at: new Date()
+  };
   await getCollection('bookings').doc(String(booking.id)).create(booking);
   return response.status(201).json(normalizeTimestamps(booking));
+});
+
+router.patch('/bookings/:id', async (request, response) => {
+  const ref = getDocument('bookings', request.params.id);
+  const snap = await ref.get();
+  if (!snap.exists) return response.status(404).json({ error: 'Booking not found' });
+  if (Number(snap.get('user_id')) !== Number(request.auth.sub)) {
+    return response.status(403).json({ error: 'Not your booking' });
+  }
+
+  const current = snap.data();
+
+  // Only pending bookings can be edited. Approved/declined/cancelled are locked
+  // so the client can't silently move a session the coach already confirmed.
+  if (current.status !== 'pending') {
+    return response.status(409).json({
+      error: `This booking is ${current.status} and can no longer be edited.`
+    });
+  }
+
+  const updates = {};
+
+  if (Object.hasOwn(request.body, 'service')) {
+    const service = typeof request.body.service === 'string' ? request.body.service.trim() : '';
+    if (!service || service.length > 120) {
+      return response.status(400).json({ error: 'Enter a valid service name' });
+    }
+    updates.service = service;
+  }
+
+  if (Object.hasOwn(request.body, 'requested_at')) {
+    const input = request.body.requested_at;
+    const when = typeof input === 'string' &&
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})?$/.test(input)
+      ? new Date(input) : null;
+    if (!when || Number.isNaN(when.getTime()) || when.getTime() < Date.now() - 60_000) {
+      return response.status(400).json({ error: 'Choose a valid future booking time' });
+    }
+    updates.requested_at = when;
+  }
+
+  if (Object.hasOwn(request.body, 'notes')) {
+    updates.notes = request.body.notes === null
+      ? null
+      : String(request.body.notes).trim().slice(0, 500) || null;
+  }
+
+  if (!Object.keys(updates).length) {
+    return response.status(400).json({ error: 'No editable fields provided' });
+  }
+
+  updates.updated_at = new Date();
+  await ref.set(updates, { merge: true });
+  const fresh = await ref.get();
+  return response.json({ booking: normalizeTimestamps({ id: ref.id, ...fresh.data() }) });
+});
+
+router.delete('/bookings/:id', async (request, response) => {
+  const ref = getDocument('bookings', request.params.id);
+  const snap = await ref.get();
+  if (!snap.exists) return response.status(404).json({ error: 'Booking not found' });
+  if (Number(snap.get('user_id')) !== Number(request.auth.sub)) {
+    return response.status(403).json({ error: 'Not your booking' });
+  }
+
+  const status = snap.get('status');
+
+  // Pending → hard delete. Approved → soft cancel (keep audit trail so coach
+  // can see the session was cancelled rather than just vanished).
+  if (status === 'pending') {
+    await ref.delete();
+    return response.status(204).end();
+  }
+  if (status === 'approved') {
+    await ref.set({ status: 'cancelled', cancelled_at: new Date(), updated_at: new Date() }, { merge: true });
+    return response.status(204).end();
+  }
+
+  // declined / cancelled → just delete the row
+  await ref.delete();
+  return response.status(204).end();
 });
 
 /* ============================================================

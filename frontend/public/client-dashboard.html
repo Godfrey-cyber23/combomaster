@@ -1434,7 +1434,13 @@
         if (link) link.classList.add('active');
         $('sectionTitle').textContent = SECTION_TITLES[section] || 'Dashboard';
         closeMobileSidebar();
-        if (section === 'progress-tracking') renderWeightChart();
+        if (section === 'progress-tracking') {
+          Loader.skeletonChart('weightProgressChart', true);
+          requestAnimationFrame(() => {
+            renderWeightChart();
+            Loader.skeletonChart('weightProgressChart', false);
+          });
+        }
         if (section === 'messages') renderMessages();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
@@ -1476,7 +1482,7 @@
         });
         if (!ok) return;
 
-        toast('Signing you out…', 'info', { duration: 2000 });
+        Loader.page('Signing you out…');
         try {
           if (typeof window.logoutClient === 'function') {
             await window.logoutClient();
@@ -1507,7 +1513,9 @@
         return window.API.request(path, options);
       }
 
-      async function loadDashboard() {
+      async function loadDashboard(opts = {}) {
+        const silent = opts.silent === true;
+        if (!silent) Loader.showTop();
         try {
           const data = await apiCall('/client/dashboard');
           applyDashboardData(data);
@@ -1515,6 +1523,8 @@
           if (err.status === 401) return location.replace('login.html');
           if (err.status === 403) return location.replace('admin-dashboard.html');
           toast(err.message || 'Could not load dashboard', 'error');
+        } finally {
+          if (!silent) Loader.hideTop();
         }
       }
 
@@ -1690,7 +1700,7 @@
         const cal = $('customMealCal').value;
         if (!name) { toast('Please enter a meal name', 'warning'); return; }
         const btn = $('customMealSubmit');
-        if (btn) { btn.disabled = true; btn.textContent = 'Logging…'; }
+        Loader.button(btn, true, 'Logging…');
         try {
           await apiCall('/client/meals', { method: 'POST', body: { meal_name: name, calories: Number(cal) } });
           closeModal();
@@ -1699,7 +1709,7 @@
         } catch (err) {
           toast(err.message || 'Could not log meal', 'error');
         } finally {
-          if (btn) { btn.disabled = false; btn.textContent = 'Log Meal'; }
+          Loader.button(btn, false);
         }
       };
 
@@ -1760,14 +1770,17 @@
         const dur = Number($('customWorkoutDur').value) || 0;
         if (!name || !dur) { toast('Please fill in name and duration', 'warning'); return; }
         const btn = $('customWorkoutSubmit');
-        if (btn) { btn.disabled = true; btn.textContent = 'Logging…'; }
+        Loader.button(btn, true, 'Logging…');
         try {
           await apiCall('/client/workouts', { method: 'POST', body: { workout_name: name, duration_minutes: dur } });
           closeModal();
           toast(`"${name}" logged successfully`, 'success');
           await loadDashboard();
-        } catch (err) { toast(err.message || 'Could not log workout', 'error'); }
-        finally { if (btn) { btn.disabled = false; btn.textContent = 'Log Workout'; } }
+        } catch (err) {
+          toast(err.message || 'Could not log workout', 'error');
+        } finally {
+          Loader.button(btn, false);
+        }
       };
 
       window.deleteWorkout = async function (id, name) {
@@ -1933,14 +1946,17 @@
         const val = $('newWeightValue').value;
         if (!val) { toast('Please enter a weight', 'warning'); return; }
         const btn = $('logWeightSubmit');
-        if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+        Loader.button(btn, true, 'Saving…');
         try {
           await apiCall('/client/progress', { method: 'POST', body: { weight_kg: Number(val) } });
           closeModal();
           toast(`Logged ${val} kg`, 'success');
           await loadDashboard();
-        } catch (err) { toast(err.message || 'Could not log weight', 'error'); }
-        finally { if (btn) { btn.disabled = false; btn.textContent = 'Save Weight'; } }
+        } catch (err) {
+          toast(err.message || 'Could not log weight', 'error');
+        } finally {
+          Loader.button(btn, false);
+        }
       };
 
       /* ---------- MESSAGES ---------- */
@@ -1970,12 +1986,15 @@
         const body = input?.value.trim();
         if (!body) { toast('Message cannot be empty', 'warning'); return; }
         input.value = '';
+        Loader.showTop();
         try {
           await apiCall('/client/messages', { method: 'POST', body: { body } });
-          await loadDashboard();
+          await loadDashboard({ silent: true });
         } catch (err) {
           toast(err.message || 'Could not send message', 'error');
           input.value = body;
+        } finally {
+          Loader.hideTop();
         }
       };
 
@@ -2064,7 +2083,7 @@
         const notes = $('bookingNotes').value.trim();
         if (!service || !date) { toast('Please fill in service and date/time', 'warning'); return; }
         const btn = $('bookingSubmit');
-        if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+        Loader.button(btn, true, 'Sending…');
         try {
           await apiCall('/client/bookings', {
             method: 'POST',
@@ -2073,8 +2092,11 @@
           closeModal();
           toast('Booking request sent — your coach will confirm shortly', 'success');
           await loadDashboard();
-        } catch (err) { toast(err.message || 'Could not send booking', 'error'); }
-        finally { if (btn) { btn.disabled = false; btn.textContent = 'Send Request'; } }
+        } catch (err) {
+          toast(err.message || 'Could not send booking', 'error');
+        } finally {
+          Loader.button(btn, false);
+        }
       };
 
       /* ---------- UPDATE ---------- */
@@ -2118,7 +2140,7 @@
         if (!ok) return;
 
         const btn = $('editBookingSubmit');
-        if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+        Loader.button(btn, true, 'Saving…');
         try {
           await apiCall('/client/bookings/' + encodeURIComponent(id), {
             method: 'PATCH',
@@ -2127,8 +2149,11 @@
           closeModal();
           toast('Booking updated', 'success');
           await loadDashboard();
-        } catch (err) { toast(err.message || 'Could not update booking', 'error'); }
-        finally { if (btn) { btn.disabled = false; btn.textContent = 'Save Changes'; } }
+        } catch (err) {
+          toast(err.message || 'Could not update booking', 'error');
+        } finally {
+          Loader.button(btn, false);
+        }
       };
 
       /* ---------- DELETE / CANCEL ---------- */
@@ -2211,7 +2236,7 @@
         });
         if (!ok) return;
 
-        if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+        Loader.button(btn, true, 'Saving…');
         try {
           await apiCall('/client/profile', {
             method: 'PATCH',
@@ -2222,8 +2247,11 @@
           }
           toast('Profile updated successfully', 'success');
           await loadDashboard();
-        } catch (err) { toast(err.message || 'Could not save profile', 'error'); }
-        finally { if (btn) { btn.disabled = false; btn.textContent = 'Save Changes'; } }
+        } catch (err) {
+          toast(err.message || 'Could not save profile', 'error');
+        } finally {
+          Loader.button(btn, false);
+        }
       };
 
       /* ---------- DELETE ACCOUNT ---------- */
@@ -2358,27 +2386,33 @@
         const mood = $('checkinMood').value;
         const notes = $('checkinNotes').value.trim();
         const btn = $('checkinSubmit');
-        if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+        Loader.button(btn, true, 'Submitting…');
         try {
           await apiCall('/client/checkins', { method: 'POST', body: { mood, notes } });
           closeModal();
           toast('Check-in submitted — your coach has been notified', 'success');
         } catch (err) {
           toast(err.message || 'Could not submit check-in', 'error');
-          if (btn) { btn.disabled = false; btn.textContent = 'Submit'; }
+        } finally {
+          Loader.button(btn, false);
         }
       };
 
       /* ---------- THEME ---------- */
       window.toggleClientTheme = function () {
+        const btn = document.querySelector('header button[onclick="toggleClientTheme()"]');
+        const restore = btn ? Loader.inline(btn, 16) : () => { };
+
         document.body.classList.toggle('light-theme');
-        const icon = $('themeIcon');
         const isLight = document.body.classList.contains('light-theme');
-        if (icon) icon.setAttribute('data-lucide', isLight ? 'sun' : 'moon');
-        if (window.lucide) lucide.createIcons();
         localStorage.setItem('clientTheme', isLight ? 'light' : 'dark');
-        renderActivityChart();
-        renderWeightChart();
+
+        requestAnimationFrame(() => {
+          renderActivityChart();
+          renderWeightChart();
+          if (btn) btn.innerHTML = `<i data-lucide="${isLight ? 'sun' : 'moon'}" id="themeIcon" class="w-5 h-5"></i>`;
+          if (window.lucide) lucide.createIcons();
+        });
       };
 
       function loadTheme() {
@@ -2418,6 +2452,7 @@
       async function startDashboard() {
         if (state.booted) return;
         state.booted = true;
+
         if (window.currentUser) {
           state.user = window.currentUser;
           state.profile.name = window.currentUser.name || '';
@@ -2425,7 +2460,28 @@
           updateProfileHeader();
           hydrateSettings();
         }
-        await Promise.all([loadDashboard(), loadPlans()]);
+
+        // ── Show skeletons immediately ─────────────────────────
+        Loader.statCards(['statWeight', 'statBodyfat', 'statStreak', 'statBadges']);
+        Loader.skeleton('recentFeed', { rows: 3 });
+        Loader.skeleton('mealLogList', { rows: 3 });
+        Loader.skeleton('workoutHistoryList', { rows: 3 });
+        Loader.skeleton('recentMeasurements', { rows: 2 });
+        Loader.skeleton('bookingsList', { rows: 2 });
+        Loader.skeleton('achievementsGrid', { rows: 4, height: 84 });
+        Loader.skeletonChart('activityChart', true);
+        Loader.skeletonChart('weightProgressChart', true);
+
+        Loader.showTop();
+        try {
+          await Promise.all([loadDashboard({ silent: true }), loadPlans()]);
+        } finally {
+          Loader.hideTop();
+          Loader.clearStatCards();
+          Loader.skeletonChart('activityChart', false);
+          Loader.skeletonChart('weightProgressChart', false);
+        }
+
         clearInterval(state.refreshTimer);
         state.refreshTimer = setInterval(async () => {
           if ($('globalModal')?.classList.contains('active')) return;

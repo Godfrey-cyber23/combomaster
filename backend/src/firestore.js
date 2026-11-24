@@ -88,6 +88,15 @@ function getDocument(name, id) {
   return getCollection(name).doc(String(id));
 }
 
+function filterBySearch(rows, q, fields = ['name', 'email']) {
+  if (!q) return rows;
+  const needle = String(q).toLowerCase().trim();
+  if (!needle) return rows;
+  return rows.filter(row =>
+    fields.some(f => String(row[f] ?? '').toLowerCase().includes(needle))
+  );
+}
+
 async function listDocuments(name, { filters = [], orderBy = [], limit = 200 } = {}) {
   let query = getCollection(name);
   filters.forEach(([field, operator, value]) => { query = query.where(field, operator, value); });
@@ -112,6 +121,7 @@ module.exports = {
   getCollection,
   getDocument,
   getFirestore,
+  filterBySearch,
   listDocuments,
   normalizeValue
 };

@@ -1,198 +1,1364 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ComboMaster | Admin Dashboard Suite</title>
-    <!-- Tailwind + Fonts + Icons -->
+    <title>ComboMaster | Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg-base: #020617; --bg-secondary: #0f172a; --bg-card: rgba(30, 41, 59, 0.65);
-            --text-main: #f1f5f9; --text-muted: #94a3b8; --border-color: rgba(255,255,255,0.08);
-            --gold-rgb: 245 158 11; --gold: rgb(245 158 11); --gold-accent: #f59e0b;
-            --card-solid: #1e293b; --toast-bg: #0f172aee;
-        }
-        body.light-theme {
-            --bg-base: #f8fafc; --bg-secondary: #f1f5f9; --bg-card: rgba(255,255,255,0.85);
-            --text-main: #0f172a; --text-muted: #475569; --border-color: rgba(0,0,0,0.08);
-            --gold-rgb: 234 88 12; --gold: #ea580c; --card-solid: #ffffff; --toast-bg: #fffffff2;
-        }
-        body { background: var(--bg-base); color: var(--text-main); font-family: 'Inter', sans-serif; transition: background 0.25s, color 0.2s; }
-        .font-display { font-family: 'Oswald', sans-serif; letter-spacing: 0.01em; }
-        .glass-card { background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 1.5rem; transition: all 0.2s; }
-        .stat-card { border-left: 3px solid var(--gold); }
-        .text-gold { color: var(--gold); }
-        .btn-gold { background: var(--gold); color: #020617; font-weight: 600; transition: 0.2s; cursor: pointer; }
-        .btn-gold:hover { background: #d97706; box-shadow: 0 8px 20px rgba(245,158,11,0.3); transform: translateY(-1px); }
-        .btn-outline { border: 1px solid rgba(245,158,11,0.5); color: var(--gold); background: transparent; font-weight: 500; transition: 0.2s; }
-        .btn-outline:hover { background: rgba(245,158,11,0.1); border-color: var(--gold); }
-        .btn-danger { background: #dc2626; color: white; font-weight: 500; transition: 0.2s; }
-        .btn-danger:hover { background: #b91c1c; }
-        .form-input { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.6rem 1rem; color: var(--text-main); font-size: 0.875rem; outline: none; width: 100%; transition: 0.2s; }
-        .form-input:focus { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(245,158,11,0.2); }
-        .admin-sidebar { width: 280px; transition: all 0.2s ease; background: var(--bg-secondary); border-right: 1px solid var(--border-color); position: fixed; left: 0; top: 0; bottom: 0; z-index: 40; overflow-y: auto; }
-        .admin-main { margin-left: 280px; transition: margin-left 0.2s; min-height: 100vh; }
-        @media (max-width: 1024px) {
-            .admin-sidebar { transform: translateX(-100%); position: fixed; z-index: 50; }
-            .admin-sidebar.mobile-open { transform: translateX(0); }
-            .admin-main { margin-left: 0; }
-        }
-        .sidebar-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1.25rem; margin: 0.25rem 0.75rem; border-radius: 0.75rem; color: var(--text-muted); transition: 0.2s; cursor: pointer; font-size: 0.9rem; }
-        .sidebar-link:hover { background: rgba(245,158,11,0.08); color: var(--gold); }
-        .sidebar-link.active { background: rgba(245,158,11,0.15); color: var(--gold); }
-        .dash-table th { text-align: left; padding: 0.9rem 1rem; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
-        .dash-table td { padding: 0.9rem 1rem; font-size: 0.85rem; border-bottom: 1px solid var(--border-color); }
-        .badge { background: rgba(245,158,11,0.2); color: var(--gold); border-radius: 9999px; padding: 0.2rem 0.7rem; font-size: 0.7rem; font-weight: 600; }
-        .toast-fixed { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; background: var(--toast-bg); backdrop-filter: blur(12px); border-radius: 1rem; padding: 0.75rem 1.5rem; box-shadow: 0 20px 25px -12px rgba(0,0,0,0.2); transition: all 0.3s; transform: translateY(100px); opacity: 0; border: 1px solid var(--border-color); }
-        .toast-fixed.show { transform: translateY(0); opacity: 1; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.2s; }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-card { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 1.5rem; width: 90%; max-width: 520px; max-height: 85vh; overflow-y: auto; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
-        .view-pane { display: none; }
-        .view-pane.active-view { display: block; }
-        .progress-ring { stroke: var(--gold); transition: stroke-dashoffset 0.5s; }
-    </style>
+    <link rel="stylesheet" href="assets/css/admin-dashboard.css">
 </head>
+
 <body class="antialiased">
 
-    <!-- Toast container -->
-    <div id="globalToast" class="toast-fixed flex items-center gap-3">
-        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
-        <span id="toastMsg" class="text-sm font-medium"></span>
-    </div>
+    <!-- ═════ TOAST STACK ═════ -->
+    <div id="toastStack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- Modal overlay -->
+    <!-- ═════ MODAL ═════ -->
     <div id="globalModal" class="modal-overlay" onclick="if(event.target===this) closeModal()">
-        <div class="modal-card p-6">
-            <div class="flex justify-between items-center mb-5"><h3 id="modalTitle" class="font-display text-xl font-bold text-gold"></h3><button onclick="closeModal()" class="text-muted hover:text-white">&times;</button></div>
+        <div class="modal-card p-6" role="dialog" aria-modal="true">
+            <div class="flex justify-between items-center mb-5" id="modalHeader">
+                <h3 id="modalTitle" class="font-display text-xl font-bold text-gold"></h3>
+                <button onclick="closeModal()" class="text-2xl leading-none hover:text-gold"
+                    style="color:var(--text-muted)" aria-label="Close">&times;</button>
+            </div>
             <div id="modalBody"></div>
         </div>
     </div>
 
-    <!-- SIDEBAR (Admin) -->
+    <!-- ═════ SIDEBAR ═════ -->
     <aside id="adminSidebar" class="admin-sidebar flex flex-col">
         <div class="h-16 flex items-center px-6 border-b border-[var(--border-color)]">
-            <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold">CM</div><span class="font-display text-xl tracking-wide text-gold font-semibold">COMBO<span class="text-white">MASTER</span></span></div>
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold">
+                    CM</div>
+                <span class="font-display text-xl tracking-wide text-gold font-semibold">COMBO<span
+                        style="color:var(--text-main)">MASTER</span></span>
+            </div>
         </div>
         <nav class="flex-1 py-6">
-            <div class="px-5 mb-2 text-[0.65rem] font-bold uppercase tracking-wider text-muted">CORE</div>
-            <a href="#" class="sidebar-link active" data-section="dashboard"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Dashboard</span></a>
-            <a href="#" class="sidebar-link" data-section="clients"><i data-lucide="users" class="w-5 h-5"></i><span>Clients</span></a>
-            <a href="#" class="sidebar-link" data-section="sales"><i data-lucide="trending-up" class="w-5 h-5"></i><span>Sales</span></a>
-            <a href="#" class="sidebar-link" data-section="payments"><i data-lucide="credit-card" class="w-5 h-5"></i><span>Payments</span></a>
-            <a href="#" class="sidebar-link" data-section="coaching-programs"><i data-lucide="file-text" class="w-5 h-5"></i><span>Coaching Programs</span></a>
-            <a href="#" class="sidebar-link" data-section="orders"><i data-lucide="package" class="w-5 h-5"></i><span>Orders</span></a>
-            <a href="#" class="sidebar-link" data-section="bookings"><i data-lucide="calendar" class="w-5 h-5"></i><span>Bookings</span></a>
-            <a href="#" class="sidebar-link" data-section="messages"><i data-lucide="message-circle" class="w-5 h-5"></i><span>Messages</span></a>
-            <a href="#" class="sidebar-link" data-section="reports"><i data-lucide="bar-chart-3" class="w-5 h-5"></i><span>Business Reports</span></a>
+            <div class="px-5 mb-2 text-[0.65rem] font-bold uppercase tracking-wider" style="color:var(--text-muted)">
+                CORE</div>
+            <a href="#" class="sidebar-link active" data-section="dashboard"><i data-lucide="layout-dashboard"
+                    class="w-5 h-5"></i><span>Dashboard</span></a>
+            <a href="#" class="sidebar-link" data-section="clients"><i data-lucide="users"
+                    class="w-5 h-5"></i><span>Clients</span></a>
+            <a href="#" class="sidebar-link" data-section="bookings"><i data-lucide="calendar"
+                    class="w-5 h-5"></i><span>Bookings</span></a>
+            <a href="#" class="sidebar-link" data-section="messages">
+                <i data-lucide="message-circle" class="w-5 h-5"></i><span>Messages</span>
+                <span id="unreadBadge" class="ml-auto badge badge-red" style="display:none">0</span>
+            </a>
             <div class="border-t border-[var(--border-color)] my-4 mx-4"></div>
-            <a href="#" class="sidebar-link" data-section="settings"><i data-lucide="settings" class="w-5 h-5"></i><span>Settings</span></a>
-            <a href="#" onclick="event.preventDefault();logoutAdmin()" class="sidebar-link text-red-400 hover:!text-red-300"><i data-lucide="log-out" class="w-5 h-5"></i><span>Logout</span></a>
+            <a href="#" class="sidebar-link" data-section="settings"><i data-lucide="settings"
+                    class="w-5 h-5"></i><span>Settings</span></a>
+            <a href="#" id="logoutLink" class="sidebar-link" style="color:var(--c-red)"
+                onclick="event.preventDefault();doLogout()"><i data-lucide="log-out"
+                    class="w-5 h-5"></i><span>Logout</span></a>
         </nav>
-        <div class="p-4 border-t border-[var(--border-color)] text-[0.7rem] text-muted text-center">© ComboMaster Fitness</div>
+        <div class="p-4 border-t border-[var(--border-color)] text-[0.7rem] text-center"
+            style="color:var(--text-muted)">© ComboMaster Fitness</div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main id="adminMain" class="admin-main bg-[var(--bg-base)]">
-        <header class="sticky top-0 z-30 bg-[var(--bg-base)]/80 backdrop-blur-lg border-b border-[var(--border-color)] h-16 flex items-center justify-between px-6">
-            <div class="flex items-center gap-4"><button id="mobileMenuBtn" class="lg:hidden p-2 text-muted hover:text-gold"><i data-lucide="menu" class="w-5 h-5"></i></button><h2 id="sectionTitle" class="font-display text-xl font-semibold">Dashboard</h2></div>
+    <!-- ═════ MAIN ═════ -->
+    <main id="adminMain" class="admin-main">
+        <header
+            class="sticky top-0 z-30 border-b border-[var(--border-color)] h-16 flex items-center justify-between px-6"
+            style="background:rgba(2,6,23,.8);backdrop-filter:blur(20px)">
+            <div class="flex items-center gap-4">
+                <button id="mobileMenuBtn" class="lg:hidden p-2 hover:text-gold" style="color:var(--text-muted)"
+                    aria-label="Open menu"><i data-lucide="menu" class="w-5 h-5"></i></button>
+                <h2 id="sectionTitle" class="font-display text-xl font-semibold">Dashboard</h2>
+            </div>
             <div class="flex items-center gap-3">
-                <a href="shop.html?cms=1" class="btn-gold px-3 py-2 rounded-lg text-xs font-semibold">Manage Site Content</a>
-                <button onclick="toggleAdminTheme()" class="p-2 text-muted hover:text-gold"><i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i></button>
-                <div class="w-9 h-9 rounded-full bg-amber-500/20 flex items-center justify-center text-gold font-bold">AD</div>
+                <button onclick="toggleAdminTheme()" class="p-2 hover:text-gold" style="color:var(--text-muted)"
+                    aria-label="Toggle theme"><i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i></button>
+                <div class="w-9 h-9 rounded-full flex items-center justify-center text-gold font-bold"
+                    style="background:rgba(245,158,11,.2)" id="avatarInitial">A</div>
             </div>
         </header>
 
         <div class="p-5 lg:p-7 space-y-7">
-            <!-- ===================== DASHBOARD ===================== -->
+
+            <!-- ═════ DASHBOARD ═════ -->
             <div id="dashboardView" class="view-pane active-view space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div class="glass-card p-5 stat-card"><p class="text-xs uppercase tracking-wider text-muted">Total Revenue</p><p class="font-display text-3xl font-bold text-gold mt-1">$43,280</p><p class="text-xs text-green-400 mt-1">↑ 12% vs last month</p></div>
-                    <div class="glass-card p-5 stat-card"><p class="text-xs uppercase tracking-wider text-muted">Active Clients</p><p class="font-display text-3xl font-bold text-gold mt-1">143</p><p class="text-xs text-muted">+8 new this week</p></div>
-                    <div class="glass-card p-5 stat-card"><p class="text-xs uppercase tracking-wider text-muted">Completed Orders</p><p class="font-display text-3xl font-bold text-gold mt-1">1,284</p><p class="text-xs text-muted">Past 30 days</p></div>
-                    <div class="glass-card p-5 stat-card"><p class="text-xs uppercase tracking-wider text-muted">Upcoming Bookings</p><p class="font-display text-3xl font-bold text-gold mt-1">23</p><p class="text-xs text-muted">Next 7 days</p></div>
+                    <div class="glass-card p-5 stat-card">
+                        <p class="text-xs uppercase tracking-wider" style="color:var(--text-muted)">Total Revenue (30d)
+                        </p>
+                        <p class="font-display text-3xl font-bold text-gold mt-1" id="statRevenue">—</p>
+                    </div>
+                    <div class="glass-card p-5 stat-card">
+                        <p class="text-xs uppercase tracking-wider" style="color:var(--text-muted)">Active Clients</p>
+                        <p class="font-display text-3xl font-bold text-gold mt-1" id="statClients">—</p>
+                    </div>
+                    <div class="glass-card p-5 stat-card">
+                        <p class="text-xs uppercase tracking-wider" style="color:var(--text-muted)">Completed Orders</p>
+                        <p class="font-display text-3xl font-bold text-gold mt-1" id="statOrders">—</p>
+                    </div>
+                    <div class="glass-card p-5 stat-card">
+                        <p class="text-xs uppercase tracking-wider" style="color:var(--text-muted)">Upcoming Bookings
+                        </p>
+                        <p class="font-display text-3xl font-bold text-gold mt-1" id="statBookings">—</p>
+                    </div>
                 </div>
+
                 <div class="grid lg:grid-cols-2 gap-6">
-                    <div class="glass-card p-5"><h3 class="font-display text-lg font-semibold flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 text-gold"></i> Revenue Trend (last 6 weeks)</h3><div class="h-40 w-full mt-4"><canvas id="revenueChart" class="w-full h-full"></canvas></div></div>
-                    <div class="glass-card p-5"><h3 class="font-display text-lg font-semibold flex items-center gap-2"><i data-lucide="briefcase" class="w-5 h-5 text-gold"></i> Recent Bookings</h3><div class="overflow-x-auto mt-3"><table class="w-full text-sm"><tbody><tr><td class="py-2">Emily Chen</td><td>1-on-1 Coaching</td><td>Today 14:00</td><td><span class="badge">Confirmed</span></td></tr><tr><td class="py-2">Marcus Lee</td><td>Nutrition Review</td><td>Tomorrow 10:30</td><td><span class="badge">Pending</span></td></tr><tr><td class="py-2">Sophia Ramirez</td><td>Group HIIT</td><td>Feb 18, 09:00</td><td><span class="badge">Confirmed</span></td></tr></tbody></table></div></div>
+                    <div class="glass-card p-5">
+                        <h3 class="font-display text-lg font-semibold flex items-center gap-2"><i data-lucide="activity"
+                                class="w-5 h-5 text-gold"></i> Revenue Trend (6 weeks)</h3>
+                        <div class="h-44 w-full mt-4"><canvas id="revenueChart"></canvas></div>
+                    </div>
+                    <div class="glass-card p-5">
+                        <h3 class="font-display text-lg font-semibold flex items-center gap-2"><i
+                                data-lucide="briefcase" class="w-5 h-5 text-gold"></i> Recent Bookings</h3>
+                        <div id="recentBookingsList" class="mt-3 space-y-2 text-sm"></div>
+                    </div>
                 </div>
-                <div class="glass-card p-5"><div class="flex justify-between items-center"><h3 class="font-display text-lg font-semibold">Top Coaching Programs (enrollments)</h3><button class="btn-outline text-xs px-3 py-1 rounded-full" onclick="showToast('Full report exported','success')">Export</button></div><div class="mt-4 flex flex-wrap gap-5"><div><span class="text-gold font-bold text-2xl">48</span><p class="text-xs text-muted">Fat Loss Blueprint</p></div><div><span class="text-gold font-bold text-2xl">35</span><p class="text-xs text-muted">Muscle Gain System</p></div><div><span class="text-gold font-bold text-2xl">22</span><p class="text-xs text-muted">Competition Prep</p></div><div><span class="text-gold font-bold text-2xl">19</span><p class="text-xs text-muted">Strength Foundations</p></div></div></div>
             </div>
 
-            <!-- ===================== CLIENTS ===================== -->
+            <!-- ═════ CLIENTS ═════ -->
             <div id="clientsView" class="view-pane space-y-5">
-                <div class="flex justify-between items-center flex-wrap gap-3"><h1 class="font-display text-2xl font-semibold">Client Management</h1><button class="btn-gold px-4 py-2 rounded-xl text-sm flex gap-2" onclick="openAddClientModal()"><i data-lucide="user-plus" class="w-4 h-4"></i> Add Client</button></div>
-                <div class="glass-card overflow-hidden rounded-2xl"><div class="overflow-x-auto"><table class="w-full dash-table"><thead><tr><th>Name</th><th>Email</th><th>Program</th><th>Status</th><th>Last Activity</th><th></th></tr></thead><tbody id="clientListTbody"><tr><td>James Mitchell</td><td>james@fit.com</td><td>Fat Loss</td><td><span class="badge">Active</span></td><td>2h ago</td><td><button class="text-gold text-xs" onclick="showToast('Client details','success')">View</button></td></tr><tr><td>Sarah Kim</td><td>sarah.k@example.com</td><td>Muscle Gain</td><td><span class="badge">Active</span></td><td>Yesterday</td><td><button class="text-gold text-xs" onclick="showToast('Client details','success')">View</button></td></tr><tr><td>David Chen</td><td>david.chen@comp.com</td><td>Competition Prep</td><td><span class="badge">High Priority</span></td><td>Today</td><td><button class="text-gold text-xs" onclick="showToast('Client details','success')">View</button></td></tr></tbody></table></div></div>
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <h1 class="font-display text-2xl font-semibold">Client Management</h1>
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <div class="search-wrap">
+                            <i data-lucide="search" class="search-ico"></i>
+                            <input id="clientSearch" class="form-input search-input" placeholder="Search by name or email…" oninput="renderClients()">
+                            <button class="search-clear" onclick="clearSearch('clientSearch');renderClients()" aria-label="Clear"><i data-lucide="x" class="w-4 h-4"></i></button>
+                        </div>
+                        <button class="btn-outline px-4 py-2 rounded-xl text-sm flex items-center gap-2" onclick="exportData('clients','csv')"><i data-lucide="download" class="w-4 h-4"></i> CSV</button>
+                        <button class="btn-outline px-4 py-2 rounded-xl text-sm flex items-center gap-2" onclick="exportData('clients','json')"><i data-lucide="file-json" class="w-4 h-4"></i> JSON</button>
+                    </div>
+                </div>
+                <div class="glass-card overflow-hidden rounded-2xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full dash-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Goal</th>
+                                    <th>Weight</th>
+                                    <th>Last Activity</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientListTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <!-- ===================== SALES & PAYMENTS ===================== -->
-            <div id="salesView" class="view-pane space-y-5"><h1 class="font-display text-2xl font-semibold">Sales Overview</h1><div class="glass-card p-5"><div class="grid sm:grid-cols-2 gap-5"><div><p class="text-sm text-muted">Monthly Recurring Revenue</p><p class="font-display text-3xl font-bold text-gold">$18,420</p></div><div><p class="text-sm text-muted">One-time product sales</p><p class="font-display text-3xl font-bold text-gold">$9,860</p></div></div><div class="mt-6 h-48"><canvas id="salesChartCanvas"></canvas></div></div></div>
-            <div id="paymentsView" class="view-pane space-y-5"><h1 class="font-display text-2xl font-semibold">Payment Transactions</h1><div class="glass-card overflow-hidden"><table class="w-full dash-table"><thead><tr><th>Transaction ID</th><th>Client</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody><tr><td>#TRX-2214</td><td>James Mitchell</td><td>$149</td><td><span class="text-green-400">Completed</span></td><td>2025-02-14</td></tr><tr><td>#TRX-2215</td><td>Sarah Kim</td><td>$249</td><td><span class="text-green-400">Completed</span></td><td>2025-02-13</td></tr><tr><td>#TRX-2216</td><td>Marcus Lee</td><td>$89</td><td><span class="text-yellow-400">Pending</span></td><td>2025-02-12</td></tr></tbody></table></div></div>
+            <!-- ═════ BOOKINGS ═════ -->
+            <div id="bookingsView" class="view-pane space-y-5">
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <h1 class="font-display text-2xl font-semibold">Bookings</h1>
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <div class="search-wrap">
+                            <i data-lucide="search" class="search-ico"></i>
+                            <input id="bookingSearch" class="form-input search-input" placeholder="Search client or service…" oninput="renderBookings()">
+                            <button class="search-clear" onclick="clearSearch('bookingSearch');renderBookings()" aria-label="Clear"><i data-lucide="x" class="w-4 h-4"></i></button>
+                        </div>
+                        <select id="bookingFilter" class="form-input" style="width:160px" onchange="renderBookings()">
+                            <option value="all">All</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="declined">Declined</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <button class="btn-outline px-4 py-2 rounded-xl text-sm flex items-center gap-2" onclick="exportData('bookings','csv')"><i data-lucide="download" class="w-4 h-4"></i> CSV</button>
+                    </div>
+                </div>
+                <div class="glass-card overflow-hidden rounded-2xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full dash-table">
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Service</th>
+                                    <th>When</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookingListTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-            <!-- ===================== COACHING PROGRAMS ===================== -->
-            <div id="coachingProgramsView" class="view-pane"><h1 class="font-display text-2xl font-semibold mb-5">Coaching Programs</h1><div class="grid sm:grid-cols-2 gap-5"><div class="glass-card p-5"><div class="flex justify-between"><h3 class="font-bold">Fat Loss Blueprint</h3><span class="badge">48 active</span></div><p class="text-xs text-muted mt-1">12 weeks • nutrition + training</p><div class="mt-3 flex gap-2"><button class="btn-outline text-xs px-3 py-1 rounded-full" onclick="showToast('Program details','success')">Manage</button></div></div><div class="glass-card p-5"><div class="flex justify-between"><h3 class="font-bold">Muscle Gain System</h3><span class="badge">35 active</span></div><p class="text-xs text-muted mt-1">16-week hypertrophy focus</p><button class="btn-outline text-xs px-3 py-1 rounded-full mt-3" onclick="showToast('Program details','success')">Manage</button></div><div class="glass-card p-5"><div class="flex justify-between"><h3 class="font-bold">Competition Prep</h3><span class="badge">22 active</span></div><p class="text-xs text-muted mt-1">Peak week programming</p><button class="btn-outline text-xs px-3 py-1 rounded-full mt-3" onclick="showToast('Program details','success')">Manage</button></div></div></div>
+            <!-- ═════ MESSAGES ═════ -->
+            <div id="messagesView" class="view-pane space-y-5">
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <h1 class="font-display text-2xl font-semibold">Client Messages</h1>
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <button id="soundToggleBtn" class="btn-outline px-3 py-2 rounded-xl text-sm flex items-center gap-2" onclick="toggleSound()" title="Toggle sound notifications">
+                            <i data-lucide="volume-2" class="w-4 h-4" id="soundIcon"></i><span id="soundLabel">Sound on</span>
+                        </button>
+                    </div>
+                </div>
 
-            <!-- ===================== ORDERS ===================== -->
-            <div id="ordersView" class="view-pane"><h1 class="font-display text-2xl font-semibold mb-4">Recent Orders</h1><div class="glass-card overflow-hidden"><table class="w-full dash-table"><thead><tr><th>Order #</th><th>Client</th><th>Item</th><th>Total</th><th>Status</th></tr></thead><tbody><tr><td>#CM-1001</td><td>Emily Chen</td><td>Resistance Bands + Program</td><td>$79</td><td>Shipped</td></tr><tr><td>#CM-1002</td><td>Grace Thompson</td><td>1-on-1 Coaching (Monthly)</td><td>$299</td><td>Active</td></tr><tr><td>#CM-1003</td><td>Alex Rivera</td><td>Nutrition E-book</td><td>$39</td><td>Delivered</td></tr></tbody></table></div></div>
+                <div class="grid md:grid-cols-3 gap-5" style="height:calc(100vh - 240px);min-height:500px">
+                    <div class="glass-card overflow-hidden md:col-span-1 flex flex-col">
+                        <div class="p-4 border-b border-[var(--border-color)]">
+                            <div class="search-wrap">
+                                <i data-lucide="search" class="search-ico"></i>
+                                <input id="msgSearch" class="form-input search-input" placeholder="Search clients…" oninput="renderMessageThreads()">
+                                <button class="search-clear" onclick="clearSearch('msgSearch');renderMessageThreads()" aria-label="Clear"><i data-lucide="x" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                        <div id="msgThreadList" class="flex-1 overflow-y-auto"></div>
+                    </div>
+                    <div class="glass-card md:col-span-2 p-0 flex flex-col overflow-hidden">
+                        <div id="chatEmpty" class="empty-state flex-1">
+                            <i data-lucide="message-square"></i>
+                            <span>Pick a client to view the conversation.</span>
+                        </div>
+                        <div id="chatPanel" class="flex-1 flex flex-col" style="display:none">
+                            <div class="flex justify-between items-center p-4 border-b border-[var(--border-color)]">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-gold font-bold" style="background:rgba(245,158,11,.2)" id="chatAvatar">?</div>
+                                    <div>
+                                        <h3 id="chatClientName" class="font-semibold"></h3>
+                                        <p id="chatClientEmail" class="text-xs" style="color:var(--text-muted)"></p>
+                                    </div>
+                                </div>
+                                <span id="chatTypingIndicator" class="text-xs italic" style="color:var(--c-green);display:none">typing…</span>
+                            </div>
+                            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-3" style="scroll-behavior:smooth"></div>
+                            <div id="replyPreview" class="px-4 py-2 border-t border-[var(--border-color)] flex justify-between items-center" style="display:none;background:var(--bg-secondary)">
+                                <div class="min-w-0">
+                                    <p class="text-xs" style="color:var(--gold)"><i data-lucide="corner-up-left" class="w-3 h-3 inline"></i> Replying to</p>
+                                    <p id="replyPreviewBody" class="text-sm truncate" style="color:var(--text-muted)"></p>
+                                </div>
+                                <button class="text-xs" style="color:var(--c-red)" onclick="cancelReply()">Cancel</button>
+                            </div>
+                            <form class="p-3 border-t border-[var(--border-color)] flex flex-col gap-2" onsubmit="event.preventDefault();sendAdminReply()">
+                                <div id="attachmentPreview" class="flex flex-wrap gap-2" style="display:none"></div>
+                                <div id="emojiPicker" class="emoji-picker" style="display:none">
+                                    <div class="emoji-grid"></div>
+                                </div>
+                                <div class="flex items-end gap-2">
+                                    <button type="button" class="icon-btn" onclick="toggleEmojiPicker()" aria-label="Emoji" title="Emoji picker">
+                                        <i data-lucide="smile" class="w-5 h-5"></i>
+                                    </button>
+                                    <button type="button" class="icon-btn" onclick="document.getElementById('fileInput').click()" aria-label="Attach file" title="Attach file">
+                                        <i data-lucide="paperclip" class="w-5 h-5"></i>
+                                    </button>
+                                    <input type="file" id="fileInput" style="display:none" accept="image/*,.pdf,.txt,.zip,.mp3,.mp4" onchange="handleFileSelected(event)">
+                                    <textarea id="chatReplyInput" class="form-input flex-1" placeholder="Reply to your client…" rows="1" maxlength="4000" style="resize:none;min-height:44px;max-height:120px" oninput="onComposerInput()" onkeydown="onComposerKey(event)"></textarea>
+                                    <button type="submit" class="btn-gold px-4 py-2 rounded-xl flex items-center gap-2" id="sendBtn">
+                                        <span id="sendBtnLabel">Send</span><i data-lucide="send" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <!-- ===================== BOOKINGS ===================== -->
-            <div id="bookingsView" class="view-pane"><h1 class="font-display text-2xl font-semibold mb-4">Sessions & Bookings</h1><div class="grid md:grid-cols-2 gap-5"><div class="glass-card p-5"><h3 class="font-semibold flex gap-2"><i data-lucide="calendar-check"></i> Upcoming (5)</h3><ul class="mt-3 space-y-2 text-sm"><li>• 02/18 10:00 - James M. (Check-in)</li><li>• 02/18 15:30 - Sarah K. (Nutrition Review)</li><li>• 02/19 09:00 - David C. (Strength Analysis)</li></ul></div><div class="glass-card p-5"><h3 class="font-semibold">Schedule a new session</h3><button onclick="openBookingModal()" class="btn-gold w-full mt-4 py-2 rounded-xl text-sm">+ Create Booking</button></div></div></div>
+            <!-- ═════ SETTINGS ═════ -->
+            <div id="settingsView" class="view-pane space-y-5">
+                <h1 class="font-display text-2xl font-semibold">Admin Settings</h1>
 
-            <!-- ===================== MESSAGES ===================== -->
-            <div id="messagesView" class="view-pane"><h1 class="font-display text-2xl font-semibold mb-4">Client Messages</h1><div class="glass-card rounded-2xl overflow-hidden"><div id="msgThreadList" class="divide-y divide-[var(--border-color)] max-h-[400px] overflow-y-auto"><div class="p-4 flex justify-between items-center hover:bg-[var(--bg-secondary)] cursor-pointer" onclick="showChatThread('James Mitchell')"><div><p class="font-semibold">James Mitchell</p><p class="text-xs text-muted">Need help with deadlift form</p></div><span class="text-[0.6rem] text-gold">10 min ago</span></div><div class="p-4 flex justify-between items-center hover:bg-[var(--bg-secondary)] cursor-pointer" onclick="showChatThread('Sarah Kim')"><div><p class="font-semibold">Sarah Kim</p><p class="text-xs text-muted">When to increase calories?</p></div><span class="text-[0.6rem] text-muted">1h ago</span></div></div><div id="chatDetailPanel" class="p-5 border-t border-[var(--border-color)] hidden"><div class="flex justify-between"><h4 id="chatClientName" class="font-bold"></h4><button onclick="document.getElementById('chatDetailPanel').classList.add('hidden');" class="text-muted text-xs">Back</button></div><div id="chatMessages" class="h-48 overflow-y-auto my-4 space-y-2"></div><div class="flex gap-2"><input id="chatReplyInput" type="text" class="form-input flex-1" placeholder="Reply..."><button onclick="sendAdminReply()" class="btn-gold px-4 py-2 rounded-xl text-sm">Send</button></div></div></div></div>
+                <div class="glass-card p-6 space-y-4">
+                    <h3 class="font-semibold mb-2">Business</h3>
+                    <div>
+                        <label class="text-sm block mb-1">Business Name</label>
+                        <input type="text" id="businessName" class="form-input" maxlength="160">
+                    </div>
+                    <div>
+                        <label class="text-sm block mb-1">Contact Email</label>
+                        <input type="email" id="contactEmail" class="form-input" maxlength="254">
+                    </div>
+                </div>
 
-            <!-- ===================== BUSINESS REPORTS ===================== -->
-            <div id="reportsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">Business Intelligence</h1><div class="grid md:grid-cols-2 gap-5 mt-5"><div class="glass-card p-5"><h3 class="font-semibold">Revenue Breakdown</h3><canvas id="revenueDonut" height="150" class="mt-3"></canvas><div class="flex justify-between text-sm mt-2"><span>Memberships: 58%</span><span>Merch: 22%</span><span>Add-ons: 20%</span></div></div><div class="glass-card p-5"><h3 class="font-semibold">Retention Rate (Q1)</h3><p class="font-display text-4xl text-gold mt-2">87%</p><div class="w-full bg-gray-700 h-2 rounded-full mt-3"><div class="bg-gold h-2 rounded-full" style="width:87%"></div></div><p class="text-xs text-muted mt-3">⬆ 4% vs previous quarter</p><button class="btn-outline w-full mt-4 py-2 rounded-xl text-sm" onclick="showToast('Full report generated','success')">Download Full Report</button></div></div><div class="glass-card p-5 mt-5"><h3 class="font-semibold">Monthly KPIs</h3><table class="w-full text-sm mt-3"><tr><td class="py-2">New Clients</td><td class="text-gold font-bold">+32</td><td>Goal: 40</td></tr><tr><td class="py-2">Churn Rate</td><td class="text-green-400">4.2%</td><td>Industry avg 6%</td></tr><tr><td class="py-2">Avg Revenue Per Client</td><td class="text-gold font-bold">$287</td><td>↑ $22</td></tr></table></div></div>
+                <div class="glass-card p-6 space-y-4">
+                    <h3 class="font-semibold mb-2">Messaging preferences</h3>
+                    <p class="text-xs mb-3" style="color:var(--text-muted)">These settings control the chat experience for both coach and clients.</p>
 
-            <!-- ===================== SETTINGS ===================== -->
-            <div id="settingsView" class="view-pane"><h1 class="font-display text-2xl font-semibold">Admin Settings</h1><div class="glass-card p-6 mt-5 space-y-5"><div><label class="text-sm block mb-1" for="businessName">Business Name</label><input type="text" class="form-input" value="ComboMaster Fitness" id="businessName" maxlength="160"></div><div><label class="text-sm block mb-1" for="contactEmail">Contact Email</label><input type="email" class="form-input" value="admin@combomaster.com" id="contactEmail" maxlength="254"></div><button class="btn-gold px-6 py-2 rounded-xl" onclick="saveBusinessSettings()">Save Changes</button></div></div>
+                    <label class="toggle-row">
+                        <div>
+                            <p class="font-medium">Sound notifications</p>
+                            <p class="text-xs" style="color:var(--text-muted)">Play a chime when a new message arrives.</p>
+                        </div>
+                        <input type="checkbox" id="toggleSound" class="toggle-input" onchange="saveAdminSettings()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label class="toggle-row">
+                        <div>
+                            <p class="font-medium">Typing indicator</p>
+                            <p class="text-xs" style="color:var(--text-muted)">Show "typing…" when the other side is composing.</p>
+                        </div>
+                        <input type="checkbox" id="toggleTyping" class="toggle-input" onchange="saveAdminSettings()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label class="toggle-row">
+                        <div>
+                            <p class="font-medium">Emoji reactions</p>
+                            <p class="text-xs" style="color:var(--text-muted)">Allow reacting to messages with emoji.</p>
+                        </div>
+                        <input type="checkbox" id="toggleReactions" class="toggle-input" onchange="saveAdminSettings()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label class="toggle-row">
+                        <div>
+                            <p class="font-medium">File attachments</p>
+                            <p class="text-xs" style="color:var(--text-muted)">Allow sending images, PDFs, and files.</p>
+                        </div>
+                        <input type="checkbox" id="toggleAttachments" class="toggle-input" onchange="saveAdminSettings()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label class="toggle-row">
+                        <div>
+                            <p class="font-medium">Read receipts</p>
+                            <p class="text-xs" style="color:var(--text-muted)">Show a small checkmark when a message is read.</p>
+                        </div>
+                        <input type="checkbox" id="toggleReceipts" class="toggle-input" onchange="saveAdminSettings()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <button class="btn-gold px-6 py-2 rounded-xl" id="saveSettingsBtn"
+                    onclick="saveAdminSettings()">Save Changes</button>
+            </div>
+
         </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="assets/js/loader.js" defer></script>
-    <script>
-        // ---------- GLOBALS ----------
-        let revenueChart, salesChart, donutChart;
-        let currentChatClient = '';
-        const messageThreads = {};
-
-        // Helper functions
-        function showToast(msg, type='success'){ let t=document.getElementById('globalToast'),m=document.getElementById('toastMsg'); m.innerText=msg; t.classList.add('show'); clearTimeout(window.toastTimer); window.toastTimer=setTimeout(()=>t.classList.remove('show'),3000); }
-        function closeModal(){ document.getElementById('globalModal').classList.remove('active'); }
-        function openModal(title, html){ document.getElementById('modalTitle').innerHTML=title; document.getElementById('modalBody').innerHTML=html; document.getElementById('globalModal').classList.add('active'); if(window.lucide)lucide.createIcons(); }
-        function openAddClientModal(){ openModal('Add New Client', `<form onsubmit="event.preventDefault(); addClientFromModal();return false;" class="space-y-4"><div><label class="text-xs block mb-1">Full name</label><input id="clientName" class="form-input" required></div><div><label class="text-xs block mb-1">Email</label><input id="clientEmail" class="form-input" required></div><div><label class="text-xs block mb-1">Program</label><select id="clientProgram" class="form-input"><option>Fat Loss Blueprint</option><option>Muscle Gain System</option></select></div><button type="submit" class="btn-gold w-full py-2 rounded-xl">Add Client</button></form>`); }
-        function addClientFromModal(){ let name=document.getElementById('clientName').value, email=document.getElementById('clientEmail').value, prog=document.getElementById('clientProgram').value; if(name){ let tbody=document.getElementById('clientListTbody'); let row=`<tr><td>${escapeHtml(name)}</td><td>${escapeHtml(email)}</td><td>${escapeHtml(prog)}</td><td><span class="badge">Active</span></td><td>Just now</td><td><button class="text-gold text-xs" onclick="showToast('Client details','success')">View</button></td></tr>`; tbody.insertAdjacentHTML('beforeend',row); closeModal(); showToast(`Client ${name} added!`);} }
-        function openBookingModal(){ openModal('New Booking', `<form onsubmit="event.preventDefault();showToast('Booking created!','success');closeModal();" class="space-y-4"><div><label class="text-xs">Client</label><input class="form-input" placeholder="Client name"></div><div><label class="text-xs">Date & Time</label><input type="datetime-local" class="form-input"></div><div><label class="text-xs">Service Type</label><select class="form-input"><option>1-on-1 Coaching</option><option>Nutrition Review</option><option>Check-in call</option></select></div><button type="submit" class="btn-gold w-full py-2 rounded-xl">Create Booking</button></form>`); }
-        function showChatThread(clientName){ currentChatClient=clientName; document.getElementById('chatClientName').innerText=clientName; let msgsDiv=document.getElementById('chatMessages'); msgsDiv.innerHTML=''; let msgs=messageThreads[clientName]||[]; if(!msgs.length){msgsDiv.innerHTML='<p class="text-sm text-muted">No messages yet.</p>';} msgs.forEach(m=>{let cls=m.startsWith('Admin')?'text-right text-gold':'text-left text-muted'; msgsDiv.innerHTML+=`<div class="${cls} text-sm bg-[var(--bg-secondary)] p-2 rounded-lg">${escapeHtml(m)}</div>`;}); document.getElementById('chatDetailPanel').classList.remove('hidden'); }
-        function sendAdminReply(){ let input=document.getElementById('chatReplyInput'); let txt=input.value.trim(); if(!txt||!currentChatClient)return; showToast('Messaging API is not available yet','error'); input.value=''; }
-        function escapeHtml(str){ let d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
-        function toggleAdminTheme(){ document.body.classList.toggle('light-theme'); let icon=document.getElementById('themeIcon'); if(document.body.classList.contains('light-theme')) icon.setAttribute('data-lucide','sun'); else icon.setAttribute('data-lucide','moon'); if(window.lucide)lucide.createIcons(); localStorage.setItem('adminTheme',document.body.classList.contains('light-theme')?'light':'dark'); }
-        async function logoutAdmin(){ await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin'}); window.location.replace('login.html'); }
-
-        // Navigation
-        function initNavigation(){ let links=document.querySelectorAll('.sidebar-link[data-section]'); links.forEach(link=>{link.addEventListener('click',(e)=>{e.preventDefault(); let section=link.getAttribute('data-section'); document.querySelectorAll('.view-pane').forEach(p=>p.classList.remove('active-view')); document.getElementById(`${section}View`).classList.add('active-view'); document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active')); link.classList.add('active'); let titles={dashboard:'Dashboard',clients:'Clients',sales:'Sales',payments:'Payments','coaching-programs':'Coaching Programs',orders:'Orders',bookings:'Bookings',messages:'Messages',reports:'Business Reports',settings:'Settings'}; document.getElementById('sectionTitle').innerText=titles[section]||'Admin'; if(window.innerWidth<1024)document.getElementById('adminSidebar').classList.remove('mobile-open'); });}); }
-        function setupMobileMenu(){ document.getElementById('mobileMenuBtn')?.addEventListener('click',()=>{document.getElementById('adminSidebar').classList.toggle('mobile-open');}); window.addEventListener('click',(e)=>{let sidebar=document.getElementById('adminSidebar'); if(window.innerWidth<1024 && !sidebar.contains(e.target) && e.target!==document.getElementById('mobileMenuBtn')) sidebar.classList.remove('mobile-open');}); }
-
-        // Charts init
-        function initCharts(){ let ctx1=document.getElementById('revenueChart')?.getContext('2d'); if(ctx1){ revenueChart=new Chart(ctx1,{type:'line',data:{labels:['W1','W2','W3','W4','W5','W6'],datasets:[{label:'Revenue ($)',data:[6200,7100,6800,8900,9400,10300],borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,0.05)',fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:true}});}
-            let ctxSales=document.getElementById('salesChartCanvas')?.getContext('2d'); if(ctxSales){ salesChart=new Chart(ctxSales,{type:'bar',data:{labels:['Jan','Feb','Mar','Apr'],datasets:[{label:'Product Sales',data:[3200,4100,5400,6800],backgroundColor:'#f59e0b'},{label:'Memberships',data:[11200,12400,13800,15400],backgroundColor:'#ea580c'}]}});}
-            let ctxDonut=document.getElementById('revenueDonut')?.getContext('2d'); if(ctxDonut){ donutChart=new Chart(ctxDonut,{type:'doughnut',data:{labels:['Memberships','Merch','Coaching add-ons'],datasets:[{data:[58,22,20],backgroundColor:['#f59e0b','#b45309','#f97316']}]}});}
-        }
-
-        // Theme loader
-        function loadTheme(){ if(localStorage.getItem('adminTheme')==='light'){document.body.classList.add('light-theme');document.getElementById('themeIcon')?.setAttribute('data-lucide','sun');} else{document.getElementById('themeIcon')?.setAttribute('data-lucide','moon');} if(window.lucide)lucide.createIcons(); }
-
-        document.addEventListener('DOMContentLoaded',()=>{ loadTheme(); initNavigation(); setupMobileMenu(); initCharts(); if(window.lucide)lucide.createIcons(); });
-    </script>
     <script src="assets/js/session.js" defer></script>
-    <script src="assets/js/api.js"></script>
+    <script src="assets/js/api.js" defer></script>
+
+    <script>
+        (function () {
+            'use strict';
+
+            /* ═══════════════════════════════════════════════════
+               MESSAGING SUBSYSTEM (attachments, emoji, reactions,
+               reply-to, typing, sound, send animation)
+               Inline so this file works standalone.
+               ═══════════════════════════════════════════════════ */
+            const M = {
+                activeUserId: null,
+                messages: [],
+                pendingAttachment: null,
+                replyTo: null,
+                soundEnabled: true,
+                typingEnabled: true,
+                reactionsEnabled: true,
+                attachmentsEnabled: true,
+                receiptsEnabled: true,
+                typingPollTimer: null,
+                audioCtx: null
+            };
+            window.ComboMessaging = M;
+
+            const EMOJI_LIST = ['👍','❤️','😂','🔥','💪','👏','🎉','😀','😍','😢','😮','🙏','💯','✅','⚡','🏋️','🥗','💧','⏰','👀','😎','🤝','🌟','🎯'];
+
+            function beep(kind) {
+                if (!M.soundEnabled) return;
+                try {
+                    if (!M.audioCtx) M.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const ctx = M.audioCtx;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.type = 'sine';
+                    const base = kind === 'send' ? 660 : 880;
+                    osc.frequency.setValueAtTime(base, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(base * 0.7, ctx.currentTime + 0.12);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+                    osc.start(); osc.stop(ctx.currentTime + 0.2);
+                } catch (_) {}
+            }
+
+            const state = {
+                user: null,
+                stats: {},
+                revenueSeries: [],
+                recentBookings: [],
+                clients: [],
+                bookings: [],
+                threads: {},
+                activeThreadUserId: null,
+                charts: { revenue: null },
+                loaded: { dashboard: false, clients: false, bookings: false, messages: false, settings: false },
+                booted: false
+            };
+
+            /* ── helpers ─────────────────────────────── */
+            const $ = id => document.getElementById(id);
+            const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            const fmtDate = d => { try { return new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }); } catch { return ''; } };
+            const fmtTime = d => { try { return new Date(d).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }); } catch { return ''; } };
+            const fmtRelative = d => {
+                if (!d) return '—';
+                const diff = Date.now() - new Date(d).getTime();
+                if (Number.isNaN(diff)) return '—';
+                if (diff < 60_000) return 'just now';
+                if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
+                if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
+                if (diff < 604_800_000) return `${Math.floor(diff / 86_400_000)}d ago`;
+                return fmtDate(d);
+            };
+
+            async function apiCall(path, options = {}) {
+                if (!window.API || typeof window.API.request !== 'function') {
+                    throw new Error('API not ready — assets/js/api.js failed to load');
+                }
+                return window.API.request(path, options);
+            }
+
+            /* ── toast ──────────────────────────────── */
+            const TOAST_ICONS = { success: 'check-circle', error: 'alert-circle', warning: 'alert-triangle', info: 'info' };
+            const TOAST_TITLES = { success: 'Success', error: 'Error', warning: 'Heads up', info: 'Notice' };
+
+            function toast(message, type = 'success', opts = {}) {
+                const stack = $('toastStack');
+                if (!stack) return;
+                const kind = TOAST_ICONS[type] ? type : 'success';
+                const title = opts.title || TOAST_TITLES[kind];
+                const duration = Math.max(1500, Number(opts.duration) || 4000);
+
+                const item = document.createElement('div');
+                item.className = `toast-item ${kind}`;
+                item.style.setProperty('--toast-dur', duration + 'ms');
+                item.innerHTML = `
+          <div class="toast-ico"><i data-lucide="${TOAST_ICONS[kind]}" class="w-5 h-5"></i></div>
+          <div class="toast-body">
+            <div class="toast-title">${esc(title)}</div>
+            <div class="toast-msg">${esc(message)}</div>
+          </div>
+          <button class="toast-close" aria-label="Dismiss"><i data-lucide="x" class="w-4 h-4"></i></button>
+          <div class="toast-progress"></div>
+        `;
+                stack.appendChild(item);
+                if (window.lucide) lucide.createIcons();
+
+                const remove = () => { item.classList.add('hide'); setTimeout(() => item.remove(), 300); };
+                item.querySelector('.toast-close')?.addEventListener('click', remove);
+                const timer = setTimeout(remove, duration);
+                item.addEventListener('mouseenter', () => { clearTimeout(timer); item.querySelector('.toast-progress').style.animationPlayState = 'paused'; });
+                item.addEventListener('mouseleave', () => item.querySelector('.toast-progress').style.animationPlayState = 'running');
+                requestAnimationFrame(() => item.classList.add('show'));
+                const all = stack.querySelectorAll('.toast-item');
+                if (all.length > 4) all[0].remove();
+            }
+            window.showToast = toast;
+
+            /* ── modal + confirm ────────────────────── */
+            function openModal(title, html, opts = {}) {
+                $('modalTitle').innerHTML = title;
+                $('modalBody').innerHTML = html;
+                const header = $('modalHeader');
+                header.style.display = opts.hideHeader ? 'none' : 'flex';
+                $('globalModal').classList.add('active');
+                if (window.lucide) lucide.createIcons();
+                setTimeout(() => { const f = $('modalBody').querySelector('input,select,textarea'); if (f) f.focus(); }, 60);
+            }
+            function closeModal() { $('globalModal').classList.remove('active'); }
+            window.closeModal = closeModal;
+
+            function showConfirm(opts = {}) {
+                return new Promise(resolve => {
+                    const variant = opts.variant || 'danger';
+                    const icon = opts.icon || (variant === 'danger' ? 'alert-triangle' : variant === 'warning' ? 'alert-circle' : 'info');
+                    const confirmText = opts.confirmText || 'Confirm';
+                    const cancelText = opts.cancelText || 'Cancel';
+                    const html = `
+            <div>
+              <div class="confirm-ico-wrap ${variant}"><i data-lucide="${icon}" class="w-7 h-7"></i></div>
+              <div class="confirm-title">${esc(opts.title || 'Are you sure?')}</div>
+              <div class="confirm-msg">${opts.message || ''}</div>
+              <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+                <button class="btn-neutral px-4 py-2 rounded-xl text-sm w-full sm:w-auto" data-act="cancel">${esc(cancelText)}</button>
+                <button class="btn-${variant === 'info' ? 'gold' : 'danger'} px-4 py-2 rounded-xl text-sm w-full sm:w-auto" data-act="ok">${esc(confirmText)}</button>
+              </div>
+            </div>`;
+                    openModal('Confirm', html, { hideHeader: true });
+                    const modal = $('globalModal');
+                    const okBtn = $('modalBody').querySelector('[data-act="ok"]');
+                    const cancelBtn = $('modalBody').querySelector('[data-act="cancel"]');
+                    let settled = false;
+                    const finish = v => { if (settled) return; settled = true; closeModal(); resolve(v); };
+                    okBtn.addEventListener('click', () => finish(true));
+                    cancelBtn.addEventListener('click', () => finish(false));
+                    const outside = e => { if (e.target === modal) { modal.removeEventListener('click', outside); finish(false); } };
+                    modal.addEventListener('click', outside);
+                    const escHandler = e => { if (e.key === 'Escape') { document.removeEventListener('keydown', escHandler); finish(false); } };
+                    document.addEventListener('keydown', escHandler);
+                });
+            }
+            window.showConfirm = showConfirm;
+
+            /* ── theme ──────────────────────────────── */
+            window.toggleAdminTheme = function () {
+                const btn = document.querySelector('header button[onclick="toggleAdminTheme()"]');
+                if (btn) btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span>';
+                document.body.classList.toggle('light-theme');
+                const isLight = document.body.classList.contains('light-theme');
+                localStorage.setItem('adminTheme', isLight ? 'light' : 'dark');
+                requestAnimationFrame(() => {
+                    if (btn) btn.innerHTML = `<i data-lucide="${isLight ? 'sun' : 'moon'}" id="themeIcon" class="w-5 h-5"></i>`;
+                    if (window.lucide) lucide.createIcons();
+                    if (state.loaded.dashboard) renderRevenueChart();
+                });
+            };
+
+            function loadTheme() {
+                if (localStorage.getItem('adminTheme') === 'light') {
+                    document.body.classList.add('light-theme');
+                    $('themeIcon')?.setAttribute('data-lucide', 'sun');
+                }
+                if (window.lucide) lucide.createIcons();
+            }
+
+            /* ── nav ────────────────────────────────── */
+            const SECTION_TITLES = { dashboard: 'Dashboard', clients: 'Clients', bookings: 'Bookings', messages: 'Messages', settings: 'Settings' };
+            const SECTION_VIEWS = { dashboard: 'dashboardView', clients: 'clientsView', bookings: 'bookingsView', messages: 'messagesView', settings: 'settingsView' };
+
+            function switchSection(section) {
+                document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active-view'));
+                const view = SECTION_VIEWS[section];
+                if (view) $(view)?.classList.add('active-view');
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                document.querySelector(`.sidebar-link[data-section="${section}"]`)?.classList.add('active');
+                $('sectionTitle').textContent = SECTION_TITLES[section] || 'Admin';
+                closeMobileSidebar();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (!state.loaded[section]) {
+                    if (section === 'dashboard') loadDashboard();
+                    if (section === 'clients') loadClients();
+                    if (section === 'bookings') loadBookings();
+                    if (section === 'messages') loadMessages();
+                    if (section === 'settings') loadSettings();
+                }
+            }
+
+            function initNav() {
+                document.querySelectorAll('.sidebar-link[data-section]').forEach(link => {
+                    link.addEventListener('click', e => { e.preventDefault(); switchSection(link.dataset.section); });
+                });
+                $('mobileMenuBtn')?.addEventListener('click', e => {
+                    e.stopPropagation();
+                    $('adminSidebar').classList.toggle('mobile-open');
+                });
+                document.addEventListener('click', e => {
+                    const s = $('adminSidebar');
+                    if (window.innerWidth >= 1025) return;
+                    if (!s.classList.contains('mobile-open')) return;
+                    if (s.contains(e.target)) return;
+                    if (e.target === $('mobileMenuBtn') || $('mobileMenuBtn')?.contains(e.target)) return;
+                    closeMobileSidebar();
+                });
+            }
+            function closeMobileSidebar() { $('adminSidebar').classList.remove('mobile-open'); }
+
+            /* ── logout ─────────────────────────────── */
+            async function doLogout() {
+                const ok = await showConfirm({
+                    title: 'Sign out?',
+                    message: 'You will be returned to the login page.',
+                    confirmText: 'Sign out',
+                    cancelText: 'Stay signed in',
+                    variant: 'warning',
+                    icon: 'log-out'
+                });
+                if (!ok) return;
+                Loader.page('Signing you out…');
+                try {
+                    if (typeof window.logoutAdmin === 'function') await window.logoutAdmin();
+                    else { try { await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }); } catch { } window.location.replace('login.html'); }
+                } catch { window.location.replace('login.html'); }
+            }
+            window.doLogout = doLogout;
+
+            /* ═══════════════════════════════════════
+               DASHBOARD
+               ═══════════════════════════════════════ */
+            async function loadDashboard() {
+                Loader.showTop();
+                Loader.skeleton('recentBookingsList', { rows: 3, height: 44 });
+                Loader.statCards(['statRevenue', 'statClients', 'statOrders', 'statBookings']);
+                Loader.skeletonChart('revenueChart', true);
+                try {
+                    const data = await apiCall('/admin/dashboard');
+                    state.stats = data.stats || {};
+                    state.revenueSeries = data.revenueSeries || [];
+                    state.recentBookings = data.recentBookings || [];
+                    renderStats();
+                    renderRevenueChart();
+                    renderRecentBookings();
+                    state.loaded.dashboard = true;
+                } catch (err) {
+                    if (err.status === 401) return location.replace('login.html');
+                    toast(err.message || 'Could not load dashboard', 'error');
+                } finally {
+                    Loader.hideTop();
+                    Loader.clearStatCards();
+                    Loader.skeletonChart('revenueChart', false);
+                }
+            }
+
+            function renderStats() {
+                $('statRevenue').textContent = `$${Number(state.stats.totalRevenue || 0).toLocaleString()}`;
+                $('statClients').textContent = state.stats.activeClients ?? state.stats.clients ?? 0;
+                $('statOrders').textContent = state.stats.completedOrders ?? 0;
+                $('statBookings').textContent = state.stats.upcomingBookings ?? 0;
+            }
+
+            function renderRevenueChart() {
+                const canvas = $('revenueChart');
+                if (!canvas || !window.Chart) return;
+                if (state.charts.revenue) state.charts.revenue.destroy();
+                const ctx = canvas.getContext('2d');
+                const grad = ctx.createLinearGradient(0, 0, 0, canvas.clientHeight || 180);
+                grad.addColorStop(0, 'rgba(245,158,11,.35)');
+                grad.addColorStop(1, 'rgba(245,158,11,0)');
+                state.charts.revenue = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+                        datasets: [{
+                            label: 'Revenue ($)',
+                            data: state.revenueSeries,
+                            borderColor: 'rgba(245,158,11,1)',
+                            backgroundColor: grad,
+                            fill: true,
+                            tension: 0.35,
+                            pointBackgroundColor: 'rgba(245,158,11,1)',
+                            pointBorderColor: 'rgba(255,255,255,.9)',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', padding: 10, cornerRadius: 8 } },
+                        scales: {
+                            y: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,.05)' } },
+                            x: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            function renderRecentBookings() {
+                const host = $('recentBookingsList');
+                if (!host) return;
+                if (!state.recentBookings.length) {
+                    host.innerHTML = `<div class="empty-state"><i data-lucide="calendar"></i><span>No bookings yet.</span></div>`;
+                    if (window.lucide) lucide.createIcons();
+                    return;
+                }
+                host.innerHTML = state.recentBookings.map(b => {
+                    const cls = b.status === 'approved' ? 'badge-green'
+                        : b.status === 'declined' ? 'badge-red'
+                            : b.status === 'cancelled' ? 'badge-gray' : 'badge-gold';
+                    return `
+            <div class="flex items-center justify-between gap-2 p-2 rounded-lg" style="background:var(--bg-secondary)">
+              <div class="min-w-0">
+                <p class="font-medium truncate">${esc(b.clientName)}</p>
+                <p class="text-xs" style="color:var(--text-muted)">${esc(b.service)} · ${fmtDate(b.requested_at)} ${fmtTime(b.requested_at)}</p>
+              </div>
+              <span class="badge ${cls}">${esc(b.status)}</span>
+            </div>`;
+                }).join('');
+                if (window.lucide) lucide.createIcons();
+            }
+
+            /* ═══════════════════════════════════════
+               CLIENTS
+               ═══════════════════════════════════════ */
+            async function loadClients() {
+                Loader.showTop();
+                $('clientListTbody').innerHTML = Array.from({ length: 3 }).map(() =>
+                    `<tr><td colspan="6"><div class="skeleton-row"></div></td></tr>`
+                ).join('');
+                try {
+                    const data = await apiCall('/admin/clients');
+                    state.clients = data.clients || [];
+                    renderClients();
+                    state.loaded.clients = true;
+                } catch (err) {
+                    if (err.status === 401) return location.replace('login.html');
+                    toast(err.message || 'Could not load clients', 'error');
+                } finally {
+                    Loader.hideTop();
+                }
+            }
+
+            function renderClients() {
+                const tbody = $('clientListTbody');
+                if (!tbody) return;
+                const q = ($('clientSearch')?.value || '').toLowerCase().trim();
+                const filtered = state.clients.filter(c =>
+                    !q || c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q)
+                );
+                if (!filtered.length) {
+                    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i data-lucide="users"></i><span>No clients found.</span></div></td></tr>`;
+                    if (window.lucide) lucide.createIcons();
+                    return;
+                }
+                tbody.innerHTML = filtered.map(c => `
+          <tr>
+            <td class="font-medium">${esc(c.name)}</td>
+            <td style="color:var(--text-muted)">${esc(c.email)}</td>
+            <td>${esc(c.goal || '—')}</td>
+            <td>${c.latestWeightKg != null ? esc(c.latestWeightKg) + ' kg' : '—'}</td>
+            <td style="color:var(--text-muted)">${fmtRelative(c.lastActivity)}</td>
+            <td><button class="text-gold text-xs hover:underline" onclick="openClientDetail(${c.id})">View</button></td>
+          </tr>`).join('');
+                if (window.lucide) lucide.createIcons();
+            }
+            window.renderClients = renderClients;
+
+            window.openClientDetail = async function (userId) {
+                openModal('Client details', `<div class="empty-state"><div class="spinner big"></div><span>Loading…</span></div>`);
+                try {
+                    const data = await apiCall('/admin/clients/' + encodeURIComponent(userId));
+                    const c = data.client || {};
+                    const html = `
+            <div class="space-y-4">
+              <div>
+                <h3 class="font-display text-xl font-bold text-gold">${esc(c.name)}</h3>
+                <p class="text-xs" style="color:var(--text-muted)">${esc(c.email)}</p>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="p-2 rounded-lg" style="background:var(--bg-secondary)">
+                  <p class="text-xs" style="color:var(--text-muted)">Meals</p>
+                  <p class="font-display text-xl font-bold text-gold">${data.meals.length}</p>
+                </div>
+                <div class="p-2 rounded-lg" style="background:var(--bg-secondary)">
+                  <p class="text-xs" style="color:var(--text-muted)">Workouts</p>
+                  <p class="font-display text-xl font-bold text-gold">${data.workouts.length}</p>
+                </div>
+                <div class="p-2 rounded-lg" style="background:var(--bg-secondary)">
+                  <p class="text-xs" style="color:var(--text-muted)">Weigh-ins</p>
+                  <p class="font-display text-xl font-bold text-gold">${data.progress.length}</p>
+                </div>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-1">Recent workouts <span class="text-xs" style="color:var(--text-muted)">(click pencil to edit)</span></h4>
+                ${data.workouts.length
+                            ? data.workouts.slice(0, 8).map(w => `
+                              <div class="flex justify-between items-center text-sm p-1.5 rounded mb-1" style="background:var(--bg-secondary)">
+                                <span class="truncate">${esc(w.workout_name)} · ${w.duration_minutes || 0} min · ${fmtDate(w.completed_at)}</span>
+                                <button class="icon-btn" onclick="editWorkout(${w.id})" title="Edit"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                              </div>`).join('')
+                            : '<p class="text-xs" style="color:var(--text-muted)">None yet.</p>'}
+              </div>
+              <div>
+                <h4 class="font-semibold mb-1">Recent meals <span class="text-xs" style="color:var(--text-muted)">(click pencil to edit)</span></h4>
+                ${data.meals.length
+                            ? data.meals.slice(0, 8).map(m => `
+                              <div class="flex justify-between items-center text-sm p-1.5 rounded mb-1" style="background:var(--bg-secondary)">
+                                <span class="truncate">${esc(m.meal_name)} · ${m.calories || 0} kcal</span>
+                                <button class="icon-btn" onclick="editMeal(${m.id})" title="Edit"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                              </div>`).join('')
+                            : '<p class="text-xs" style="color:var(--text-muted)">None yet.</p>'}
+              </div>
+            </div>`;
+                    $('modalBody').innerHTML = html;
+                    if (window.lucide) lucide.createIcons();
+                } catch (err) {
+                    $('modalBody').innerHTML = `<p class="text-sm text-red-400">${esc(err.message || 'Failed to load')}</p>`;
+                }
+            };
+
+            window.editWorkout = async function (workoutId) {
+                const existing = prompt('Edit workout name (leave blank to keep):');
+                if (!existing) return;
+                const durationStr = prompt('Duration in minutes:', '60');
+                const duration = Number(durationStr);
+                if (!duration || duration < 1) return;
+                try {
+                    await apiCall('/admin/workouts/' + encodeURIComponent(workoutId), {
+                        method: 'PATCH',
+                        body: { workout_name: existing, duration_minutes: duration }
+                    });
+                    toast('Workout updated', 'success');
+                    closeModal();
+                } catch (err) { toast(err.message || 'Could not update workout', 'error'); }
+            };
+
+            window.editMeal = async function (mealId) {
+                const existing = prompt('Edit meal name (leave blank to keep):');
+                if (!existing) return;
+                const calStr = prompt('Calories:', '500');
+                const cal = Number(calStr);
+                if (Number.isNaN(cal)) return;
+                try {
+                    await apiCall('/admin/meals/' + encodeURIComponent(mealId), {
+                        method: 'PATCH',
+                        body: { meal_name: existing, calories: cal }
+                    });
+                    toast('Meal updated', 'success');
+                    closeModal();
+                } catch (err) { toast(err.message || 'Could not update meal', 'error'); }
+            };
+
+            /* ═══════════════════════════════════════
+               BOOKINGS
+               ═══════════════════════════════════════ */
+            async function loadBookings() {
+                Loader.showTop();
+                $('bookingListTbody').innerHTML = Array.from({ length: 3 }).map(() =>
+                    `<tr><td colspan="5"><div class="skeleton-row"></div></td></tr>`
+                ).join('');
+                try {
+                    const data = await apiCall('/admin/bookings');
+                    state.bookings = data.bookings || [];
+                    renderBookings();
+                    state.loaded.bookings = true;
+                } catch (err) {
+                    if (err.status === 401) return location.replace('login.html');
+                    toast(err.message || 'Could not load bookings', 'error');
+                } finally { Loader.hideTop(); }
+            }
+
+            function renderBookings() {
+                const tbody = $('bookingListTbody');
+                if (!tbody) return;
+                const filter = $('bookingFilter')?.value || 'all';
+                const q = ($('bookingSearch')?.value || '').toLowerCase().trim();
+                const filtered = state.bookings.filter(b => {
+                    if (filter !== 'all' && b.status !== filter) return false;
+                    if (q && !((b.clientName || '').toLowerCase().includes(q) || (b.service || '').toLowerCase().includes(q))) return false;
+                    return true;
+                });
+                if (!filtered.length) {
+                    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i data-lucide="calendar"></i><span>No ${filter === 'all' ? '' : filter} bookings.</span></div></td></tr>`;
+                    if (window.lucide) lucide.createIcons();
+                    return;
+                }
+                tbody.innerHTML = filtered.map(b => {
+                    const cls = b.status === 'approved' ? 'badge-green'
+                        : b.status === 'declined' ? 'badge-red'
+                            : b.status === 'cancelled' ? 'badge-gray' : 'badge-gold';
+                    const canAct = b.status === 'pending';
+                    return `
+            <tr>
+              <td class="font-medium">${esc(b.clientName || '—')}</td>
+              <td>${esc(b.service)}</td>
+              <td>${fmtDate(b.requested_at)} · ${fmtTime(b.requested_at)}</td>
+              <td><span class="badge ${cls}">${esc(b.status)}</span></td>
+              <td>
+                ${canAct ? `
+                  <div class="flex gap-1">
+                    <button class="btn-gold px-2 py-1 rounded text-xs" onclick="approveBooking('${esc(b.id)}')">Approve</button>
+                    <button class="btn-danger px-2 py-1 rounded text-xs" onclick="declineBooking('${esc(b.id)}')">Decline</button>
+                  </div>` : '—'}
+              </td>
+            </tr>`;
+                }).join('');
+                if (window.lucide) lucide.createIcons();
+            }
+            window.renderBookings = renderBookings;
+
+            window.approveBooking = async function (id) {
+                const ok = await showConfirm({
+                    title: 'Approve this booking?',
+                    message: 'The client will be notified that their session is confirmed.',
+                    confirmText: 'Approve',
+                    cancelText: 'Cancel',
+                    variant: 'info',
+                    icon: 'check-circle'
+                });
+                if (!ok) return;
+                try {
+                    await apiCall('/admin/bookings/' + encodeURIComponent(id), { method: 'PATCH', body: { status: 'approved' } });
+                    toast('Booking approved', 'success');
+                    await loadBookings();
+                } catch (err) { toast(err.message || 'Could not approve', 'error'); }
+            };
+
+            window.declineBooking = async function (id) {
+                const ok = await showConfirm({
+                    title: 'Decline this booking?',
+                    message: 'The client will see this booking as declined.',
+                    confirmText: 'Decline',
+                    cancelText: 'Keep pending',
+                    variant: 'danger',
+                    icon: 'x-circle'
+                });
+                if (!ok) return;
+                try {
+                    await apiCall('/admin/bookings/' + encodeURIComponent(id), { method: 'PATCH', body: { status: 'declined' } });
+                    toast('Booking declined', 'success');
+                    await loadBookings();
+                } catch (err) { toast(err.message || 'Could not decline', 'error'); }
+            };
+
+            /* ═══════════════════════════════════════
+               MESSAGES — renders thread using inline messaging
+               ═══════════════════════════════════════ */
+            async function loadMessages() {
+                Loader.showTop();
+                try {
+                    const [clientsData, msgsData] = await Promise.all([
+                        apiCall('/admin/clients'),
+                        apiCall('/admin/messages').catch(() => ({ messages: [] }))
+                    ]);
+                    state.clients = clientsData.clients || [];
+                    // compute unread per client
+                    const unread = {};
+                    (msgsData.messages || []).forEach(m => {
+                        if (Number(m.sender_id) === Number(m.user_id)) unread[m.user_id] = (unread[m.user_id] || 0) + 1;
+                    });
+                    state.unreadByClient = unread;
+                    renderMessageThreads();
+                    updateUnreadBadge();
+                    state.loaded.messages = true;
+                } catch (err) {
+                    if (err.status === 401) return location.replace('login.html');
+                    toast(err.message || 'Could not load messages', 'error');
+                } finally { Loader.hideTop(); }
+            }
+
+            function updateUnreadBadge() {
+                const total = Object.values(state.unreadByClient || {}).reduce((a, b) => a + b, 0);
+                const badge = $('unreadBadge');
+                if (badge) {
+                    badge.textContent = total;
+                    badge.style.display = total > 0 ? 'inline-flex' : 'none';
+                }
+            }
+
+            function renderMessageThreads() {
+                const host = $('msgThreadList');
+                if (!host) return;
+                const q = ($('msgSearch')?.value || '').toLowerCase().trim();
+                const filtered = state.clients.filter(c =>
+                    !q || c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q)
+                );
+                if (!filtered.length) {
+                    host.innerHTML = `<div class="empty-state"><i data-lucide="users"></i><span>No clients found.</span></div>`;
+                    if (window.lucide) lucide.createIcons();
+                    return;
+                }
+                host.innerHTML = filtered.map(c => {
+                    const unread = (state.unreadByClient || {})[c.id] || 0;
+                    return `
+          <div class="p-4 flex justify-between items-center hover:bg-[var(--bg-secondary)] cursor-pointer border-b border-[var(--border-color)]"
+               onclick="openChatThread(${c.id})">
+            <div class="min-w-0">
+              <p class="font-semibold truncate">${esc(c.name)}</p>
+              <p class="text-xs truncate" style="color:var(--text-muted)">${esc(c.email)}</p>
+            </div>
+            ${unread ? `<span class="badge badge-red">${unread}</span>` : `<i data-lucide="chevron-right" class="w-4 h-4 text-gold"></i>`}
+          </div>`;
+                }).join('');
+                if (window.lucide) lucide.createIcons();
+            }
+            window.renderMessageThreads = renderMessageThreads;
+
+            window.openChatThread = async function (userId) {
+                M.activeUserId = userId;
+                M.replyTo = null;
+                M.pendingAttachment = null;
+                M.messages = [];
+                cancelReply();
+                updateAttachmentPreview();
+
+                const client = state.clients.find(c => Number(c.id) === Number(userId));
+                $('chatEmpty').style.display = 'none';
+                $('chatPanel').style.display = 'block';
+                $('chatClientName').textContent = client?.name || 'Client';
+                $('chatClientEmail').textContent = client?.email || '';
+                $('chatAvatar').textContent = (client?.name || 'C')[0].toUpperCase();
+
+                const host = $('chatMessages');
+                host.innerHTML = `<div class="empty-state"><div class="spinner big"></div></div>`;
+                try {
+                    const data = await apiCall('/admin/clients/' + encodeURIComponent(userId));
+                    M.messages = data.messages || [];
+                    state.threads[userId] = M.messages;
+                    renderChatMessages();
+                    startTypingPoll();
+                } catch (err) {
+                    host.innerHTML = `<p class="text-sm text-red-400">${esc(err.message || 'Could not load thread')}</p>`;
+                }
+            };
+
+            function renderChatMessages() {
+                const host = $('chatMessages');
+                const msgs = M.messages || [];
+                const coachId = state.user?.id;
+                if (!msgs.length) {
+                    host.innerHTML = `<div class="empty-state"><i data-lucide="message-square"></i><span>No messages yet — say hello.</span></div>`;
+                    if (window.lucide) lucide.createIcons();
+                    return;
+                }
+                host.innerHTML = msgs.map(m => {
+                    const own = Number(m.sender_id) === Number(coachId);
+                    const replies = m.reply_to
+                        ? `<div class="reply-quote">↩ ${esc((msgs.find(x => Number(x.id) === Number(m.reply_to))?.body || 'message').slice(0, 80))}</div>`
+                        : '';
+                    const attachmentsHtml = (m.attachments || []).map(a => {
+                        if ((a.mime_type || '').startsWith('image/')) {
+                            return `<a href="${esc(a.url)}" target="_blank" class="msg-attachment-img">
+                              <img src="${esc(a.url)}" alt="${esc(a.original_name)}" loading="lazy">
+                            </a>`;
+                        }
+                        return `<a href="${esc(a.url)}" target="_blank" class="msg-attachment-file">
+                          <i data-lucide="paperclip" class="w-4 h-4"></i>
+                          <span>${esc(a.original_name)}</span>
+                          <span class="text-xs opacity-60">${Math.round((a.size_bytes || 0) / 1024)} KB</span>
+                        </a>`;
+                    }).join('');
+                    const reactionMap = {};
+                    (m.reactions || []).forEach(r => { (reactionMap[r.emoji] ||= []).push(r); });
+                    const reactionsHtml = Object.entries(reactionMap).map(([emoji, list]) => {
+                        const mine = list.some(r => Number(r.user_id) === Number(coachId));
+                        return `<button class="reaction-pill ${mine ? 'mine' : ''}" onclick="toggleReaction(${m.id}, '${emoji}')">${emoji} ${list.length}</button>`;
+                    }).join('');
+                    const hoverReactions = M.reactionsEnabled ? `
+                      <div class="msg-hover-reactions">
+                        ${['👍','❤️','😂'].map(e => `<button onclick="toggleReaction(${m.id}, '${e}')">${e}</button>`).join('')}
+                        <button onclick="startReply(${m.id})" title="Reply"><i data-lucide="corner-up-left" class="w-3.5 h-3.5"></i></button>
+                      </div>` : '';
+                    return `
+                      <div class="msg-row ${own ? 'own' : 'other'}" data-msg-id="${m.id}">
+                        <div class="msg-bubble ${own ? 'bubble-own' : 'bubble-other'}">
+                          ${replies}
+                          ${m.body ? `<div class="msg-body">${esc(m.body)}</div>` : ''}
+                          ${attachmentsHtml}
+                          ${reactionsHtml ? `<div class="msg-reactions">${reactionsHtml}</div>` : ''}
+                        </div>
+                        ${hoverReactions}
+                        <div class="msg-meta">${own ? 'You' : 'Client'} · ${fmtDate(m.created_at)} ${fmtTime(m.created_at)}</div>
+                      </div>`;
+                }).join('');
+                host.scrollTop = host.scrollHeight;
+                if (window.lucide) lucide.createIcons();
+            }
+            window.renderChatMessages = renderChatMessages;
+
+            window.sendAdminReply = async function () {
+                const input = $('chatReplyInput');
+                const text = input.value.trim();
+                if ((!text && !M.pendingAttachment) || !M.activeUserId) return;
+
+                const sendBtn = $('sendBtn');
+                const sendLabel = $('sendBtnLabel');
+                if (sendBtn) sendBtn.disabled = true;
+                if (sendLabel) sendLabel.textContent = 'Sending…';
+
+                const optimistic = {
+                    id: 'temp-' + Date.now(),
+                    sender_id: state.user?.id || 0,
+                    body: text,
+                    reply_to: M.replyTo ? M.replyTo.id : null,
+                    attachments: M.pendingAttachment ? [M.pendingAttachment] : [],
+                    reactions: [],
+                    created_at: new Date().toISOString()
+                };
+                M.messages.push(optimistic);
+                renderChatMessages();
+                beep('send');
+
+                try {
+                    const payload = { body: text || '' };
+                    if (M.replyTo) payload.reply_to = M.replyTo.id;
+                    if (M.pendingAttachment) payload.attachment_id = M.pendingAttachment.id;
+
+                    const { message } = await apiCall('/admin/messages/' + encodeURIComponent(M.activeUserId), {
+                        method: 'POST', body: payload
+                    });
+                    M.messages = M.messages.filter(x => x.id !== optimistic.id);
+                    M.messages.push(message);
+                    renderChatMessages();
+                    input.value = '';
+                    M.replyTo = null;
+                    M.pendingAttachment = null;
+                    cancelReply();
+                    updateAttachmentPreview();
+                } catch (err) {
+                    M.messages = M.messages.filter(x => x.id !== optimistic.id);
+                    renderChatMessages();
+                    toast(err.message || 'Could not send message', 'error');
+                    input.value = text;
+                } finally {
+                    if (sendBtn) sendBtn.disabled = false;
+                    if (sendLabel) sendLabel.textContent = 'Send';
+                }
+            };
+
+            /* ═══════════════════════════════════════
+               MESSAGING — helpers exposed globally
+               ═══════════════════════════════════════ */
+            window.handleFileSelected = async function (event) {
+                const file = event.target.files?.[0];
+                event.target.value = '';
+                if (!file) return;
+                if (!M.attachmentsEnabled) { toast('Attachments disabled in settings', 'warning'); return; }
+                if (file.size > 10 * 1024 * 1024) { toast('File too large (max 10 MB)', 'error'); return; }
+
+                const preview = $('attachmentPreview');
+                preview.style.display = 'flex';
+                preview.innerHTML = `<div class="attach-chip loading"><div class="spinner" style="width:12px;height:12px"></div> Uploading ${esc(file.name)}…</div>`;
+
+                try {
+                    const fd = new FormData();
+                    fd.append('file', file);
+                    const res = await fetch(`/api/admin/messages/${encodeURIComponent(M.activeUserId)}/attachments`, {
+                        method: 'POST', credentials: 'same-origin', body: fd
+                    });
+                    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `Upload failed (${res.status})`);
+                    const data = await res.json();
+                    M.pendingAttachment = data.attachment;
+                    updateAttachmentPreview();
+                    toast('File ready to send', 'success');
+                } catch (err) {
+                    preview.innerHTML = `<div class="attach-chip error">Upload failed</div>`;
+                    toast(err.message || 'Upload failed', 'error');
+                    setTimeout(() => { preview.style.display = 'none'; }, 2000);
+                }
+            };
+
+            function updateAttachmentPreview() {
+                const preview = $('attachmentPreview');
+                if (!preview) return;
+                if (!M.pendingAttachment) { preview.style.display = 'none'; preview.innerHTML = ''; return; }
+                const a = M.pendingAttachment;
+                preview.style.display = 'flex';
+                preview.innerHTML = `
+                  <div class="attach-chip">
+                    <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                    <span>${esc(a.original_name)}</span>
+                    <button onclick="cancelAttachment()" aria-label="Remove"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                  </div>`;
+                if (window.lucide) lucide.createIcons();
+            }
+
+            window.cancelAttachment = function () { M.pendingAttachment = null; updateAttachmentPreview(); };
+
+            window.toggleEmojiPicker = function () {
+                const picker = $('emojiPicker');
+                if (!picker) return;
+                const open = picker.style.display !== 'none';
+                if (open) { picker.style.display = 'none'; return; }
+                const grid = picker.querySelector('.emoji-grid');
+                if (grid && !grid.dataset.built) {
+                    grid.innerHTML = EMOJI_LIST.map(e => `<button type="button" onclick="insertEmoji('${e}')">${e}</button>`).join('');
+                    grid.dataset.built = '1';
+                }
+                picker.style.display = 'block';
+            };
+
+            window.insertEmoji = function (emoji) {
+                const input = $('chatReplyInput');
+                if (!input) return;
+                input.value += emoji;
+                input.focus();
+                $('emojiPicker').style.display = 'none';
+            };
+
+            window.startReply = function (messageId) {
+                const m = M.messages.find(x => Number(x.id) === Number(messageId));
+                if (!m) return;
+                M.replyTo = { id: m.id, body: m.body || '[attachment]' };
+                const preview = $('replyPreview');
+                const body = $('replyPreviewBody');
+                if (preview && body) {
+                    body.textContent = M.replyTo.body.slice(0, 100);
+                    preview.style.display = 'flex';
+                }
+                $('chatReplyInput')?.focus();
+            };
+
+            window.cancelReply = function () {
+                M.replyTo = null;
+                const preview = $('replyPreview');
+                if (preview) preview.style.display = 'none';
+            };
+
+            window.toggleReaction = async function (messageId, emoji) {
+                if (!M.reactionsEnabled) { toast('Reactions disabled', 'warning'); return; }
+                const m = M.messages.find(x => Number(x.id) === Number(messageId));
+                if (!m) return;
+                const coachId = state.user?.id || 0;
+                m.reactions = m.reactions || [];
+                const idx = m.reactions.findIndex(r => Number(r.user_id) === Number(coachId) && r.emoji === emoji);
+                if (idx >= 0) m.reactions.splice(idx, 1);
+                else m.reactions.push({ user_id: coachId, emoji });
+                renderChatMessages();
+                try {
+                    await apiCall(`/admin/messages/${encodeURIComponent(messageId)}/reactions`, {
+                        method: 'POST', body: { emoji }
+                    });
+                } catch (err) {
+                    toast(err.message || 'Could not react', 'error');
+                    if (M.activeUserId) {
+                        const data = await apiCall('/admin/clients/' + encodeURIComponent(M.activeUserId));
+                        M.messages = data.messages || [];
+                        renderChatMessages();
+                    }
+                }
+            };
+
+            let typingSignalTimer = null;
+            window.onComposerInput = function () {
+                if (!M.typingEnabled || !M.activeUserId) return;
+                clearTimeout(typingSignalTimer);
+                apiCall(`/admin/messages/${encodeURIComponent(M.activeUserId)}/typing`, { method: 'POST', body: {} }).catch(() => {});
+                typingSignalTimer = setTimeout(() => { typingSignalTimer = null; }, 2000);
+                const ta = $('chatReplyInput');
+                if (ta) { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 120) + 'px'; }
+            };
+
+            window.onComposerKey = function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAdminReply(); }
+            };
+
+            function startTypingPoll() {
+                stopTypingPoll();
+                if (!M.typingEnabled || !M.activeUserId) return;
+                M.typingPollTimer = setInterval(async () => {
+                    if (!M.activeUserId) return;
+                    try {
+                        const { typing } = await apiCall(`/admin/messages/${encodeURIComponent(M.activeUserId)}/typing`);
+                        const el = $('chatTypingIndicator');
+                        if (el) el.style.display = typing ? 'inline' : 'none';
+                    } catch (_) {}
+                }, 3000);
+            }
+            function stopTypingPoll() {
+                if (M.typingPollTimer) { clearInterval(M.typingPollTimer); M.typingPollTimer = null; }
+            }
+
+            window.toggleSound = function () {
+                M.soundEnabled = !M.soundEnabled;
+                const icon = $('soundIcon');
+                const label = $('soundLabel');
+                if (icon) icon.setAttribute('data-lucide', M.soundEnabled ? 'volume-2' : 'volume-x');
+                if (label) label.textContent = M.soundEnabled ? 'Sound on' : 'Sound off';
+                if (window.lucide) lucide.createIcons();
+                toast(M.soundEnabled ? 'Sound enabled' : 'Sound muted', 'info');
+            };
+
+            /* ═══════════════════════════════════════
+               SETTINGS — extended with messaging toggles
+               ═══════════════════════════════════════ */
+            async function loadSettings() {
+                Loader.showTop();
+                try {
+                    const { settings } = await apiCall('/admin/settings');
+                    $('businessName').value = settings.business_name || settings.businessName || '';
+                    $('contactEmail').value = settings.contact_email || settings.contactEmail || '';
+                    if ($('toggleSound')) $('toggleSound').checked = settings.sound_enabled !== false;
+                    if ($('toggleTyping')) $('toggleTyping').checked = settings.typing_indicator_enabled !== false;
+                    if ($('toggleReactions')) $('toggleReactions').checked = settings.reactions_enabled !== false;
+                    if ($('toggleAttachments')) $('toggleAttachments').checked = settings.attachments_enabled !== false;
+                    if ($('toggleReceipts')) $('toggleReceipts').checked = settings.read_receipts_enabled !== false;
+                    M.soundEnabled = settings.sound_enabled !== false;
+                    M.typingEnabled = settings.typing_indicator_enabled !== false;
+                    M.reactionsEnabled = settings.reactions_enabled !== false;
+                    M.attachmentsEnabled = settings.attachments_enabled !== false;
+                    M.receiptsEnabled = settings.read_receipts_enabled !== false;
+                    state.loaded.settings = true;
+                } catch (err) {
+                    toast(err.message || 'Could not load settings', 'error');
+                } finally { Loader.hideTop(); }
+            }
+
+            window.saveAdminSettings = async function () {
+                const btn = $('saveSettingsBtn');
+                const businessName = $('businessName').value.trim();
+                const contactEmail = $('contactEmail').value.trim();
+                if (!businessName) { toast('Business name is required', 'warning'); return; }
+                Loader.button(btn, true, 'Saving…');
+                try {
+                    const payload = {
+                        business_name: businessName,
+                        contact_email: contactEmail,
+                        sound_enabled: $('toggleSound')?.checked ?? true,
+                        typing_indicator_enabled: $('toggleTyping')?.checked ?? true,
+                        reactions_enabled: $('toggleReactions')?.checked ?? true,
+                        attachments_enabled: $('toggleAttachments')?.checked ?? true,
+                        read_receipts_enabled: $('toggleReceipts')?.checked ?? true
+                    };
+                    await apiCall('/admin/settings', { method: 'PUT', body: payload });
+                    M.soundEnabled = payload.sound_enabled;
+                    M.typingEnabled = payload.typing_indicator_enabled;
+                    M.reactionsEnabled = payload.reactions_enabled;
+                    M.attachmentsEnabled = payload.attachments_enabled;
+                    M.receiptsEnabled = payload.read_receipts_enabled;
+                    toast('Settings saved', 'success');
+                } catch (err) {
+                    toast(err.message || 'Could not save settings', 'error');
+                } finally {
+                    Loader.button(btn, false);
+                }
+            };
+
+            /* ═══════════════════════════════════════
+               EXPORT + SEARCH CLEAR
+               ═══════════════════════════════════════ */
+            window.exportData = function (type, format) {
+                const url = `/api/admin/export/${encodeURIComponent(type)}?format=${encodeURIComponent(format)}`;
+                fetch(url, { credentials: 'same-origin' })
+                    .then(async res => {
+                        if (!res.ok) throw new Error(`Export failed (${res.status})`);
+                        const blob = await res.blob();
+                        const a = document.createElement('a');
+                        a.href = URL.createObjectURL(blob);
+                        a.download = `${type}-${new Date().toISOString().slice(0, 10)}.${format}`;
+                        a.click();
+                        URL.revokeObjectURL(a.href);
+                        toast(`${type} exported as ${format.toUpperCase()}`, 'success');
+                    })
+                    .catch(err => toast(err.message || 'Export failed', 'error'));
+            };
+
+            window.clearSearch = function (id) {
+                const el = $(id);
+                if (!el) return;
+                el.value = '';
+                el.dispatchEvent(new Event('input'));
+                el.focus();
+            };
+
+            /* ═══════════════════════════════════════
+               BOOT
+               ═══════════════════════════════════════ */
+            function boot() {
+                loadTheme();
+                initNav();
+                if (window.lucide) lucide.createIcons();
+
+                if (window.currentUser) {
+                    state.user = window.currentUser;
+                    $('avatarInitial').textContent = (state.user.name || 'A')[0].toUpperCase();
+                    loadDashboard();
+                } else {
+                    document.addEventListener('dashboard:ready', () => {
+                        state.user = window.currentUser;
+                        $('avatarInitial').textContent = (state.user?.name || 'A')[0].toUpperCase();
+                        loadDashboard();
+                    }, { once: true });
+                    setTimeout(() => {
+                        if (!state.booted && !window.currentUser) {
+                            state.booted = true;
+                            loadDashboard().catch(() => {});
+                        }
+                    }, 2500);
+                }
+            }
+
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+            else boot();
+        })();
+    </script>
 </body>
+
 </html>

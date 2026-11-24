@@ -1,22 +1,65 @@
 const express = require('express');
+const crypto = require('node:crypto');
+const path = require('node:path');
+const fs = require('node:fs/promises');
+const multer = require('multer');
 const { allocateId, getCollection, getDocument, listDocuments } = require('../firestore');
 const { requireAuth, requireRole } = require('../middleware/auth');
+const config = require('../config');
 
 const router = express.Router();
-
-// Every route in this file requires a logged-in client.
 router.use(requireAuth, requireRole('client'));
 
-/* ============================================================
+/* ═══════════════════════════════════════════════════════
+   FILE UPLOADS (attachments)
+   ═══════════════════════════════════════════════════════ */
+const uploadsDir = path.resolve(
+  config.uploadDirectory || path.join(__dirname, '../../../storage/uploads'),
+  'messages'
+);
+fs.mkdir(uploadsDir, { recursive: true }).catch(() => {});
+
+const ALLOWED_MIME = new Set([
+  'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+  'application/pdf', 'text/plain', 'application/zip',
+  'audio/mpeg', 'audio/webm', 'audio/ogg',
+  'video/mp4', 'video/webm'
+]);
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_FILE_SIZE, files: 1 },
+  fileFilter: (_req, file, cb) => {
+    if (!ALLOWED_MIME.has(file.mimetype)) return cb(new Error('Unsupported file type'));
+    cb(null, true);
+  }
+});
+
+/* ═══════════════════════════════════════════════════════
+   TYPING STATE — in-memory, per-process
+   Coach polls GET /api/admin/messages/:userId/typing
+   ═══════════════════════════════════════════════════════ */
+const typingState = new Map();
+const TYPING_TTL_MS = 5000;
+
+function markTyping(userId, whoId) {
+  typingState.set(Number(userId), { whoId, until: Date.now() + TYPING_TTL_MS });
+}
+function isTyping(userId) {
+  const entry = typingState.get(Number(userId));
+  if (!entry) return false;
+  if (entry.until < Date.now()) { typingState.delete(Number(userId)); return false; }
+  return true;
+}
+
+/* ═══════════════════════════════════════════════════════
    TIMESTAMP NORMALIZATION
-   Firestore stores `new Date()` as a Timestamp object. JSON.stringify
-   serializes that as { _seconds, _nanoseconds } — NOT an ISO string —
-   which makes every `new Date(x)` on the frontend return "Invalid Date".
-   Normalize timestamp fields to ISO strings before sending JSON.
-   ============================================================ */
+   ═══════════════════════════════════════════════════════ */
 const TIMESTAMP_FIELDS = [
   'recorded_at', 'logged_at', 'completed_at',
-  'requested_at', 'created_at', 'updated_at'
+  'requested_at', 'created_at', 'updated_at',
+  'cancelled_at', 'approved_at', 'declined_at'
 ];
 
 function normalizeTimestamps(row) {
@@ -25,22 +68,26 @@ function normalizeTimestamps(row) {
   for (const key of TIMESTAMP_FIELDS) {
     const value = out[key];
     if (!value) continue;
-    if (typeof value === 'string') continue;                // already ISO
+    if (typeof value === 'string') continue;
     if (value instanceof Date) { out[key] = value.toISOString(); continue; }
-    if (typeof value.toDate === 'function') {               // Firestore Timestamp
-      out[key] = value.toDate().toISOString();
-    } else if (typeof value._seconds === 'number') {        // serialized Timestamp
-      out[key] = new Date(value._seconds * 1000).toISOString();
-    } else if (typeof value.seconds === 'number') {
-      out[key] = new Date(value.seconds * 1000).toISOString();
-    }
+    if (typeof value.toDate === 'function') out[key] = value.toDate().toISOString();
+    else if (typeof value._seconds === 'number') out[key] = new Date(value._seconds * 1000).toISOString();
+    else if (typeof value.seconds === 'number') out[key] = new Date(value.seconds * 1000).toISOString();
   }
   return out;
 }
 
-function normalizeArray(rows) {
-  return Array.isArray(rows) ? rows.map(normalizeTimestamps) : [];
-}
+const normalizeArray = (rows) => Array.isArray(rows) ? rows.map(normalizeTimestamps) : [];
+
+const parseTimestamp = (value) => {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+  if (typeof value.toDate === 'function') return value.toDate();
+  if (typeof value._seconds === 'number') return new Date(value._seconds * 1000);
+  if (typeof value.seconds === 'number') return new Date(value.seconds * 1000);
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+};
 
 /* ============================================================
    DASHBOARD
@@ -50,18 +97,18 @@ router.get('/dashboard', async (request, response) => {
   const [profileSnapshot, progress, meals, workouts, bookings, messages] = await Promise.all([
     getDocument('client_profiles', userId).get(),
     listDocuments('progress_entries', { filters: [['user_id', '==', userId]], orderBy: [['recorded_at', 'desc']], limit: 30 }),
-    listDocuments('meal_logs', { filters: [['user_id', '==', userId]], orderBy: [['logged_at', 'desc']], limit: 20 }),
-    listDocuments('workout_logs', { filters: [['user_id', '==', userId]], orderBy: [['completed_at', 'desc']], limit: 20 }),
-    listDocuments('bookings', { filters: [['user_id', '==', userId]], orderBy: [['requested_at', 'desc']], limit: 20 }),
-    listDocuments('messages', { filters: [['user_id', '==', userId]], orderBy: [['created_at', 'desc']], limit: 50 })
+    listDocuments('meal_logs',        { filters: [['user_id', '==', userId]], orderBy: [['logged_at', 'desc']],    limit: 20 }),
+    listDocuments('workout_logs',     { filters: [['user_id', '==', userId]], orderBy: [['completed_at', 'desc']], limit: 20 }),
+    listDocuments('bookings',         { filters: [['user_id', '==', userId]], orderBy: [['requested_at', 'desc']], limit: 20 }),
+    listDocuments('messages',         { filters: [['user_id', '==', userId]], orderBy: [['created_at', 'desc']],   limit: 50 })
   ]);
   const profile = profileSnapshot.exists ? profileSnapshot.data() : {};
 
-  // Compute streak server-side: consecutive days with at least one workout.
+  // streak calculation — fixed to use parseTimestamp
   const workoutDays = new Set(
     workouts
-      .map(w => new Date(w.completed_at))
-      .filter(d => !Number.isNaN(d.getTime()))
+      .map(w => parseTimestamp(w.completed_at))
+      .filter(d => d && !Number.isNaN(d.getTime()))
       .map(d => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`)
   );
   let streak = 0;
@@ -79,7 +126,6 @@ router.get('/dashboard', async (request, response) => {
     }
   }
 
-  // Derive achievements progress from real data.
   const achievements = [
     { icon: 'flame',  name: '7-Day Streak',       desc: 'Train 7 days in a row', progress: Math.min(streak, 7), target: 7 },
     { icon: 'trophy', name: 'Iron Warrior',       desc: '50 workouts completed', progress: workouts.length,       target: 50 },
@@ -120,24 +166,28 @@ router.patch('/profile', async (request, response) => {
   const profileRef = getDocument('client_profiles', userId);
   const currentSnapshot = await profileRef.get();
   const current = currentSnapshot.exists ? currentSnapshot.data() : { phone: null, goal: null, height_cm: null };
-  if ((Object.hasOwn(request.body, 'name') && typeof request.body.name !== 'string') ||
-      (Object.hasOwn(request.body, 'phone') && request.body.phone !== null && typeof request.body.phone !== 'string') ||
-      (Object.hasOwn(request.body, 'goal') && request.body.goal !== null && typeof request.body.goal !== 'string') ||
-      (Object.hasOwn(request.body, 'height_cm') && request.body.height_cm !== null &&
-        typeof request.body.height_cm !== 'string' && typeof request.body.height_cm !== 'number')) {
+
+  const body = request.body || {};
+  if ((Object.hasOwn(body, 'name') && typeof body.name !== 'string') ||
+      (Object.hasOwn(body, 'phone') && body.phone !== null && typeof body.phone !== 'string') ||
+      (Object.hasOwn(body, 'goal') && body.goal !== null && typeof body.goal !== 'string') ||
+      (Object.hasOwn(body, 'height_cm') && body.height_cm !== null &&
+        typeof body.height_cm !== 'string' && typeof body.height_cm !== 'number')) {
     return response.status(400).json({ error: 'Profile values are invalid' });
   }
-  const name = Object.hasOwn(request.body, 'name') ? request.body.name.trim() : undefined;
-  const phone = Object.hasOwn(request.body, 'phone')
-    ? (request.body.phone === null ? null : String(request.body.phone).trim())
+
+  const name = Object.hasOwn(body, 'name') ? body.name.trim() : undefined;
+  const phone = Object.hasOwn(body, 'phone')
+    ? (body.phone === null ? null : String(body.phone).trim())
     : current.phone;
-  const goal = Object.hasOwn(request.body, 'goal')
-    ? (request.body.goal === null ? null : String(request.body.goal).trim())
+  const goal = Object.hasOwn(body, 'goal')
+    ? (body.goal === null ? null : String(body.goal).trim())
     : current.goal;
-  const heightInput = request.body.height_cm;
-  const height = Object.hasOwn(request.body, 'height_cm')
+  const heightInput = body.height_cm;
+  const height = Object.hasOwn(body, 'height_cm')
     ? (heightInput === null || heightInput === '' ? null : Number(heightInput))
     : current.height_cm;
+
   if ((name !== undefined && (name.length < 2 || name.length > 100)) ||
       (phone && phone.length > 32) || (goal && goal.length > 500) ||
       (height !== null && (!Number.isFinite(height) || height < 50 || height > 300))) {
@@ -158,7 +208,7 @@ router.patch('/profile', async (request, response) => {
 });
 
 /* ============================================================
-   MEALS  (list + create + delete)
+   MEALS
    ============================================================ */
 router.get('/meals', async (request, response) => {
   const meals = await listDocuments('meal_logs', {
@@ -170,22 +220,59 @@ router.get('/meals', async (request, response) => {
 });
 
 router.post('/meals', async (request, response) => {
-  const mealName = typeof request.body.meal_name === 'string' ? request.body.meal_name.trim() : '';
-  const validNumberInput = (value) => typeof value === 'number' || typeof value === 'string';
-  if ((request.body.calories !== undefined && request.body.calories !== null && request.body.calories !== '' && !validNumberInput(request.body.calories)) ||
-      (request.body.protein_g !== undefined && request.body.protein_g !== null && request.body.protein_g !== '' && !validNumberInput(request.body.protein_g))) {
+  const body = request.body || {};
+  const mealName = typeof body.meal_name === 'string' ? body.meal_name.trim() : '';
+  const validNumberInput = (v) => typeof v === 'number' || typeof v === 'string';
+  if ((body.calories !== undefined && body.calories !== null && body.calories !== '' && !validNumberInput(body.calories)) ||
+      (body.protein_g !== undefined && body.protein_g !== null && body.protein_g !== '' && !validNumberInput(body.protein_g))) {
     return response.status(400).json({ error: 'Meal name and nutrition values are invalid' });
   }
-  const calories = request.body.calories === undefined || request.body.calories === null || request.body.calories === '' ? null : Number(request.body.calories);
-  const protein = request.body.protein_g === undefined || request.body.protein_g === null || request.body.protein_g === '' ? null : Number(request.body.protein_g);
+  const calories = body.calories === undefined || body.calories === null || body.calories === '' ? null : Number(body.calories);
+  const protein  = body.protein_g === undefined || body.protein_g === null || body.protein_g === '' ? null : Number(body.protein_g);
   if (!mealName || mealName.length > 120 ||
       (calories !== null && (!Number.isInteger(calories) || calories < 0 || calories > 10000)) ||
       (protein !== null && (!Number.isFinite(protein) || protein < 0 || protein > 1000))) {
     return response.status(400).json({ error: 'Meal name and nutrition values are invalid' });
   }
-  const meal = { id: await allocateId('meal_logs'), user_id: Number(request.auth.sub), meal_name: mealName, calories, protein_g: protein, logged_at: new Date() };
+  const meal = {
+    id: await allocateId('meal_logs'),
+    user_id: Number(request.auth.sub),
+    meal_name: mealName, calories, protein_g: protein,
+    logged_at: new Date()
+  };
   await getCollection('meal_logs').doc(String(meal.id)).create(meal);
   return response.status(201).json(normalizeTimestamps(meal));
+});
+
+router.patch('/meals/:id', async (request, response) => {
+  const ref = getDocument('meal_logs', request.params.id);
+  const snap = await ref.get();
+  if (!snap.exists) return response.status(404).json({ error: 'Meal not found' });
+  if (Number(snap.get('user_id')) !== Number(request.auth.sub)) {
+    return response.status(403).json({ error: 'Not your meal' });
+  }
+  const body = request.body || {};
+  const updates = {};
+  if (Object.hasOwn(body, 'meal_name')) {
+    const name = String(body.meal_name || '').trim();
+    if (!name || name.length > 120) return response.status(400).json({ error: 'Invalid meal name' });
+    updates.meal_name = name;
+  }
+  if (Object.hasOwn(body, 'calories')) {
+    const c = Number(body.calories);
+    if (!Number.isInteger(c) || c < 0 || c > 10000) return response.status(400).json({ error: 'Invalid calories' });
+    updates.calories = c;
+  }
+  if (Object.hasOwn(body, 'protein_g')) {
+    const p = Number(body.protein_g);
+    if (!Number.isFinite(p) || p < 0 || p > 1000) return response.status(400).json({ error: 'Invalid protein' });
+    updates.protein_g = p;
+  }
+  if (!Object.keys(updates).length) return response.status(400).json({ error: 'No fields to update' });
+  updates.updated_at = new Date();
+  await ref.set(updates, { merge: true });
+  const fresh = await ref.get();
+  return response.json({ meal: normalizeTimestamps({ id: ref.id, ...fresh.data() }) });
 });
 
 router.delete('/meals/:id', async (request, response) => {
@@ -200,7 +287,7 @@ router.delete('/meals/:id', async (request, response) => {
 });
 
 /* ============================================================
-   WORKOUTS  (list + create + delete)
+   WORKOUTS
    ============================================================ */
 router.get('/workouts', async (request, response) => {
   const workouts = await listDocuments('workout_logs', {
@@ -212,17 +299,49 @@ router.get('/workouts', async (request, response) => {
 });
 
 router.post('/workouts', async (request, response) => {
-  const name = typeof request.body.workout_name === 'string' ? request.body.workout_name.trim() : '';
-  if (typeof request.body.duration_minutes !== 'number' && typeof request.body.duration_minutes !== 'string') {
+  const body = request.body || {};
+  const name = typeof body.workout_name === 'string' ? body.workout_name.trim() : '';
+  if (typeof body.duration_minutes !== 'number' && typeof body.duration_minutes !== 'string') {
     return response.status(400).json({ error: 'Workout name and duration are invalid' });
   }
-  const duration = Number(request.body.duration_minutes);
+  const duration = Number(body.duration_minutes);
   if (!name || name.length > 120 || !Number.isInteger(duration) || duration < 1 || duration > 1440) {
     return response.status(400).json({ error: 'Workout name and duration are invalid' });
   }
-  const workout = { id: await allocateId('workout_logs'), user_id: Number(request.auth.sub), workout_name: name, duration_minutes: duration, completed_at: new Date() };
+  const workout = {
+    id: await allocateId('workout_logs'),
+    user_id: Number(request.auth.sub),
+    workout_name: name, duration_minutes: duration,
+    completed_at: new Date()
+  };
   await getCollection('workout_logs').doc(String(workout.id)).create(workout);
   return response.status(201).json(normalizeTimestamps(workout));
+});
+
+router.patch('/workouts/:id', async (request, response) => {
+  const ref = getDocument('workout_logs', request.params.id);
+  const snap = await ref.get();
+  if (!snap.exists) return response.status(404).json({ error: 'Workout not found' });
+  if (Number(snap.get('user_id')) !== Number(request.auth.sub)) {
+    return response.status(403).json({ error: 'Not your workout' });
+  }
+  const body = request.body || {};
+  const updates = {};
+  if (Object.hasOwn(body, 'workout_name')) {
+    const name = String(body.workout_name || '').trim();
+    if (!name || name.length > 120) return response.status(400).json({ error: 'Invalid workout name' });
+    updates.workout_name = name;
+  }
+  if (Object.hasOwn(body, 'duration_minutes')) {
+    const d = Number(body.duration_minutes);
+    if (!Number.isInteger(d) || d < 1 || d > 1440) return response.status(400).json({ error: 'Invalid duration' });
+    updates.duration_minutes = d;
+  }
+  if (!Object.keys(updates).length) return response.status(400).json({ error: 'No fields to update' });
+  updates.updated_at = new Date();
+  await ref.set(updates, { merge: true });
+  const fresh = await ref.get();
+  return response.json({ workout: normalizeTimestamps({ id: ref.id, ...fresh.data() }) });
 });
 
 router.delete('/workouts/:id', async (request, response) => {
@@ -237,7 +356,7 @@ router.delete('/workouts/:id', async (request, response) => {
 });
 
 /* ============================================================
-   PROGRESS  (list + create)
+   PROGRESS
    ============================================================ */
 router.get('/progress', async (request, response) => {
   const progress = await listDocuments('progress_entries', {
@@ -249,27 +368,33 @@ router.get('/progress', async (request, response) => {
 });
 
 router.post('/progress', async (request, response) => {
-  if ((typeof request.body.weight_kg !== 'number' && typeof request.body.weight_kg !== 'string') ||
-      (request.body.body_fat_percent !== undefined && request.body.body_fat_percent !== null && request.body.body_fat_percent !== '' &&
-        typeof request.body.body_fat_percent !== 'number' && typeof request.body.body_fat_percent !== 'string')) {
+  const body = request.body || {};
+  if ((typeof body.weight_kg !== 'number' && typeof body.weight_kg !== 'string') ||
+      (body.body_fat_percent !== undefined && body.body_fat_percent !== null && body.body_fat_percent !== '' &&
+        typeof body.body_fat_percent !== 'number' && typeof body.body_fat_percent !== 'string')) {
     return response.status(400).json({ error: 'Progress values are invalid' });
   }
-  const weight = Number(request.body.weight_kg);
-  const bodyFat = request.body.body_fat_percent === undefined || request.body.body_fat_percent === null || request.body.body_fat_percent === ''
-    ? null : Number(request.body.body_fat_percent);
-  const note = typeof request.body.note === 'string' ? request.body.note.trim() : null;
+  const weight = Number(body.weight_kg);
+  const bodyFat = body.body_fat_percent === undefined || body.body_fat_percent === null || body.body_fat_percent === ''
+    ? null : Number(body.body_fat_percent);
+  const note = typeof body.note === 'string' ? body.note.trim() : null;
   if (!Number.isFinite(weight) || weight < 20 || weight > 500 ||
       (bodyFat !== null && (!Number.isFinite(bodyFat) || bodyFat < 1 || bodyFat > 80)) ||
       (note && note.length > 500)) {
     return response.status(400).json({ error: 'Progress values are invalid' });
   }
-  const progress = { id: await allocateId('progress_entries'), user_id: Number(request.auth.sub), weight_kg: weight, body_fat_percent: bodyFat, note: note || null, recorded_at: new Date() };
+  const progress = {
+    id: await allocateId('progress_entries'),
+    user_id: Number(request.auth.sub),
+    weight_kg: weight, body_fat_percent: bodyFat, note: note || null,
+    recorded_at: new Date()
+  };
   await getCollection('progress_entries').doc(String(progress.id)).create(progress);
   return response.status(201).json(normalizeTimestamps(progress));
 });
 
 /* ============================================================
-   BOOKINGS  (list + get + create + update + cancel/delete)
+   BOOKINGS
    ============================================================ */
 router.get('/bookings', async (request, response) => {
   const bookings = await listDocuments('bookings', {
@@ -291,12 +416,13 @@ router.get('/bookings/:id', async (request, response) => {
 });
 
 router.post('/bookings', async (request, response) => {
-  const service = typeof request.body.service === 'string' ? request.body.service.trim() : '';
-  const requestedAtInput = request.body.requested_at;
+  const body = request.body || {};
+  const service = typeof body.service === 'string' ? body.service.trim() : '';
+  const requestedAtInput = body.requested_at;
   const requestedAt = typeof requestedAtInput === 'string' &&
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})?$/.test(requestedAtInput)
     ? new Date(requestedAtInput) : null;
-  const notes = typeof request.body.notes === 'string' ? request.body.notes.trim().slice(0, 500) : null;
+  const notes = typeof body.notes === 'string' ? body.notes.trim().slice(0, 500) : null;
   if (!service || service.length > 120 || !requestedAt || Number.isNaN(requestedAt.getTime()) ||
       requestedAt.getTime() < Date.now() - 60_000) {
     return response.status(400).json({ error: 'Choose a valid service and a future booking time' });
@@ -304,11 +430,8 @@ router.post('/bookings', async (request, response) => {
   const booking = {
     id: await allocateId('bookings'),
     user_id: Number(request.auth.sub),
-    service,
-    requested_at: requestedAt,
-    status: 'pending',
-    notes: notes || null,
-    created_at: new Date()
+    service, requested_at: requestedAt, status: 'pending',
+    notes: notes || null, created_at: new Date()
   };
   await getCollection('bookings').doc(String(booking.id)).create(booking);
   return response.status(201).json(normalizeTimestamps(booking));
@@ -323,27 +446,22 @@ router.patch('/bookings/:id', async (request, response) => {
   }
 
   const current = snap.data();
-
-  // Only pending bookings can be edited. Approved/declined/cancelled are locked
-  // so the client can't silently move a session the coach already confirmed.
   if (current.status !== 'pending') {
     return response.status(409).json({
       error: `This booking is ${current.status} and can no longer be edited.`
     });
   }
 
+  const body = request.body || {};
   const updates = {};
 
-  if (Object.hasOwn(request.body, 'service')) {
-    const service = typeof request.body.service === 'string' ? request.body.service.trim() : '';
-    if (!service || service.length > 120) {
-      return response.status(400).json({ error: 'Enter a valid service name' });
-    }
+  if (Object.hasOwn(body, 'service')) {
+    const service = typeof body.service === 'string' ? body.service.trim() : '';
+    if (!service || service.length > 120) return response.status(400).json({ error: 'Enter a valid service name' });
     updates.service = service;
   }
-
-  if (Object.hasOwn(request.body, 'requested_at')) {
-    const input = request.body.requested_at;
+  if (Object.hasOwn(body, 'requested_at')) {
+    const input = body.requested_at;
     const when = typeof input === 'string' &&
       /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})?$/.test(input)
       ? new Date(input) : null;
@@ -352,16 +470,10 @@ router.patch('/bookings/:id', async (request, response) => {
     }
     updates.requested_at = when;
   }
-
-  if (Object.hasOwn(request.body, 'notes')) {
-    updates.notes = request.body.notes === null
-      ? null
-      : String(request.body.notes).trim().slice(0, 500) || null;
+  if (Object.hasOwn(body, 'notes')) {
+    updates.notes = body.notes === null ? null : String(body.notes).trim().slice(0, 500) || null;
   }
-
-  if (!Object.keys(updates).length) {
-    return response.status(400).json({ error: 'No editable fields provided' });
-  }
+  if (!Object.keys(updates).length) return response.status(400).json({ error: 'No editable fields provided' });
 
   updates.updated_at = new Date();
   await ref.set(updates, { merge: true });
@@ -376,11 +488,7 @@ router.delete('/bookings/:id', async (request, response) => {
   if (Number(snap.get('user_id')) !== Number(request.auth.sub)) {
     return response.status(403).json({ error: 'Not your booking' });
   }
-
   const status = snap.get('status');
-
-  // Pending → hard delete. Approved → soft cancel (keep audit trail so coach
-  // can see the session was cancelled rather than just vanished).
   if (status === 'pending') {
     await ref.delete();
     return response.status(204).end();
@@ -389,56 +497,166 @@ router.delete('/bookings/:id', async (request, response) => {
     await ref.set({ status: 'cancelled', cancelled_at: new Date(), updated_at: new Date() }, { merge: true });
     return response.status(204).end();
   }
-
-  // declined / cancelled → just delete the row
   await ref.delete();
   return response.status(204).end();
 });
 
 /* ============================================================
-   MESSAGES  (list + create)
+   MESSAGES — list
+   ═══════════════════════════════════════════════════════
+   Order matters: the literal routes (/attachments, /typing)
+   must come BEFORE the parameterized ones (:messageId/reactions).
+   Express matches in definition order.
    ============================================================ */
 router.get('/messages', async (request, response) => {
+  const userId = Number(request.auth.sub);
   const messages = await listDocuments('messages', {
-    filters: [['user_id', '==', Number(request.auth.sub)]],
+    filters: [['user_id', '==', userId]],
     orderBy: [['created_at', 'asc']],
     limit: 200
   });
-  response.json({ messages: normalizeArray(messages) });
+  const messageIds = messages.map(m => Number(m.id));
+
+  const [attachments, reactions] = await Promise.all([
+    listDocuments('message_attachments', { limit: 5000 }),
+    listDocuments('message_reactions', { limit: 5000 })
+  ]);
+
+  const attachmentsByMsg = {};
+  attachments.forEach(a => {
+    if (!messageIds.includes(Number(a.message_id))) return;
+    (attachmentsByMsg[a.message_id] ||= []).push(normalizeTimestamps(a));
+  });
+  const reactionsByMsg = {};
+  reactions.forEach(r => {
+    if (!messageIds.includes(Number(r.message_id))) return;
+    (reactionsByMsg[r.message_id] ||= []).push(r);
+  });
+
+  response.json({
+    messages: normalizeArray(messages).map(m => ({
+      ...m,
+      attachments: attachmentsByMsg[m.id] || [],
+      reactions: reactionsByMsg[m.id] || []
+    }))
+  });
 });
 
-router.post('/messages', async (request, response) => {
-  const body = typeof request.body.body === 'string' ? request.body.body.trim() : '';
-  if (!body || body.length > 4000) {
-    return response.status(400).json({ error: 'Message must be between 1 and 4000 characters' });
-  }
-  const message = {
-    id: await allocateId('messages'),
-    user_id: Number(request.auth.sub),
-    sender_id: Number(request.auth.sub),
-    body,
+/* Client polls coach typing — MUST be before :messageId routes */
+router.get('/messages/typing', async (request, response) => {
+  const userId = Number(request.auth.sub);
+  response.json({ typing: isTyping(userId) });
+});
+
+/* Client signals typing */
+router.post('/messages/typing', async (request, response) => {
+  const userId = Number(request.auth.sub);
+  markTyping(userId, userId);
+  response.json({ ok: true });
+});
+
+/* Upload attachment — MUST be before :messageId routes */
+router.post('/messages/attachments', upload.single('file'), async (request, response) => {
+  if (!request.file) return response.status(400).json({ error: 'No file uploaded' });
+  const userId = Number(request.auth.sub);
+  const attachmentId = await allocateId('message_attachments');
+  const ext = path.extname(request.file.originalname || '').toLowerCase().slice(0, 10) || '';
+  const storedName = `${attachmentId}-${crypto.randomBytes(6).toString('hex')}${ext}`;
+  const filePath = path.join(uploadsDir, storedName);
+  await fs.writeFile(filePath, request.file.buffer);
+
+  const attachment = {
+    id: attachmentId, message_id: null, user_id: userId, sender_id: userId,
+    original_name: request.file.originalname, stored_name: storedName,
+    mime_type: request.file.mimetype, size_bytes: request.file.size,
+    url: `/api/client/messages/attachments/${storedName}`,
     created_at: new Date()
   };
-  await getCollection('messages').doc(String(message.id)).create(message);
-  return response.status(201).json(normalizeTimestamps(message));
+  await getCollection('message_attachments').doc(String(attachmentId)).create(attachment);
+  response.status(201).json({ attachment: normalizeTimestamps(attachment) });
+});
+
+/* Serve attachment */
+router.get('/messages/attachments/:storedName', async (request, response) => {
+  const storedName = path.basename(request.params.storedName);
+  const filePath = path.join(uploadsDir, storedName);
+  try {
+    await fs.access(filePath);
+    response.sendFile(filePath);
+  } catch {
+    response.status(404).json({ error: 'Attachment not found' });
+  }
+});
+
+/* Toggle reaction on a message — verify ownership */
+router.post('/messages/:messageId/reactions', async (request, response) => {
+  const messageId = Number(request.params.messageId);
+  const emoji = String(request.body?.emoji || '').trim();
+  if (!messageId || !emoji || emoji.length > 8) {
+    return response.status(400).json({ error: 'Invalid message or emoji' });
+  }
+  const userId = Number(request.auth.sub);
+
+  // Verify the message belongs to this client's thread
+  const msgSnap = await getDocument('messages', messageId).get();
+  if (!msgSnap.exists || Number(msgSnap.get('user_id')) !== userId) {
+    return response.status(403).json({ error: 'Not your message thread' });
+  }
+
+  const existing = await listDocuments('message_reactions', {
+    filters: [['message_id', '==', messageId], ['user_id', '==', userId], ['emoji', '==', emoji]],
+    limit: 1
+  });
+  if (existing.length) {
+    await getDocument('message_reactions', existing[0].id).delete();
+    return response.json({ removed: true });
+  }
+  const id = await allocateId('message_reactions');
+  await getCollection('message_reactions').doc(String(id)).create({
+    id, message_id: messageId, user_id: userId, emoji, created_at: new Date()
+  });
+  response.json({ added: true, reaction: { id, message_id: messageId, user_id: userId, emoji } });
+});
+
+/* Send message — must come LAST among /messages routes */
+router.post('/messages', async (request, response) => {
+  const body = request.body || {};
+  const text = typeof body.body === 'string' ? body.body.trim() : '';
+  const replyTo = body.reply_to != null ? Number(body.reply_to) : null;
+  const attachmentId = body.attachment_id != null ? Number(body.attachment_id) : null;
+  if ((!text || text.length > 4000) && !attachmentId) {
+    return response.status(400).json({ error: 'Message must be 1–4000 chars, or include an attachment' });
+  }
+  const userId = Number(request.auth.sub);
+  const messageId = await allocateId('messages');
+  const message = {
+    id: messageId, user_id: userId, sender_id: userId,
+    body: text || '', reply_to: replyTo || null, created_at: new Date()
+  };
+  await getCollection('messages').doc(String(messageId)).create(message);
+  if (attachmentId) {
+    const attRef = getDocument('message_attachments', attachmentId);
+    const attSnap = await attRef.get();
+    if (attSnap.exists && Number(attSnap.get('user_id')) === userId) {
+      await attRef.set({ message_id: messageId, updated_at: new Date() }, { merge: true });
+    }
+  }
+  response.status(201).json({ message: normalizeTimestamps(message) });
 });
 
 /* ============================================================
-   ASSIGNED PLANS (meal + workout)
+   ASSIGNED PLANS
    ============================================================ */
 router.get('/plans', async (request, response) => {
   const userId = Number(request.auth.sub);
   const userSnap = await getDocument('users', userId).get();
   if (!userSnap.exists) return response.status(401).json({ error: 'Account not found' });
-
   const mealPlanId = userSnap.get('meal_plan_id') || null;
   const workoutPlanId = userSnap.get('workout_plan_id') || null;
-
   const [mealPlanSnap, workoutPlanSnap] = await Promise.all([
     mealPlanId ? getDocument('meal_plans', mealPlanId).get() : null,
     workoutPlanId ? getDocument('workout_plans', workoutPlanId).get() : null
   ]);
-
   response.json({
     mealPlan: mealPlanSnap && mealPlanSnap.exists ? normalizeTimestamps({ id: mealPlanSnap.id, ...mealPlanSnap.data() }) : null,
     workoutPlan: workoutPlanSnap && workoutPlanSnap.exists ? normalizeTimestamps({ id: workoutPlanSnap.id, ...workoutPlanSnap.data() }) : null

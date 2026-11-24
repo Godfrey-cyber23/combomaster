@@ -2,12 +2,20 @@ const crypto = require('node:crypto');
 const express = require('express');
 const config = require('../config');
 const { getCollection, getDocument, getFirestore, listDocuments } = require('../firestore');
+const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const referencePattern = /^[0-9a-f-]{36}$/i;
 const currency = 'ZMW';
 const flutterwaveApi = 'https://api.flutterwave.com/v3';
+
+// Plan catalog used by /subscribe
+const SUBSCRIPTION_PLANS = {
+  starter: { id: 'starter', name: 'Starter',          price: 39  },
+  premium: { id: 'premium', name: 'Premium Coaching', price: 89  },
+  elite:   { id: 'elite',   name: 'Elite',            price: 149 }
+};
 
 router.use((_request, response, next) => {
   response.setHeader('Cache-Control', 'no-store');
@@ -115,6 +123,63 @@ async function setOrderStatus(reference, status) {
   });
 }
 
+/* ═══════════════════════════════════════════════════════
+   SUBSCRIPTION CHECKOUT
+   ═══════════════════════════════════════════════════════ */
+router.post('/subscribe', requireAuth, async (request, response) => {
+  if (!isConfigured()) {
+    return response.status(503).json({
+      error: 'Subscription checkout is not configured yet. Contact support.'
+    });
+  }
+
+  const planId = typeof request.body.plan_id === 'string' ? request.body.plan_id : '';
+  const plan = SUBSCRIPTION_PLANS[planId];
+  if (!plan) {
+    return response.status(400).json({ error: 'Unknown plan' });
+  }
+
+  const userSnap = await getDocument('users', request.auth.sub).get();
+  if (!userSnap.exists) {
+    return response.status(401).json({ error: 'Account not found' });
+  }
+  const user = userSnap.data();
+  const txRef = `sub_${request.auth.sub}_${Date.now()}`;
+
+  try {
+    const checkout = await flutterwaveRequest('/payments', {
+      method: 'POST',
+      body: JSON.stringify({
+        tx_ref: txRef,
+        amount: plan.price.toFixed(2),
+        currency,
+        redirect_url: new URL('/api/payments/callback', config.publicAppUrl).toString(),
+        payment_options: 'card',
+        customer: { email: user.email, name: user.name },
+        customizations: {
+          title: `ComboMaster ${plan.name}`,
+          description: `Subscription — ${plan.name}`,
+          logo: 'https://res.cloudinary.com/xfcqi4ts/image/upload/v1788711230/gym_logo.jpg'
+        },
+        meta: { type: 'subscription', plan_id: plan.id, user_id: Number(request.auth.sub) }
+      })
+    });
+    const checkoutUrl = new URL(checkout.link);
+    if (checkoutUrl.origin !== 'https://checkout.flutterwave.com') {
+      throw new Error('Flutterwave returned an untrusted checkout URL');
+    }
+    return response.json({ checkout_url: checkoutUrl.toString(), tx_ref: txRef });
+  } catch (error) {
+    console.error('[payments] Subscription checkout failed:', error.message);
+    return response.status(502).json({
+      error: 'Could not start subscription checkout. Please try again.'
+    });
+  }
+});
+
+/* ═══════════════════════════════════════════════════════
+   SHOP CHECKOUT
+   ═══════════════════════════════════════════════════════ */
 router.post('/checkout', async (request, response) => {
   if (!isConfigured()) {
     return response.status(503).json({
@@ -222,6 +287,9 @@ router.post('/checkout', async (request, response) => {
   }
 });
 
+/* ═══════════════════════════════════════════════════════
+   CALLBACK / STATUS / WEBHOOK
+   ═══════════════════════════════════════════════════════ */
 router.get('/callback', async (request, response) => {
   const reference = typeof request.query.tx_ref === 'string' ? request.query.tx_ref : '';
   const transactionId = typeof request.query.transaction_id === 'string'

@@ -99,6 +99,26 @@ router.post('/forgot-password', async (request, response, next) => {
   }
 });
 
+router.delete('/account', requireAuth, async (req, res) => {
+  const userId = Number(req.auth.sub);
+  const db = getFirestore();
+  const userSnap = await getDocument('users', userId).get();
+  const email = userSnap.exists ? userSnap.get('email') : null;
+  if (email) {
+    const emailHash = crypto.createHash('sha256').update(email.toLowerCase()).digest('hex');
+    await db.collection('_user_emails').doc(emailHash).delete().catch(() => {});
+  }
+  // delete related docs
+  for (const coll of ['meal_logs', 'workout_logs', 'progress_entries', 'bookings', 'messages', 'checkins']) {
+    const rows = await listDocuments(coll, { filters: [['user_id', '==', userId]] });
+    await Promise.all(rows.map(r => db.collection(coll).doc(String(r.id)).delete().catch(() => {})));
+  }
+  await db.collection('users').doc(String(userId)).delete();
+  await db.collection('client_profiles').doc(String(userId)).delete().catch(() => {});
+  clearSession(res);
+  res.status(204).end();
+});
+
 // POST /api/auth/reset-password
 // Body: { token, password }
 router.post('/reset-password', async (request, response, next) => {

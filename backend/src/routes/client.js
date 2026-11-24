@@ -1,11 +1,46 @@
 const express = require('express');
-const { allocateId, getCollection, getDocument, listDocuments, getFirestore } = require('../firestore');
+const { allocateId, getCollection, getDocument, listDocuments } = require('../firestore');
 const { requireAuth, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
 // Every route in this file requires a logged-in client.
 router.use(requireAuth, requireRole('client'));
+
+/* ============================================================
+   TIMESTAMP NORMALIZATION
+   Firestore stores `new Date()` as a Timestamp object. JSON.stringify
+   serializes that as { _seconds, _nanoseconds } — NOT an ISO string —
+   which makes every `new Date(x)` on the frontend return "Invalid Date".
+   Normalize timestamp fields to ISO strings before sending JSON.
+   ============================================================ */
+const TIMESTAMP_FIELDS = [
+  'recorded_at', 'logged_at', 'completed_at',
+  'requested_at', 'created_at', 'updated_at'
+];
+
+function normalizeTimestamps(row) {
+  if (!row || typeof row !== 'object') return row;
+  const out = { ...row };
+  for (const key of TIMESTAMP_FIELDS) {
+    const value = out[key];
+    if (!value) continue;
+    if (typeof value === 'string') continue;                // already ISO
+    if (value instanceof Date) { out[key] = value.toISOString(); continue; }
+    if (typeof value.toDate === 'function') {               // Firestore Timestamp
+      out[key] = value.toDate().toISOString();
+    } else if (typeof value._seconds === 'number') {        // serialized Timestamp
+      out[key] = new Date(value._seconds * 1000).toISOString();
+    } else if (typeof value.seconds === 'number') {
+      out[key] = new Date(value.seconds * 1000).toISOString();
+    }
+  }
+  return out;
+}
+
+function normalizeArray(rows) {
+  return Array.isArray(rows) ? rows.map(normalizeTimestamps) : [];
+}
 
 /* ============================================================
    DASHBOARD
@@ -46,10 +81,10 @@ router.get('/dashboard', async (request, response) => {
 
   // Derive achievements progress from real data.
   const achievements = [
-    { icon: 'flame',  name: '7-Day Streak',      desc: 'Train 7 days in a row', progress: Math.min(streak, 7),       target: 7 },
-    { icon: 'trophy', name: 'Iron Warrior',      desc: '50 workouts completed', progress: workouts.length,              target: 50 },
-    { icon: 'apple',  name: 'Nutrition Master',  desc: 'Log 30 meals',          progress: meals.length,                 target: 30 },
-    { icon: 'scale',  name: 'Consistent Tracker',desc: 'Log 10 weigh-ins',      progress: progress.length,              target: 10 }
+    { icon: 'flame',  name: '7-Day Streak',       desc: 'Train 7 days in a row', progress: Math.min(streak, 7), target: 7 },
+    { icon: 'trophy', name: 'Iron Warrior',       desc: '50 workouts completed', progress: workouts.length,       target: 50 },
+    { icon: 'apple',  name: 'Nutrition Master',   desc: 'Log 30 meals',          progress: meals.length,          target: 30 },
+    { icon: 'scale',  name: 'Consistent Tracker', desc: 'Log 10 weigh-ins',      progress: progress.length,       target: 10 }
   ];
   const badges = achievements.filter(a => a.progress >= a.target).length;
 
@@ -60,11 +95,11 @@ router.get('/dashboard', async (request, response) => {
       goal: profile.goal || null,
       height_cm: profile.height_cm ?? null
     },
-    progress,
-    meals,
-    workouts,
-    bookings,
-    messages,
+    progress: normalizeArray(progress),
+    meals:    normalizeArray(meals),
+    workouts: normalizeArray(workouts),
+    bookings: normalizeArray(bookings),
+    messages: normalizeArray(messages),
     stats: {
       latestWeightKg: progress[0]?.weight_kg ?? null,
       latestBodyFatPercent: progress[0]?.body_fat_percent ?? null,
@@ -131,7 +166,7 @@ router.get('/meals', async (request, response) => {
     orderBy: [['logged_at', 'desc']],
     limit: 50
   });
-  response.json({ meals });
+  response.json({ meals: normalizeArray(meals) });
 });
 
 router.post('/meals', async (request, response) => {
@@ -150,7 +185,7 @@ router.post('/meals', async (request, response) => {
   }
   const meal = { id: await allocateId('meal_logs'), user_id: Number(request.auth.sub), meal_name: mealName, calories, protein_g: protein, logged_at: new Date() };
   await getCollection('meal_logs').doc(String(meal.id)).create(meal);
-  return response.status(201).json(meal);
+  return response.status(201).json(normalizeTimestamps(meal));
 });
 
 router.delete('/meals/:id', async (request, response) => {
@@ -173,7 +208,7 @@ router.get('/workouts', async (request, response) => {
     orderBy: [['completed_at', 'desc']],
     limit: 50
   });
-  response.json({ workouts });
+  response.json({ workouts: normalizeArray(workouts) });
 });
 
 router.post('/workouts', async (request, response) => {
@@ -187,7 +222,7 @@ router.post('/workouts', async (request, response) => {
   }
   const workout = { id: await allocateId('workout_logs'), user_id: Number(request.auth.sub), workout_name: name, duration_minutes: duration, completed_at: new Date() };
   await getCollection('workout_logs').doc(String(workout.id)).create(workout);
-  return response.status(201).json(workout);
+  return response.status(201).json(normalizeTimestamps(workout));
 });
 
 router.delete('/workouts/:id', async (request, response) => {
@@ -210,7 +245,7 @@ router.get('/progress', async (request, response) => {
     orderBy: [['recorded_at', 'desc']],
     limit: 60
   });
-  response.json({ progress });
+  response.json({ progress: normalizeArray(progress) });
 });
 
 router.post('/progress', async (request, response) => {
@@ -230,7 +265,7 @@ router.post('/progress', async (request, response) => {
   }
   const progress = { id: await allocateId('progress_entries'), user_id: Number(request.auth.sub), weight_kg: weight, body_fat_percent: bodyFat, note: note || null, recorded_at: new Date() };
   await getCollection('progress_entries').doc(String(progress.id)).create(progress);
-  return response.status(201).json(progress);
+  return response.status(201).json(normalizeTimestamps(progress));
 });
 
 /* ============================================================
@@ -242,7 +277,7 @@ router.get('/bookings', async (request, response) => {
     orderBy: [['requested_at', 'desc']],
     limit: 50
   });
-  response.json({ bookings });
+  response.json({ bookings: normalizeArray(bookings) });
 });
 
 router.post('/bookings', async (request, response) => {
@@ -257,7 +292,7 @@ router.post('/bookings', async (request, response) => {
   }
   const booking = { id: await allocateId('bookings'), user_id: Number(request.auth.sub), service, requested_at: requestedAt, status: 'pending', created_at: new Date() };
   await getCollection('bookings').doc(String(booking.id)).create(booking);
-  return response.status(201).json(booking);
+  return response.status(201).json(normalizeTimestamps(booking));
 });
 
 /* ============================================================
@@ -269,7 +304,7 @@ router.get('/messages', async (request, response) => {
     orderBy: [['created_at', 'asc']],
     limit: 200
   });
-  response.json({ messages });
+  response.json({ messages: normalizeArray(messages) });
 });
 
 router.post('/messages', async (request, response) => {
@@ -285,7 +320,7 @@ router.post('/messages', async (request, response) => {
     created_at: new Date()
   };
   await getCollection('messages').doc(String(message.id)).create(message);
-  return response.status(201).json(message);
+  return response.status(201).json(normalizeTimestamps(message));
 });
 
 /* ============================================================
@@ -305,8 +340,8 @@ router.get('/plans', async (request, response) => {
   ]);
 
   response.json({
-    mealPlan: mealPlanSnap && mealPlanSnap.exists ? { id: mealPlanSnap.id, ...mealPlanSnap.data() } : null,
-    workoutPlan: workoutPlanSnap && workoutPlanSnap.exists ? { id: workoutPlanSnap.id, ...workoutPlanSnap.data() } : null
+    mealPlan: mealPlanSnap && mealPlanSnap.exists ? normalizeTimestamps({ id: mealPlanSnap.id, ...mealPlanSnap.data() }) : null,
+    workoutPlan: workoutPlanSnap && workoutPlanSnap.exists ? normalizeTimestamps({ id: workoutPlanSnap.id, ...workoutPlanSnap.data() }) : null
   });
 });
 
@@ -323,7 +358,7 @@ router.post('/checkins', async (request, response) => {
     created_at: new Date()
   };
   await getCollection('checkins').doc(String(entry.id)).create(entry);
-  response.status(201).json({ checkin: entry });
+  response.status(201).json({ checkin: normalizeTimestamps(entry) });
 });
 
 module.exports = router;

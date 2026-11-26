@@ -10,6 +10,11 @@ module.exports = {
     process.env.JWT_SECRET.length >= 32 &&
     !/replace-with|change-me/i.test(process.env.JWT_SECRET)
   ),
+  smtpHost: process.env.SMTP_HOST || 'smtp.gmail.com',
+smtpPort: Number(process.env.SMTP_PORT) || 465,
+smtpUser: process.env.SMTP_USER || '',
+smtpPass: process.env.SMTP_PASS || '',
+mailFrom: process.env.MAIL_FROM || process.env.SMTP_USER || '',
   sessionLifetime: Number(process.env.SESSION_LIFETIME) || 3600,
   sessionName: process.env.SESSION_NAME || 'combomaster_session',
   firebaseProjectId: process.env.FIREBASE_PROJECT_ID || '',

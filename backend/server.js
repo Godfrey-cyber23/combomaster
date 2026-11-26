@@ -5,7 +5,7 @@ function start() {
 	const server = app.listen(config.port, () => {
 		console.log('──────────────────────────────────────────────');
 		console.log(`🚀 ComboMaster API listening on port ${config.port}`);
-		console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
+		console.log(`   Environment: ${process.env.NODE_ENV || 'production'}`);
 		console.log(`   Time:        ${new Date().toISOString()}`);
 		console.log('──────────────────────────────────────────────');
 	});

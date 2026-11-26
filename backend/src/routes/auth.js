@@ -87,7 +87,7 @@ router.post('/forgot-password', async (request, response, next) => {
 
     // Only trust the configured frontend URL — never the Origin header,
     // which can be spoofed and would poison the reset link.
-    const frontendBase = config.frontendUrl || 'http://localhost:3000';
+    const frontendBase = config.publicAppUrl || 'http://localhost:3000';
     const resetUrl = `${frontendBase.replace(/\/+$/, '')}/resetpassword.html?token=${token}`;
 
     // TODO: send an actual email. For now, log so you can test locally.

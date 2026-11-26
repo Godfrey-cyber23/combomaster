@@ -42,7 +42,12 @@ app.get('/api/health', async (_request, response) => {
     };
     response.status(config.sessionConfigured ? 200 : 503).json(body);
   } catch (error) {
-    console.error('[health] Database check failed:', error.code || error.message);
+    console.error('[health] Database check failed:', {
+  code: error.code,
+  message: error.message,
+  cause: error.cause?.message,
+  causeCode: error.cause?.code
+});
     response.status(503).json({
       status: 'unavailable',
       database: 'disconnected',

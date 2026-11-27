@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('node:crypto');
 const jwt = require('jsonwebtoken');
 const { sendPasswordResetEmail } = require('../services/email');
-const { getAuth, getDocument, getFirestore } = require('../firestore');
+const { getAuth, getDocument, getFirestore,listDocuments } = require('../firestore');
 const config = require('../config');
 const { requireAuth } = require('../middleware/auth');
 
@@ -11,6 +11,14 @@ const router = express.Router();
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_MIN = 8;
 const PASSWORD_MAX_BYTES = 72; // bcrypt limit
+
+function normalizeName(value) {
+  if (typeof value !== 'string') return '';
+
+  return value
+    .trim()
+    .replace(/\s+/g, ' ');
+}
 
 function isValidPassword(password) {
   return typeof password === 'string'
@@ -229,7 +237,7 @@ router.post('/register', async (request, response) => {
   if (!config.sessionConfigured) {
     return response.status(503).json({ error: 'Authentication is not configured' });
   }
-  const name = typeof request.body.name === 'string' ? request.body.name.trim() : '';
+  const name = normalizeName(request.body?.name);
   const email = typeof request.body.email === 'string' ? request.body.email.trim().toLowerCase() : '';
   const password = typeof request.body.password === 'string' ? request.body.password : '';
 
@@ -251,15 +259,36 @@ router.post('/register', async (request, response) => {
     const counter = await transaction.get(counterRef);
     const id = (counter.exists ? Number(counter.get('value')) : 0) + 1;
     const userRef = db.collection('users').doc(String(id));
-    const createdUser = {
-      id, name, email, password_hash: passwordHash, role: 'client',
-      created_at: new Date(), updated_at: new Date()
-    };
-    transaction.set(counterRef, { value: id });
-    transaction.create(userRef, createdUser);
-    transaction.create(emailRef, { user_id: id });
-    return publicUser(createdUser);
-  });
+const profileRef = db.collection('client_profiles').doc(String(id));
+
+const now = new Date();
+
+const createdUser = {
+  id,
+  name,
+  email,
+  password_hash: passwordHash,
+  role: 'client',
+  created_at: now,
+  updated_at: now
+};
+
+const createdProfile = {
+  user_id: id,
+  name,
+  phone: null,
+  goal: null,
+  height_cm: null,
+  created_at: now,
+  updated_at: now
+};
+
+transaction.set(counterRef, { value: id });
+transaction.create(userRef, createdUser);
+transaction.create(emailRef, { user_id: id });
+transaction.create(profileRef, createdProfile);
+
+return publicUser(createdUser);
   if (!user) return response.status(409).json({ error: 'An account with that email already exists' });
   setSession(response, user);
   return response.status(201).json({ user, message: 'Account created successfully' });
@@ -319,28 +348,103 @@ router.post('/firebase-login', async (request, response) => {
     const emailSnapshot = await transaction.get(emailRef);
 
     if (emailSnapshot.exists) {
-      const userRef = db.collection('users').doc(String(emailSnapshot.get('user_id')));
-      const userSnapshot = await transaction.get(userRef);
-      if (!userSnapshot.exists) return null;
-      const data = userSnapshot.data();
-      if (!data.firebase_uid) transaction.update(userRef, { firebase_uid: decoded.uid, updated_at: new Date() });
-      return publicUser(data);
-    }
+  const userId = emailSnapshot.get('user_id');
+  const userRef = db.collection('users').doc(String(userId));
+  const profileRef = db.collection('client_profiles').doc(String(userId));
+
+  const userSnapshot = await transaction.get(userRef);
+  if (!userSnapshot.exists) return null;
+
+  const data = userSnapshot.data();
+
+  const firebaseName = normalizeName(
+    decoded.name ||
+    [decoded.given_name, decoded.family_name]
+      .filter(Boolean)
+      .join(' ')
+  );
+
+  const updates = {
+    updated_at: new Date()
+  };
+
+  if (!data.firebase_uid) {
+    updates.firebase_uid = decoded.uid;
+  }
+
+  if ((!data.name || data.name === 'Client') && firebaseName) {
+    updates.name = firebaseName;
+  }
+
+  transaction.set(userRef, updates, { merge: true });
+
+  const profileSnapshot = await transaction.get(profileRef);
+
+  if (!profileSnapshot.exists) {
+    transaction.set(profileRef, {
+      user_id: Number(userId),
+      name: updates.name || data.name || firebaseName || 'Client',
+      phone: null,
+      goal: null,
+      height_cm: null,
+      created_at: new Date(),
+      updated_at: new Date()
+    });
+  } else if (updates.name) {
+    transaction.set(profileRef, {
+      name: updates.name,
+      updated_at: new Date()
+    }, { merge: true });
+  }
+
+  return publicUser({
+    ...data,
+    ...updates
+  });
+}
 
     const counterRef = db.collection('_counters').doc('users');
     const counter = await transaction.get(counterRef);
     const id = (counter.exists ? Number(counter.get('value')) : 0) + 1;
     const userRef = db.collection('users').doc(String(id));
-    const createdUser = {
-      id, name: decoded.name || email.split('@')[0].slice(0, 100),
-      email, role: 'client', firebase_uid: decoded.uid,
-      created_at: new Date(), updated_at: new Date()
-    };
-    transaction.set(counterRef, { value: id });
-    transaction.create(userRef, createdUser);
-    transaction.create(emailRef, { user_id: id });
-    return publicUser(createdUser);
-  });
+    const firebaseName = normalizeName(
+  decoded.name ||
+  [decoded.given_name, decoded.family_name]
+    .filter(Boolean)
+    .join(' ')
+);
+
+const name = firebaseName || 'Client';
+const now = new Date();
+
+const profileRef = db.collection('client_profiles').doc(String(id));
+
+const createdUser = {
+  id,
+  name,
+  email,
+  role: 'client',
+  firebase_uid: decoded.uid,
+  created_at: now,
+  updated_at: now
+};
+
+const createdProfile = {
+  user_id: id,
+  name,
+  phone: null,
+  goal: null,
+  height_cm: null,
+  created_at: now,
+  updated_at: now
+};
+
+transaction.set(counterRef, { value: id });
+transaction.create(userRef, createdUser);
+transaction.create(emailRef, { user_id: id });
+transaction.create(profileRef, createdProfile);
+
+return publicUser(createdUser);
 
   if (!user) return response.status(401).json({ error: 'Account not found' });
   setSession(response, user);

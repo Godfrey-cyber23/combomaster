@@ -350,24 +350,47 @@ router.post('/login', async (request, response) => {
 });
 
 router.post('/firebase-login', async (request, response) => {
-  if (!config.sessionConfigured) return response.status(503).json({ error: 'Authentication is not configured' });
-  if (!config.firebaseServiceAccountPath) return response.status(503).json({ error: 'Firebase is not configured' });
+  if (!config.sessionConfigured) {
+    return response.status(503).json({
+      error: 'Authentication is not configured'
+    });
+  }
+
+  if (!config.firebaseServiceAccountPath) {
+    return response.status(503).json({
+      error: 'Firebase is not configured'
+    });
+  }
 
   const { token } = request.body || {};
-  if (!token || typeof token !== 'string') return response.status(400).json({ error: 'Firebase token required' });
+
+  if (!token || typeof token !== 'string') {
+    return response.status(400).json({
+      error: 'Firebase token required'
+    });
+  }
 
   let decoded;
+
   try {
     decoded = await getAuth().verifyIdToken(token);
   } catch (error) {
-    // Surface a 503 if Firebase itself isn't initialised; otherwise 401.
     if (error.status === 503) {
-      return response.status(503).json({ error: error.message });
+      return response.status(503).json({
+        error: error.message
+      });
     }
-    return response.status(401).json({ error: 'Invalid Firebase token' });
+
+    return response.status(401).json({
+      error: 'Invalid Firebase token'
+    });
   }
 
-  if (!decoded.email) return response.status(400).json({ error: 'Firebase token did not include an email' });
+  if (!decoded.email) {
+    return response.status(400).json({
+      error: 'Firebase token did not include an email'
+    });
+  }
 
   const email = decoded.email.trim().toLowerCase();
   const emailHash = crypto.createHash('sha256').update(email).digest('hex');
@@ -377,108 +400,117 @@ router.post('/firebase-login', async (request, response) => {
     const emailRef = db.collection('_user_emails').doc(emailHash);
     const emailSnapshot = await transaction.get(emailRef);
 
+    const firebaseName = normalizeName(
+      decoded.name ||
+      [decoded.given_name, decoded.family_name]
+        .filter(Boolean)
+        .join(' ')
+    );
+
     if (emailSnapshot.exists) {
-  const userId = emailSnapshot.get('user_id');
-  const userRef = db.collection('users').doc(String(userId));
-  const profileRef = db.collection('client_profiles').doc(String(userId));
+      const userId = emailSnapshot.get('user_id');
 
-  const userSnapshot = await transaction.get(userRef);
-  if (!userSnapshot.exists) return null;
+      const userRef = db.collection('users').doc(String(userId));
+      const profileRef = db.collection('client_profiles').doc(String(userId));
 
-  const data = userSnapshot.data();
+      // Complete all reads before performing writes.
+      const userSnapshot = await transaction.get(userRef);
+      const profileSnapshot = await transaction.get(profileRef);
 
-  const firebaseName = normalizeName(
-    decoded.name ||
-    [decoded.given_name, decoded.family_name]
-      .filter(Boolean)
-      .join(' ')
-  );
+      if (!userSnapshot.exists) return null;
 
-  const updates = {
-    updated_at: new Date()
-  };
+      const data = userSnapshot.data();
 
-  if (!data.firebase_uid) {
-    updates.firebase_uid = decoded.uid;
-  }
+      const updates = {
+        updated_at: new Date()
+      };
 
-  if ((!data.name || data.name === 'Client') && firebaseName) {
-    updates.name = firebaseName;
-  }
+      if (!data.firebase_uid) {
+        updates.firebase_uid = decoded.uid;
+      }
 
-  transaction.set(userRef, updates, { merge: true });
+      if ((!data.name || data.name === 'Client') && firebaseName) {
+        updates.name = firebaseName;
+      }
 
-  const profileSnapshot = await transaction.get(profileRef);
+      const finalName = updates.name || data.name || firebaseName || 'Client';
 
-  if (!profileSnapshot.exists) {
-    transaction.set(profileRef, {
-      user_id: Number(userId),
-      name: updates.name || data.name || firebaseName || 'Client',
-      phone: null,
-      goal: null,
-      height_cm: null,
-      created_at: new Date(),
-      updated_at: new Date()
-    });
-  } else if (updates.name) {
-    transaction.set(profileRef, {
-      name: updates.name,
-      updated_at: new Date()
-    }, { merge: true });
-  }
+      transaction.set(userRef, updates, { merge: true });
 
-  return publicUser({
-    ...data,
-    ...updates
-  });
-}
+      if (!profileSnapshot.exists) {
+        transaction.set(profileRef, {
+          user_id: Number(userId),
+          name: finalName,
+          phone: null,
+          goal: null,
+          height_cm: null,
+          created_at: new Date(),
+          updated_at: new Date()
+        });
+      } else if (updates.name) {
+        transaction.set(profileRef, {
+          name: updates.name,
+          updated_at: new Date()
+        }, { merge: true });
+      }
+
+      return publicUser({
+        ...data,
+        ...updates
+      });
+    }
 
     const counterRef = db.collection('_counters').doc('users');
     const counter = await transaction.get(counterRef);
+
     const id = (counter.exists ? Number(counter.get('value')) : 0) + 1;
+
     const userRef = db.collection('users').doc(String(id));
-    const firebaseName = normalizeName(
-  decoded.name ||
-  [decoded.given_name, decoded.family_name]
-    .filter(Boolean)
-    .join(' ')
-);
+    const profileRef = db.collection('client_profiles').doc(String(id));
 
-const name = firebaseName || 'Client';
-const now = new Date();
+    const name = firebaseName || 'Client';
+    const now = new Date();
 
-const profileRef = db.collection('client_profiles').doc(String(id));
+    const createdUser = {
+      id,
+      name,
+      email,
+      role: 'client',
+      firebase_uid: decoded.uid,
+      created_at: now,
+      updated_at: now
+    };
 
-const createdUser = {
-  id,
-  name,
-  email,
-  role: 'client',
-  firebase_uid: decoded.uid,
-  created_at: now,
-  updated_at: now
-};
+    const createdProfile = {
+      user_id: id,
+      name,
+      phone: null,
+      goal: null,
+      height_cm: null,
+      created_at: now,
+      updated_at: now
+    };
 
-const createdProfile = {
-  user_id: id,
-  name,
-  phone: null,
-  goal: null,
-  height_cm: null,
-  created_at: now,
-  updated_at: now
-};
+    transaction.set(counterRef, { value: id });
+    transaction.create(userRef, createdUser);
+    transaction.create(emailRef, { user_id: id });
+    transaction.create(profileRef, createdProfile);
 
-transaction.set(counterRef, { value: id });
-transaction.create(userRef, createdUser);
-transaction.create(emailRef, { user_id: id });
-transaction.create(profileRef, createdProfile);
+    return publicUser(createdUser);
+  });
 
-return publicUser(createdUser);
+  if (!user) {
+    return response.status(401).json({
+      error: 'Account not found'
+    });
+  }
 
-  if (!user) return response.status(401).json({ error: 'Account not found' });
   setSession(response, user);
-  return response.json({ user, message: 'Signed in successfully' });
+
+  return response.json({
+    user,
+    message: 'Signed in successfully'
+  });
 });
 
 router.get('/me', requireAuth, async (request, response) => {

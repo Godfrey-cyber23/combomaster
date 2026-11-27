@@ -17,6 +17,47 @@ const router = express.Router();
 router.use(requireAuth, requireRole('admin'));
 
 /* ═══════════════════════════════════════════════════════
+   CLIENT NAME NORMALIZATION
+   ═══════════════════════════════════════════════════════ */
+
+function formatPersonName(value) {
+  if (typeof value !== 'string') return '';
+
+  return value
+    .trim()
+    .replace(/\s+/g, ' ')
+    .split(' ')
+    .map(word =>
+      word
+        .split(/([-'])/)
+        .map(part => {
+          if (part === '-' || part === "'") return part;
+          return part
+            ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+            : '';
+        })
+        .join('')
+    )
+    .join(' ');
+}
+
+function getPersonFullName(user = {}, profile = {}) {
+  const fullName =
+    profile.full_name ||
+    profile.fullName ||
+    profile.name ||
+    user.full_name ||
+    user.fullName ||
+    user.name ||
+    [
+      user.first_name || user.firstName || profile.first_name || profile.firstName,
+      user.last_name || user.lastName || profile.last_name || profile.lastName
+    ].filter(Boolean).join(' ');
+
+  return formatPersonName(fullName) || 'Unknown client';
+}
+
+/* ═══════════════════════════════════════════════════════
    TIMESTAMP NORMALIZATION
    ═══════════════════════════════════════════════════════ */
 const TIMESTAMP_FIELDS = [
@@ -176,10 +217,14 @@ router.get('/dashboard', async (_request, response) => {
 
   const userMap = Object.fromEntries(users.map((u) => [Number(u.id), u]));
 
-  const recentBookings = bookings.slice(0, 5).map((b) => ({
+  const recentBookings = bookings.slice(0, 5).map((b) => {
+  const user = userMap[Number(b.user_id)] || {};
+
+  return {
     ...normalizeTimestamps(b),
-    clientName: userMap[Number(b.user_id)]?.name || 'Unknown client'
-  }));
+    clientName: getPersonFullName(user)
+  };
+});
 
   response.json({
     stats: {
@@ -233,10 +278,12 @@ router.get('/clients', async (request, response) => {
       ? candidates.sort((a, b) => b.getTime() - a.getTime())[0]
       : null;
 
-    return {
-      id: user.id,
-      name: user.name || 'Unknown',
-      email: user.email || '',
+    const profile = profileSnap.exists ? profileSnap.data() : {};
+
+return {
+  id: user.id,
+  name: getPersonFullName(user, profile),
+  email: user.email || '',
       created_at: normalizeTimestamps({ created_at: user.created_at }).created_at,
       goal: profileSnap.exists ? profileSnap.get('goal') || null : null,
       height_cm: profileSnap.exists ? profileSnap.get('height_cm') ?? null : null,
@@ -301,12 +348,17 @@ router.get('/clients/:id', async (request, response) => {
   }));
 
   response.json({
-    client: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      created_at: normalizeTimestamps({ created_at: user.created_at }).created_at,
-      ...(profileSnap.exists ? profileSnap.data() : {})
+  client: {
+  id: user.id,
+  name: getPersonFullName(
+    user,
+    profileSnap.exists ? profileSnap.data() : {}
+  ),
+  email: user.email || '',
+  created_at: normalizeTimestamps({
+    created_at: user.created_at
+  }).created_at,
+  ...(profileSnap.exists ? profileSnap.data() : {})
     },
     meals:    normalizeArray(meals),
     workouts: normalizeArray(workouts),
@@ -329,12 +381,15 @@ router.get('/bookings', async (request, response) => {
   const userMap = Object.fromEntries(
     users
       .filter((u) => u.exists)
-      .map((u) => [Number(u.id), { name: u.get('name'), email: u.get('email') }])
+      .map((u) => [Number(u.id), {
+  ...u.data(),
+  id: u.id
+}])
   );
 
   let bookings = normalizeArray(records).map((b) => ({
     ...b,
-    clientName: userMap[Number(b.user_id)]?.name || 'Unknown client',
+    clientName: getPersonFullName( userMap[Number(b.user_id)] || {}),
     clientEmail: userMap[Number(b.user_id)]?.email || ''
   }));
 

@@ -30,7 +30,7 @@ jobs:
           node-version: '24'
 
       - name: Install project dependencies
-        run: npm ci
+        run: npm install
 
       - name: Validate backend JavaScript syntax
         run: |

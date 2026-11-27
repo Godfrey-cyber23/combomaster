@@ -23,6 +23,17 @@
   /* ─── helpers ─────────────────────────────── */
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+   function formatClientName(value) {
+  if (typeof value !== 'string') return 'Client';
+
+  const name = value
+    .normalize('NFC')
+    .trim()
+    .replace(/\s+/g, ' ');
+
+  return name || 'Client';
+   }
+   
   const fmtDate = d => { try { return new Date(d).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); } catch { return ''; } };
   const fmtTime = d => { try { return new Date(d).toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}); } catch { return ''; } };
   const fmtRelative = d => {
@@ -297,7 +308,7 @@
       return `
         <div class="flex items-center justify-between gap-2 p-2 rounded-lg" style="background:var(--bg-secondary)">
           <div class="min-w-0">
-            <p class="font-medium truncate">${esc(b.clientName)}</p>
+            <p class="font-medium truncate">${esc(formatClientName(b.clientName))}</p>
             <p class="text-xs" style="color:var(--text-muted)">${esc(b.service)} · ${fmtDate(b.requested_at)} ${fmtTime(b.requested_at)}</p>
           </div>
           <span class="badge ${cls}">${esc(b.status)}</span>
@@ -333,8 +344,10 @@
     if (!tbody) return;
     const q = ($('clientSearch')?.value || '').toLowerCase().trim();
     const filtered = state.clients.filter(c =>
-      !q || c.name?.toLowerCase().includes(q) || c.email?.toLowerCase().includes(q)
-    );
+  !q ||
+  formatClientName(c.name).toLowerCase().includes(q) ||
+  c.email?.toLowerCase().includes(q)
+);
     if (!filtered.length) {
       tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i data-lucide="users"></i><span>No clients found.</span></div></td></tr>`;
       if (window.lucide) lucide.createIcons();
@@ -342,7 +355,7 @@
     }
     tbody.innerHTML = filtered.map(c => `
       <tr>
-        <td class="font-medium">${esc(c.name || '—')}</td>
+        <td class="font-medium">${esc(formatClientName(c.name))}</td>
         <td style="color:var(--text-muted)">${esc(c.email || '—')}</td>
         <td>${esc(c.goal || '—')}</td>
         <td>${c.latestWeightKg != null ? esc(c.latestWeightKg) + ' kg' : '—'}</td>
@@ -361,7 +374,7 @@
       const html = `
         <div class="space-y-4">
           <div>
-            <h3 class="font-display text-xl font-bold text-gold">${esc(c.name)}</h3>
+            <h3 class="font-display text-xl font-bold text-gold">${esc(formatClientName(c.name))}</h3>
             <p class="text-xs" style="color:var(--text-muted)">${esc(c.email)}</p>
           </div>
           <div class="grid grid-cols-3 gap-2 text-center">

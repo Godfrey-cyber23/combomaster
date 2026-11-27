@@ -94,16 +94,46 @@ const parseTimestamp = (value) => {
    ============================================================ */
 router.get('/dashboard', async (request, response) => {
   const userId = Number(request.auth.sub);
-  const [profileSnapshot, progress, meals, workouts, bookings, messages] = await Promise.all([
-    getDocument('client_profiles', userId).get(),
-    listDocuments('progress_entries', { filters: [['user_id', '==', userId]], orderBy: [['recorded_at', 'desc']], limit: 30 }),
-    listDocuments('meal_logs',        { filters: [['user_id', '==', userId]], orderBy: [['logged_at', 'desc']],    limit: 20 }),
-    listDocuments('workout_logs',     { filters: [['user_id', '==', userId]], orderBy: [['completed_at', 'desc']], limit: 20 }),
-    listDocuments('bookings',         { filters: [['user_id', '==', userId]], orderBy: [['requested_at', 'desc']], limit: 20 }),
-    listDocuments('messages',         { filters: [['user_id', '==', userId]], orderBy: [['created_at', 'desc']],   limit: 50 })
-  ]);
-  const profile = profileSnapshot.exists ? profileSnapshot.data() : {};
+  const [
+  userSnapshot,
+  profileSnapshot,
+  progress,
+  meals,
+  workouts,
+  bookings,
+  messages
+] = await Promise.all([
+  getDocument('users', userId).get(),
+  getDocument('client_profiles', userId).get(),
+  listDocuments('progress_entries', {
+    filters: [['user_id', '==', userId]],
+    orderBy: [['recorded_at', 'desc']],
+    limit: 30
+  }),
+  listDocuments('meal_logs', {
+    filters: [['user_id', '==', userId]],
+    orderBy: [['logged_at', 'desc']],
+    limit: 20
+  }),
+  listDocuments('workout_logs', {
+    filters: [['user_id', '==', userId]],
+    orderBy: [['completed_at', 'desc']],
+    limit: 20
+  }),
+  listDocuments('bookings', {
+    filters: [['user_id', '==', userId]],
+    orderBy: [['requested_at', 'desc']],
+    limit: 20
+  }),
+  listDocuments('messages', {
+    filters: [['user_id', '==', userId]],
+    orderBy: [['created_at', 'desc']],
+    limit: 50
+  })
+]);
 
+const user = userSnapshot.exists ? userSnapshot.data() : {};
+const profile = profileSnapshot.exists ? profileSnapshot.data() : {};
   // streak calculation — fixed to use parseTimestamp
   const workoutDays = new Set(
     workouts
@@ -136,11 +166,11 @@ router.get('/dashboard', async (request, response) => {
 
   response.json({
     profile: {
-      name: profile.name || null,
-      phone: profile.phone || null,
-      goal: profile.goal || null,
-      height_cm: profile.height_cm ?? null
-    },
+  name: profile.name || user.name || null,
+  phone: profile.phone || null,
+  goal: profile.goal || null,
+  height_cm: profile.height_cm ?? null
+},
     progress: normalizeArray(progress),
     meals:    normalizeArray(meals),
     workouts: normalizeArray(workouts),
@@ -195,16 +225,43 @@ router.patch('/profile', async (request, response) => {
   }
 
   const db = profileRef.firestore;
-  await db.runTransaction(async (transaction) => {
-    transaction.set(profileRef, {
-      user_id: userId, phone: phone || null, goal: goal || null, height_cm: height,
-      updated_at: new Date()
-    }, { merge: true });
-    if (name !== undefined) {
-      transaction.set(getDocument('users', userId), { name, updated_at: new Date() }, { merge: true });
-    }
-  });
-  return response.json({ profile: { name, phone: phone || null, goal: goal || null, height_cm: height } });
+
+const updatedName = name !== undefined
+  ? name.replace(/\s+/g, ' ')
+  : current.name || null;
+
+await db.runTransaction(async (transaction) => {
+  const profileUpdates = {
+    user_id: userId,
+    phone: phone || null,
+    goal: goal || null,
+    height_cm: height,
+    updated_at: new Date()
+  };
+
+  if (name !== undefined) {
+    profileUpdates.name = updatedName;
+
+    transaction.set(
+      getDocument('users', userId),
+      {
+        name: updatedName,
+        updated_at: new Date()
+      },
+      { merge: true }
+    );
+  }
+
+  transaction.set(profileRef, profileUpdates, { merge: true });
+});
+
+return response.json({
+  profile: {
+    name: updatedName,
+    phone: phone || null,
+    goal: goal || null,
+    height_cm: height
+  }
 });
 
 /* ============================================================

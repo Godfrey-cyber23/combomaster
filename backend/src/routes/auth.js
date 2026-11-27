@@ -235,15 +235,26 @@ router.post('/reset-password', async (request, response, next) => {
 
 router.post('/register', async (request, response) => {
   if (!config.sessionConfigured) {
-    return response.status(503).json({ error: 'Authentication is not configured' });
+    return response.status(503).json({
+      error: 'Authentication is not configured'
+    });
   }
-  const name = normalizeName(request.body?.name);
-  const email = typeof request.body.email === 'string' ? request.body.email.trim().toLowerCase() : '';
-  const password = typeof request.body.password === 'string' ? request.body.password : '';
 
-  if (name.length < 2 || name.length > 100
-      || !emailPattern.test(email) || email.length > 254
-      || !isValidPassword(password)) {
+  const name = normalizeName(request.body?.name);
+  const email = typeof request.body.email === 'string'
+    ? request.body.email.trim().toLowerCase()
+    : '';
+  const password = typeof request.body.password === 'string'
+    ? request.body.password
+    : '';
+
+  if (
+    name.length < 2 ||
+    name.length > 100 ||
+    !emailPattern.test(email) ||
+    email.length > 254 ||
+    !isValidPassword(password)
+  ) {
     return response.status(400).json({
       error: `Enter a valid name and email address, and a password between ${PASSWORD_MIN} and ${PASSWORD_MAX_BYTES} UTF-8 bytes`
     });
@@ -251,47 +262,66 @@ router.post('/register', async (request, response) => {
 
   const passwordHash = await bcrypt.hash(password, 12);
   const db = getFirestore();
-  const emailRef = db.collection('_user_emails').doc(crypto.createHash('sha256').update(email).digest('hex'));
+
+  const emailRef = db.collection('_user_emails').doc(
+    crypto.createHash('sha256').update(email).digest('hex')
+  );
+
   const user = await db.runTransaction(async (transaction) => {
     const emailSnapshot = await transaction.get(emailRef);
+
     if (emailSnapshot.exists) return null;
+
     const counterRef = db.collection('_counters').doc('users');
     const counter = await transaction.get(counterRef);
+
     const id = (counter.exists ? Number(counter.get('value')) : 0) + 1;
+
     const userRef = db.collection('users').doc(String(id));
-const profileRef = db.collection('client_profiles').doc(String(id));
+    const profileRef = db.collection('client_profiles').doc(String(id));
 
-const now = new Date();
+    const now = new Date();
 
-const createdUser = {
-  id,
-  name,
-  email,
-  password_hash: passwordHash,
-  role: 'client',
-  created_at: now,
-  updated_at: now
-};
+    const createdUser = {
+      id,
+      name,
+      email,
+      password_hash: passwordHash,
+      role: 'client',
+      created_at: now,
+      updated_at: now
+    };
 
-const createdProfile = {
-  user_id: id,
-  name,
-  phone: null,
-  goal: null,
-  height_cm: null,
-  created_at: now,
-  updated_at: now
-};
+    const createdProfile = {
+      user_id: id,
+      name,
+      phone: null,
+      goal: null,
+      height_cm: null,
+      created_at: now,
+      updated_at: now
+    };
 
-transaction.set(counterRef, { value: id });
-transaction.create(userRef, createdUser);
-transaction.create(emailRef, { user_id: id });
-transaction.create(profileRef, createdProfile);
+    transaction.set(counterRef, { value: id });
+    transaction.create(userRef, createdUser);
+    transaction.create(emailRef, { user_id: id });
+    transaction.create(profileRef, createdProfile);
 
-return publicUser(createdUser);
-  if (!user) return response.status(409).json({ error: 'An account with that email already exists' });
+    return publicUser(createdUser);
+  });
+
+  if (!user) {
+    return response.status(409).json({
+      error: 'An account with that email already exists'
+    });
+  }
+
   setSession(response, user);
-  return response.status(201).json({ user, message: 'Account created successfully' });
+
+  return response.status(201).json({
+    user,
+    message: 'Account created successfully'
+  });
 });
 
 router.post('/login', async (request, response) => {

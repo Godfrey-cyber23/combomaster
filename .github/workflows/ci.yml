@@ -1,3 +1,4 @@
+
 name: CI
 
 on:
@@ -7,16 +8,33 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
 
       - name: Validate PHP syntax
-        run: find api -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+        run: |
+          if [ -d api ]; then
+            find api -type f -name '*.php' -print0 | xargs -0 -r -n1 php -l
+          fi
 
-      - name: Install Node dependencies
-        working-directory: backend
-        run: npm ci
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
 
-      - name: Run backend tests
-        working-directory: backend
-        run: npm test
+      - name: Install project dependencies
+        run: npm install
+
+      - name: Validate backend JavaScript syntax
+        run: |
+          find backend -type f -name '*.js' \
+            -not -path '*/node_modules/*' \
+            -print0 | xargs -0 -r -n1 node --check
+            

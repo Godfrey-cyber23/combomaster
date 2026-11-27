@@ -1563,16 +1563,77 @@
       }
 
       /* ---------- PROFILE / STATS ---------- */
-      function updateProfileHeader() {
-        const name = (state.profile.name || state.user?.name || 'Member').trim();
-        const first = name.split(' ')[0];
-        $('clientNameSpan').textContent = first || 'Member';
-        const avatar = $('avatarInitial');
-        if (avatar) avatar.textContent = (first[0] || '?').toUpperCase();
-        $('currentDate').textContent = new Date().toLocaleDateString('en-US', {
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
+      
+function formatDisplayName(value) {
+  if (typeof value !== 'string') return '';
+
+  return value
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLowerCase()
+    .replace(/(^|[\s'-])([a-z])/g, (_, separator, letter) =>
+      separator + letter.toUpperCase()
+    );
+}
+
+function getDisplayName() {
+  const profile = state.profile || {};
+  const user = state.user || {};
+
+  // Prefer the member's saved full profile name.
+  const fullName =
+    profile.name ||
+    profile.full_name ||
+    user.name ||
+    user.full_name ||
+    user.display_name ||
+    [user.first_name, user.last_name].filter(Boolean).join(' ') ||
+    [user.firstName, user.lastName].filter(Boolean).join(' ');
+
+  return formatDisplayName(fullName) || 'Member';
+}
+
+function updateProfileHeader() {
+  const fullName = getDisplayName();
+
+  // Display the complete professional name.
+  const nameElement = $('clientNameSpan');
+  if (nameElement) {
+    nameElement.textContent = fullName;
+    nameElement.title = fullName;
+  }
+
+  // Use the first and last initials for the avatar.
+  const avatar = $('avatarInitial');
+
+  if (avatar) {
+    const initials = fullName === 'Member'
+      ? 'M'
+      : fullName
+          .split(' ')
+          .filter(Boolean)
+          .slice(0, 2)
+          .map(part => part[0])
+          .join('');
+
+    avatar.textContent = initials.toUpperCase();
+  }
+
+  // Current date.
+  const dateElement = $('currentDate');
+
+  if (dateElement) {
+    dateElement.textContent = new Date().toLocaleDateString(
+      'en-ZM',
+      {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       }
+    );
+  }
+}
 
       function updateStatsCards() {
         const { latestWeightKg, latestBodyFatPercent, streak, badges } = state.stats;
@@ -2213,7 +2274,7 @@
 
       /* ---------- SETTINGS ---------- */
       function hydrateSettings() {
-        $('settingsName').value = state.profile.name || '';
+        $('settingsName').value = getDisplayName() === 'Member'? '' : getDisplayName();
         $('settingsEmail').value = state.profile.email || state.user?.email || '';
         $('settingsHeight').value = state.profile.height_cm || '';
         $('settingsWeight').value = state.stats.latestWeightKg || '';

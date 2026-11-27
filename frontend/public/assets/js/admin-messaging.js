@@ -13,6 +13,7 @@
      ──────────────────────────────────────────────── */
   const M = {
     activeUserId: null,
+    activeClientName: 'Client',
     messages: [],               // current thread
     pendingAttachment: null,    // { id, url, mime_type, original_name }
     replyTo: null,              // { id, body }
@@ -34,6 +35,14 @@
      ──────────────────────────────────────────────── */
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+   function formatClientName(value) {
+  if (typeof value !== 'string') return 'Client';
+
+  return value
+    .normalize('NFC')
+    .trim()
+    .replace(/\s+/g, ' ') || 'Client';
+   }
   const fmtTime = d => { try { return new Date(d).toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}); } catch { return ''; } };
   const fmtDate = d => { try { return new Date(d).toLocaleDateString(undefined,{month:'short',day:'numeric'}); } catch { return ''; } };
 
@@ -103,8 +112,7 @@
           ${reactionsHtml ? `<div class="msg-reactions">${reactionsHtml}</div>` : ''}
         </div>
         ${hoverReactions}
-        <div class="msg-meta">${own ? 'You' : 'Client'} · ${fmtDate(m.created_at)} ${fmtTime(m.created_at)}</div>
-      </div>`;
+        <div class="msg-meta">${own ? 'You' : esc(formatClientName(M.activeClientName))} · ${fmtDate(m.created_at)} ${fmtTime(m.created_at)}</div>
   }
 
   /* ────────────────────────────────────────────────
@@ -129,6 +137,7 @@
      ──────────────────────────────────────────────── */
   async function openThread(userId, clientMeta) {
     M.activeUserId = userId;
+   M.activeClientName = formatClientName(clientMeta?.name);
     M.replyTo = null;
     M.pendingAttachment = null;
     cancelReply();
@@ -136,10 +145,11 @@
 
     $('chatEmpty').style.display = 'none';
     $('chatPanel').style.display = 'block';
-    $('chatClientName').textContent = clientMeta?.name || 'Client';
-    $('chatClientEmail').textContent = clientMeta?.email || '';
-    $('chatAvatar').textContent = (clientMeta?.name || 'C')[0].toUpperCase();
+    const clientName = formatClientName(clientMeta?.name);
 
+$('chatClientName').textContent = clientName;
+$('chatClientEmail').textContent = clientMeta?.email || '';
+$('chatAvatar').textContent = clientName.charAt(0).toUpperCase();
     const host = $('chatMessages');
     host.innerHTML = `<div class="empty-state"><div class="spinner big"></div></div>`;
 
